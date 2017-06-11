@@ -178,7 +178,11 @@ export default {
                 self.allweixinlist = data.data
                 self.totalpage = self.allweixinlist.length
                 self.weixinlist = []
-                for(var i = (self.currentPage-1)*self.pagesize; i < self.currentPage*self.pagesize; i++){
+				var currentSize = self.currentPage*self.pagesize
+				if(currentSize > self.allweixinlist.length) {
+					currentSize = self.allweixinlist.length
+				}
+                for(var i = (self.currentPage-1)*self.pagesize; i < currentSize; i++){
                   self.weixinlist.push(self.allweixinlist[i])             
                 }
               }    
