@@ -196,7 +196,7 @@ export default {
               if(self.verifysetting.reply[i].msgType == 3){
                 self.uploadimg(i)
               }
-              else if(self.keywords.reply[i].msgType == 34){
+              else if(self.verifysetting.reply[i].msgType == 34){
                 self.uploadaudio(i)
               }
             }        

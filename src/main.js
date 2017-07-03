@@ -13,7 +13,7 @@ window._ = require('lodash')
 Vue.use(VueAxios,axios)
 Vue.use(ElementUI)
 
-axios.defaults.baseURL = 'http://weixinbs.djtaoke.com'
+axios.defaults.baseURL = 'http://weixinx.djtaoke.com'
 // axios.defaults.withCredentials = true;
 
 router.beforeEach((to, from, next) => {
