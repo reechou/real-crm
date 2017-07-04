@@ -9,8 +9,8 @@
       </el-form-item>
       <div class="" v-for="(item, key) in verifysetting.reply">
           <template v-if="item.msgType == 1">
-            <el-form-item label="文本" type="textarea" :rows="3">
-              <el-input v-model="item.content"></el-input>
+            <el-form-item label="文本">
+              <el-input v-model="item.content" type="textarea" :rows="3"></el-input>
             </el-form-item> 
           </template>
           <template v-if="item.msgType == 42">
