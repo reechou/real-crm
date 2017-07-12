@@ -52,6 +52,9 @@ export default {
                   self.$router.push('/weixinlist?user=' + self.ruleForm.user);
                   console.log("success!");
                 }
+                else {
+                  alert(data.msg);
+                }
                 console.log(data);
               }, (response) => {
                 console.log(response);
