@@ -192,6 +192,7 @@ export default {
           var data = JSON.parse(response.data)        
           if(data.state == 1000){
             self.uptoken = data.data
+            console.log(self.verifysetting.reply);
             for(var i in self.verifysetting.reply){
               if(self.verifysetting.reply[i].msgType == 3){
                 self.uploadimg(i)

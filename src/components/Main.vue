@@ -54,38 +54,38 @@ export default {
           this.$router.push('/loginrobot')
         }
         else if(index == 'loginout'){
-          var self = this
-          this.axios.get('http://tym.taoyumin.cn/index.php?r=user/logout',{withCredentials: true})
-          .then((response) => {
-            var data = response.data
-            if(data.state == 1000){
-              self.$router.push("/")
-            }
+          var self = this;
+          self.$router.push("/");
+        //   this.axios.get('http://tym.taoyumin.cn/index.php?r=user/logout',{withCredentials: true})
+        //   .then((response) => {
+        //     var data = response.data
+        //     if(data.state == 1000){
+        //       self.$router.push("/")
+        //     }
            
-          }, (response) => {
-            console.log(response);
-          });
+        //   }, (response) => {
+        //     console.log(response);
+        //   });
         }
       },
-      getuser: function () {
-        var self = this
-        this.axios.get('http://tym.taoyumin.cn/index.php?r=user/checklogin',{withCredentials: true})
-          .then((response) => {
-            var data = response.data
-            if(data.state == 1000){
-              self.user = data.data.userName
-            }
-            else{
-              self.$router.push("/")
-            }
-          }, (response) => {
-            console.log(response);
-          });
-      }
+      // getuser: function () {
+      //   var self = this
+      //   this.axios.get('http://tym.taoyumin.cn/index.php?r=user/checklogin',{withCredentials: true})
+      //     .then((response) => {
+      //       var data = response.data
+      //       if(data.state == 1000){
+      //         self.user = data.data.userName
+      //       }
+      //       else{
+      //         self.$router.push("/")
+      //       }
+      //     }, (response) => {
+      //       console.log(response);
+      //     });
+      // }
     },
     created: function () {
-      this.active = this.$route.path
-      this.getuser()
+      this.active = this.$route.path;
     }
 }
 </script>

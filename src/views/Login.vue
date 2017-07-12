@@ -24,6 +24,10 @@ export default {
           user: '',
           pass: ''
         },
+        RealtechLoginSearch:{
+          username: '',
+          password: ''
+        },
         rules: {
           user: [
             { required: true, message: '请输入用户名', trigger: 'blur' }
@@ -37,15 +41,18 @@ export default {
     methods: {
       submitForm(formName) {
         var self = this
+        self.RealtechLoginSearch.username = self.ruleForm.user;
+        self.RealtechLoginSearch.password = self.ruleForm.pass;
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            self.axios.post('http://tym.taoyumin.cn/index.php?r=user/login',{userName: self.ruleForm.user, passWord: self.ruleForm.pass},{withCredentials: true})
+            self.axios.post('http://wxmp.gatao.cn/realtech/login',{RealtechLoginSearch: self.RealtechLoginSearch})   // ,{withCredentials: true} 用于跨域请求  RealtechLoginSearch: {username:self.ruleForm.user, password: self.ruleForm.pass}}
               .then((response) => {
-                var data = response.data
-                if(data.state == 1000){
-                  self.$router.push('/weixinlist?user=' + self.ruleForm.user)
+                var data = response.data;
+                if(data.code == 0){
+                  self.$router.push('/weixinlist?user=' + self.ruleForm.user);
+                  console.log("success!");
                 }
-                console.log(data)
+                console.log(data);
               }, (response) => {
                 console.log(response);
               });
