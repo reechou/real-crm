@@ -227,10 +227,10 @@ export default {
            if('linkMsgs' in this.task.data && this.task.data.linkMsgs.length == 0){
           this.task.data =  _.omit(this.task.data, 'linkMsgs')
           }
-           if(this.task.data.cardMsgs.length == 0){
+           if(this.task.data.cardMsgs == ""){
           this.task.data =  _.omit(this.task.data, 'cardMsgs')
           }
-          if(this.task.data.textMsgs.length == 0){
+          if(this.task.data.textMsgs == ""){
           this.task.data =  _.omit(this.task.data, 'textMsgs')
           }
         this.task.data.interval = Number.parseInt(this.task.data.interval)
@@ -266,10 +266,10 @@ export default {
                   self.textMsgs = []
                   self.cardMsgs = []
                   for(var i in data.data.data.textMsgs){
-                    self.textMsgs.push({value: data.data.data.textMsgs})
+                    self.textMsgs.push({value: data.data.data.textMsgs[i]})
                   }
                    for(var i in data.data.data.cardMsgs){
-                    self.cardMsgs.push({value : data.data.data.cardMsgs})
+                    self.cardMsgs.push({value : data.data.data.cardMsgs[i]})
                   }
               }   
           })
