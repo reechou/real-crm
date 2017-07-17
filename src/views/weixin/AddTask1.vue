@@ -53,8 +53,7 @@
         <el-button type="primary" @click="onSubmit">立即创建</el-button>
         <el-button @click="addtext">新增文本</el-button>
         <el-button @click="addlink">新增链接消息</el-button> 
-        <el-button @click="addcard">新增名片</el-button> 
-        <button @click="test">test</button>       
+        <el-button @click="addcard">新增名片</el-button>      
       </el-form-item>      
     </el-form>
   </div>
@@ -81,9 +80,6 @@ export default {
       };
   },
     methods: {
-      test: function() {
-        alert('ggggg');
-      },
       addtext: function (){
         this.textMsgs.push({value: ''})
       },
