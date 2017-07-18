@@ -85,6 +85,34 @@
        </el-table-column>                  
     </el-table>
   </el-dialog>
+  <el-dialog title="回复内容" v-model="dialogTableVisible7">
+    <el-table :data="replylist7">
+      <el-table-column property="interval" label="时间间隔"></el-table-column>
+       <el-table-column property="textMsgs" label="文本消息"> </el-table-column>
+       <el-table-column property="cardMsgs" label="名片消息"> </el-table-column>
+       <el-table-column property="picMsg" label="图片消息"> <template scope="scope"><img :src="scope.row.picMsg" alt="" width="100"></template></el-table-column>   
+       <el-table-column label="链接消息">
+          <template scope="scope">
+            <div v-for="item in scope.row.linkMsgs">
+              <ul>
+                  <li>
+                    标题：{{item.title}}
+                  </li>
+                  <li>
+                    描述：{{item.desc}}
+                  </li>
+                  <li>
+                    图片：<img :src="item.showPicUrl" alt="" width="100">
+                  </li>
+                   <li>
+                    链接：<a :href="item.linkUrl" target="_blank">{{item.linkUrl}}</a>
+                  </li>
+              </ul>
+            </div>
+          </template>
+       </el-table-column>                  
+    </el-table>
+  </el-dialog>
   </div>
 </template>
 
@@ -98,11 +126,13 @@ export default {
         dialogTableVisible1: false,
         dialogTableVisible2: false,
         dialogTableVisible3: false,
-        dialogTableVisible4: false,        
+        dialogTableVisible4: false,   
+        dialogTableVisible7: false,     
         replylist1: [],
         replylist2: [],
         replylist3: [],
         replylist4: [],
+        replylist7: [],
         weixinId: '',
         weixinTaskId: ''
       };
@@ -144,7 +174,7 @@ export default {
       },
       type: function (val) {
         if(val == 1){
-          return '通讯录'
+          return '通讯录好友群发'
         }
         else if(val == 2){
           return '朋友圈'
@@ -154,6 +184,9 @@ export default {
         }
         else if(val == 4){
           return '修改个人信息'
+        }
+        else if(val == 7){
+          return '通讯录群群发'
         }
       },
       getreply: function (val, type) {
@@ -172,6 +205,10 @@ export default {
          else if(type == 4){
            this.replylist4 = [JSON.parse(val)]
            this.dialogTableVisible4 = true
+        }
+        else if(type == 7){
+          this.replylist7 = [JSON.parse(val)]
+          this.dialogTableVisible7 = true
         }
       },
       ifAutoVerified: function (val) {

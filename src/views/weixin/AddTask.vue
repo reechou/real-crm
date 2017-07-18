@@ -2,7 +2,7 @@
   <div class="admin-userlist">
     <el-card class="box-card">
       <div class="text item">
-        <router-link to="addtask1">通讯录群发</router-link>
+        <router-link to="addtask1">通讯录好友群发</router-link>
       </div>
       <div class="text item">
         <router-link to="addtask2">发朋友圈</router-link>
@@ -12,6 +12,9 @@
       </div>
       <div class="text item">
         <router-link to="addtask4">修改个人信息</router-link>
+      </div>
+      <div class="text item">
+        <router-link to="addtask7">通讯录群群发</router-link>
       </div>
     </el-card>
   </div>

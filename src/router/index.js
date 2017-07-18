@@ -74,6 +74,10 @@ export default new Router({
           component: require('views/weixin/AddTask4')
         },
         {
+          path:'/addtask7',
+          component: require('views/weixin/AddTask7')
+        },
+        {
           path: '/updatetask1',
           component: require('views/weixin/UpdateTask1')
         },
@@ -88,6 +92,10 @@ export default new Router({
         {
           path: '/updatetask4',
           component: require('views/weixin/UpdateTask4')
+        },
+        {
+          path: '/updatetask7',
+          component: require('views/weixin/UpdateTask7')
         },
         {
           path: '/updateset',
