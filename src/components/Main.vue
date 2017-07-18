@@ -38,6 +38,15 @@ export default {
     }
   },
   methods: {
+      getCookie: function (name) {
+        var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
+ 
+        if(arr=document.cookie.match(reg))
+ 
+          return unescape(arr[2]); 
+        else 
+          return null;
+      },
       handselect(index, indexPath){
         if(index == '/sendmessage'){
           window.open(index)
@@ -55,17 +64,18 @@ export default {
         }
         else if(index == 'loginout'){
           var self = this;
-          self.$router.push("/");
-        //   this.axios.get('http://tym.taoyumin.cn/index.php?r=user/logout',{withCredentials: true})
-        //   .then((response) => {
-        //     var data = response.data
-        //     if(data.state == 1000){
-        //       self.$router.push("/")
-        //     }
+          var ca = self.getCookie('token');
+          // self.$router.push("/");
+          this.axios.get('http://wxmp.gatao.cn/realtech/logout?token='+ ca)
+          .then((response) => {
+            var data = response.data
+            if(data.code == 0){
+              self.$router.push("/")
+            }
            
-        //   }, (response) => {
-        //     console.log(response);
-        //   });
+          }, (response) => {
+            console.log(response);
+          });
         }
       },
       // getuser: function () {

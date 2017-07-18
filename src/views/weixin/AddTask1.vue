@@ -33,7 +33,7 @@
               <el-input v-model="item.title"></el-input>
             </el-form-item> 
              <el-form-item label="描述">
-              <el-input v-model="item.dec"></el-input>
+              <el-input v-model="item.decs"></el-input>
             </el-form-item> 
              <el-form-item label="链接">
               <el-input v-model="item.linkUrl"></el-input>
@@ -87,7 +87,7 @@ export default {
          var self = this
         this.task.data.linkMsgs.push({
               title: "",
-              desc: "",
+              decs: "",
               linkUrl: "",
               showPicUrl: "" })
         this.$nextTick(function(){
@@ -217,13 +217,13 @@ export default {
         if(this.task.data.picMsg == ""){
          this.task.data =  _.omit(this.task.data, 'picMsg')
         }
-         if(this.task.data.linkMsgs.length == 0){
+         if(this.task.data.linkMsgs == ""){
           this.task.data =  _.omit(this.task.data, 'linkMsgs')
           }
-          if(this.task.data.cardMsgs.length == 0){
+          if(this.task.data.cardMsgs == ""){
           this.task.data =  _.omit(this.task.data, 'cardMsgs')
           }
-          if(this.task.data.textMsgs.length == 0){
+          if(this.task.data.textMsgs == ""){
           this.task.data =  _.omit(this.task.data, 'textMsgs')
           }
         this.task.IfDefault = this.task.IfDefault ? 1 : 0

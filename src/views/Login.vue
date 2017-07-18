@@ -48,9 +48,9 @@ export default {
             self.axios.post('http://wxmp.gatao.cn/realtech/login',{RealtechLoginSearch: self.RealtechLoginSearch})   // ,{withCredentials: true} 用于跨域请求  RealtechLoginSearch: {username:self.ruleForm.user, password: self.ruleForm.pass}}
               .then((response) => {
                 var data = response.data;
-                if(data.code == 0){
-                  self.$router.push('/weixinlist?user=' + self.ruleForm.user);
-                  console.log("success!");
+                if(data.code == 0){ 
+                  self.setCookie("token",data.msg.token,60*60*30);
+                   self.$router.push('/weixinlist?user=' + self.ruleForm.user);                 
                 }
                 else {
                   alert(data.msg);
@@ -67,6 +67,12 @@ export default {
       },
       resetForm(formName) {
         this.$refs[formName].resetFields();
+      },
+      setCookie: function(cname,cvalue,exdays){
+        var expires = "expires=" + exdays;
+        console.info(cname+ "=" + cvalue +";" + expires);
+        document.cookie = cname + "=" + cvalue + ";" + expires;
+        console.info(document.cookie);
       }
     }
 }
