@@ -2,7 +2,9 @@
   <div style="width: 100%">
    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
       <el-form-item label="微信号" prop="wechat">
-        <el-input type="text" v-model="ruleForm.wechat"></el-input>
+        <el-input type="text" v-model="ruleForm.wechat" style="width: 400px;"></el-input>
+        <el-button type="primary" @click="submitForm('ruleForm')" style="margin-bottom: 10px;">提交</el-button>
+
       </el-form-item>
       
     </el-form>
