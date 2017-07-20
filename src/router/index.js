@@ -104,6 +104,22 @@ export default new Router({
         {
           path: '/updatekeyword',
           component: require('views/weixin/UpdateKeyword')
+        },
+        {
+          path: '/friendslist',
+          component: require('views/weixin/FriendsList')
+        },
+        {
+          path: '/addtaskbyfriends',
+          component: require('views/weixin/AddTaskByFriends')
+        },
+        {
+          path: '/addtaskbytag',
+          component: require('views/weixin/AddTaskByTag')
+        },
+        {
+          path: '/weixinsettask',
+          component: require('views/weixin/WeiXinSetTask')
         }
       ]
     }

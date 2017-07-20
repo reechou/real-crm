@@ -10,17 +10,25 @@
         :data="weixinlist" style="width: 100%;margin-bottom: 80px" v-loading="loading" element-loading-text="拼命加载中">
         <el-table-column prop="id" label="id"> </el-table-column>      
         <el-table-column prop="nickName" label="微信昵称"> </el-table-column>
-        <el-table-column prop="wxId" label="微信id"></el-table-column>
+         <!-- <el-table-column prop="wxId" label="微信id"></el-table-column>  -->
         <el-table-column prop="wechat" label="微信号"> </el-table-column>
-        <el-table-column label="是否已执行默认任务"> <template scope='scope'>{{ifExecDefaultTask(scope.row.ifExecDefaultTask)}}</template></el-table-column>
-        <el-table-column label="创建日期"> <template scope='scope'>{{formate(scope.row.createAt)}}</template></el-table-column>  
+        <!-- <el-table-column label="是否已执行默认任务"> <template scope='scope'>{{ifExecDefaultTask(scope.row.ifExecDefaultTask)}}</template></el-table-column>
+        <el-table-column label="创建日期"> <template scope='scope'>{{formate(scope.row.createAt)}}</template></el-table-column>   -->
         <el-table-column label="最后心跳时间"> <template scope='scope'>{{formate(scope.row.lastHeartbeat)}}</template></el-table-column>  
         <el-table-column label="今日添加人数" prop="todayAddContactNum"> </el-table-column>  
         <el-table-column label="描述"> <template scope="scope">{{scope.row.desc}} <el-button type="text" size="small" @click="updatedec(scope.row.id, scope.row.desc)">修改</el-button></template></el-table-column>                                                                  
-        <el-table-column label="操作"> <template scope='scope'>
-          <el-button type="text" size="small" @click="settask(scope.row.id)">创建任务</el-button>
+        <el-table-column label="操作" > <template scope='scope'>
+          <!-- <el-button type="text" size="small" @click="settask(scope.row.id)">创建任务</el-button>
           <el-button type="text" size="small" @click="gosetting(scope.row.id)">查看设置</el-button>  
-          <el-button type="text" size="small" @click="confirm(scope.row.id)">删除</el-button>  
+          <el-button type="text" size="small" @click="confirm(scope.row.id)">删除</el-button>
+          <el-button type="text" size="small" @click="gofriendslsit(scope.row.id)">查看好友</el-button>  -->
+           <select :id="scope.row.id" @change="selectevent(scope.row.id)" v-model="selected">
+             <option selected>请选择</option>
+              <option>创建任务</option>
+              <option>查看设置</option>
+              <option>删除</option>
+              <option>查看好友</option>
+          </select> 
         </template></el-table-column>               
       </el-table>
     </template>
@@ -54,10 +62,26 @@ export default {
         currentPage: 1,
         dialogVisible: false,
         desc: '',
-        id: ''
+        id: '',
+        selected: '请选择'
       };
     },
     methods: {
+      selectevent: function(val) {
+        if(this.selected == "创建任务"){
+          this.settask(val);
+        }
+        else if(this.selected == "查看设置"){
+          this.gosetting(val);
+        }
+        else if(this.selected == "删除"){
+          this.confirm(val);
+        }
+        else{
+          this.gofriendslsit(val);
+        }
+          console.log(val);
+      },
       goset: function (val) {
           this.$router.push("/setweixin?id="+val)
       },
@@ -191,6 +215,9 @@ export default {
               console.log(err);
               self.loading = false
           })
+      },
+      gofriendslsit: function(val) {
+        this.$router.push('/friendslist?id=' + val);
       }
     },
     created: function () {
@@ -201,4 +228,9 @@ export default {
 
 <style>
   .admin-userlist{width: 100%;padding: 20px}
+select{
+  width: 100px;
+  height: 30px;
+  border-radius: 5px;
+}
 </style>

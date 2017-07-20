@@ -1,26 +1,25 @@
 <template>
   <div class="admin-userlist">
+      {{ taskIds }}
     <div class="" style="padding: 10px 0">
-          <el-button type="primary" @click="go()">新建任务内容</el-button>
-          <el-button type="primary" @click="goweixin()">拉取微信</el-button>
+       <el-button @click="gofriends">选择好友</el-button>
+       <el-button @click="gotags">选择标签</el-button>
     </div>
     <template>
-    <el-checkbox-group v-model="ids">
-    <input type="checkbox" @click="checkAll()">全选
+    <el-checkbox-group v-model="taskIds">
+        <input type="checkbox" @click="checkAll">全选
     <el-table
       :data="tasklist" style="width: 100%;margin-bottom: 80px" v-loading="loading" element-loading-text="拼命加载中">
-      <el-table-column prop="id" label="选择"><template scope="scope">
-            <el-checkbox :label="scope.row.id"></el-checkbox>
-          </template></el-table-column>         
+      <el-table-column label="选择">
+          <template scope="scope">
+              <el-checkbox :label="scope.row.id"></el-checkbox>
+          </template>
+      </el-table-column>       
       <el-table-column prop="id" label="id"></el-table-column>      
       <el-table-column label="是否默认"><template scope="scope">{{scope.row.ifDefault?"是":"否"}} </template></el-table-column>
       <el-table-column label="任务类型"><template scope="scope">{{type(scope.row.taskType)}} </template></el-table-column>      
       <el-table-column label="任务内容"> <template scope='scope'><el-button type="text" size="small" @click="getreply(scope.row.data, scope.row.taskType)">查看</el-button></template></el-table-column>
-      <el-table-column label="创建日期"> <template scope='scope'>{{formate(scope.row.createAt)}}</template></el-table-column>  
-      <el-table-column label="操作"> <template scope='scope'>
-      <el-button type="text" size="small" @click="confirm(scope.row.id)">删除</el-button>
-      <el-button type="text" size="small" @click="goupdate(scope.row.id, scope.row.taskType)">修改</el-button>      
-      </template></el-table-column>                   
+      <el-table-column label="创建日期"> <template scope='scope'>{{formate(scope.row.createAt)}}</template></el-table-column>    
     </el-table>
     </el-checkbox-group>
   </template>
@@ -92,7 +91,7 @@
        </el-table-column>                  
     </el-table>
   </el-dialog>
-    <el-dialog title="回复内容" v-model="dialogTableVisible7">
+  <el-dialog title="回复内容" v-model="dialogTableVisible7">
     <el-table :data="replylist7">
       <el-table-column property="interval" label="时间间隔"></el-table-column>
        <el-table-column property="textMsgs" label="文本消息"> </el-table-column>
@@ -128,111 +127,39 @@ export default {
   name: 'settask',
   data() {
       return {
-        ids: [],
+        taskIds:[],
         tasklist: [],
         loading: false,
         dialogTableVisible1: false,
         dialogTableVisible2: false,
         dialogTableVisible3: false,
-        dialogTableVisible4: false,
-        dialogTableVisible7: false,        
+        dialogTableVisible4: false,   
+        dialogTableVisible7: false,     
         replylist1: [],
         replylist2: [],
         replylist3: [],
         replylist4: [],
         replylist7: [],
-        weixinId: '',
+        weixinId: 0,
         weixinTaskId: '',
-        checkall: false,
+        checkall : false,
+        weixinids:[]
       };
     },
     methods: {
       checkAll: function () {//全选
 	     if (!this.checkall) {
-  			this.ids = []         
+  			this.taskIds = []         
 	       this.tasklist.forEach((item) => {
-	         this.ids.push(item.id);
+	         this.taskIds.push(item.id);
 	       });
          this.checkall = true
 	     }
        else{
-  			this.ids = [] 
+  			this.taskIds = [] 
          this.checkall = false                
-       }
-  		},
-      goweixin: function () {
-        if(this.ids.length == 0){
-          this.$message("请选择任务")
-          return false
         }
-        this.$router.push("/weixinlist1?ids="+ this.ids)
-      },
-      goupdate: function (val, type) {
-        this.$router.push("/updatetask"+type+"?id="+val)
-      // },
-      // gofriendstask: function () {
-      //   if(this.ids.length == 0){
-      //     this.$message("请选择任务")
-      //     return false
-      //   }
-      //   this.$router.push("/addtaskbyfriends?ids="+ this.ids)
-      // },
-      // gotagtask: function () {
-      //   if(this.ids.length == 0){
-      //     this.$message("请选择任务")
-      //     return false
-      //   }
-      //   this.$router.push("/addtaskbytag?ids="+ this.ids)
-      },
-      confirm(val) {
-        var self = this
-        this.$confirm('是否删除?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          self.delet(val)
-        }).catch(() => {
-                    
-        });
-      },
-      delet: function (val) {
-          var self = this
-          this.axios.post('/weixin/delete_task', {id: val})
-          .then(function(res){
-              var data = res.data
-              if(data.code == 0){
-                self.$message("删除成功")
-                self.gettasklist()
-              }  
-              else{
-                self.$message("删除失败")                
-              }  
-          })
-          .catch(function(err){
-              console.log(err);
-              self.$message("删除失败")                              
-          })
-      },
-      go: function () {
-        this.$router.push("/addtask")
-      },
-      open2(val) {
-        this.weixinTaskId = val
-        var self = this
-        this.$confirm('确认操作, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          self.queren()
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });          
-        });
-      },
+  	  },
       type: function (val) {
         if(val == 1){
           return '通讯录好友群发'
@@ -246,7 +173,7 @@ export default {
         else if(val == 4){
           return '修改个人信息'
         }
-        else if( val == 7){
+        else if(val == 7){
           return '通讯录群群发'
         }
       },
@@ -269,7 +196,7 @@ export default {
         }
         else if(type == 7){
           this.replylist7 = [JSON.parse(val)]
-          this.dialogTableVisible7 = true;
+          this.dialogTableVisible7 = true
         }
       },
       ifAutoVerified: function (val) {
@@ -304,9 +231,24 @@ export default {
               console.log(err);
               self.loading = false
           })
+      },
+      gofriends: function() {
+        if(this.taskIds.length == 0){
+          this.$message("请选择任务")
+          return false
+        }
+        this.$router.push('/addtaskbyfriends?id=' + this.weixinId + '&taskids=' +　this.taskIds);
+      },
+      gotags: function() {
+        if(this.taskIds.length == 0){
+          this.$message("请选择任务")
+          return false
+        }
+          this.$router.push('/addtaskbytag?id=' + this.weixinId + '&taskids=' +　this.taskIds);
       }
     },
     created: function () {
+      this.weixinId = Number.parseInt(this.$route.query.id)
       this.gettasklist()
     }
 }
