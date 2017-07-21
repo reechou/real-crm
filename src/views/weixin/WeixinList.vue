@@ -3,7 +3,7 @@
     <div style="width: 400px;padding: 10px">
           <el-button type="primary" size="small" @click="goset()" style="margin-bottom: 10px">设置新微信</el-button>                                                                        
     
-        <el-input placeholder="请输入微信号" icon="search" v-model="searchcontent" :on-icon-click="handleIconClick"></el-input>
+        <el-input placeholder="请输入微信号" icon="search" v-model="searchcontent" :on-icon-click="handleIconClick"  @keyup.enter.native="show($event)"></el-input>
     </div>
     <template>
       <el-table
@@ -166,6 +166,17 @@ export default {
         else{
           var self = this
           this.weixinlist = [_.find(self.allweixinlist, function(chr) {return chr.id == self.searchcontent;})]
+        }
+      },
+      show: function(ev){
+        if(ev.keyCode == 13){
+          if(this.searchcontent == ''){
+            this.weixinlist = this.allweixinlist;
+          }
+          else{
+            var self = this;
+            this.weixinlist = [_.find(self.allweixinlist, function(chr) {return chr.id == self.searchcontent;})]
+          }
         }
       },
       gosetting: function (val) {

@@ -1,44 +1,50 @@
 <template>
   <div class="admin-userlist">
     <el-form ref="verifysetting" :model="task" label-width="80px" v-if="task.data.basicInfo">
-     <el-form-item label="性别">
-      <el-radio-group v-model="task.data.basicInfo.sex">
-        <el-radio label="1">男</el-radio>
-        <el-radio label="2">女</el-radio>
-      </el-radio-group>
-    </el-form-item>
-     <el-form-item label="是否默认">
+      <el-form-item label="性别">
+        <el-radio-group v-model="task.data.basicInfo.sex">
+          <el-radio label="1">男</el-radio>
+          <el-radio label="2">女</el-radio>
+        </el-radio-group>
+      </el-form-item>
+      <el-form-item label="是否默认">
         <el-switch on-text="" off-text="" v-model="task.ifDefault"></el-switch>
       </el-form-item>
       <el-form-item label="省份">
         <el-input v-model="task.data.basicInfo.province"></el-input>
       </el-form-item>
-       <el-form-item label="城市">
+      <el-form-item label="城市">
         <el-input v-model="task.data.basicInfo.city"></el-input>
       </el-form-item>
-       <el-form-item label="签名">
+      <el-form-item label="签名">
         <el-input v-model="task.data.basicInfo.signature"></el-input>
       </el-form-item>
-       <el-form-item label="昵称">
+      <el-form-item label="昵称">
         <el-input v-model="task.data.basicInfo.nickname"></el-input>
       </el-form-item>
       <el-form-item label="头像">
         <div id="container">
-            <label for="img" class="el-button el-button--primary el-button--small">
-              <i class="el-icon-upload"></i><span>点击上传图片</span>
-            </label>
-            <div><img :src="task.data.headImg.headUrl" alt="" width="100"></div>
-            <input type="file" id="img" class="hide" />
+          <label for="img" class="el-button el-button--primary el-button--small">
+            <i class="el-icon-upload"></i>
+            <span>点击上传图片</span>
+          </label>
+          <div>
+            <img :src="task.data.headImg.headUrl" alt="" width="100">
           </div>
+          <input type="file" id="img" class="hide" />
+        </div>
       </el-form-item>
       <el-form-item label="背景">
         <div id="container1">
-            <label for="img1" class="el-button el-button--primary el-button--small">
-              <i class="el-icon-upload"></i><span>点击上传图片</span>
-            </label>
-            <div><img :src="task.data.headImg.backgroundUrl" alt="" width="100"></div>
-            <input type="file" id="img1" class="hide" />
+          <label for="img1" class="el-button el-button--primary el-button--small">
+            <i class="el-icon-upload"></i>
+            <span>点击上传图片</span>
+          </label>
+          <div>
+            <img :src="task.data.headImg.backgroundUrl" alt="" width="100">
           </div>
+          <input type="file" id="img1" class="hide" />
+        </div>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="onSubmit">立即创建</el-button>
@@ -51,14 +57,14 @@
 export default {
   name: 'addtask2',
   data() {
-      return {
+    return {
+      id: '',
+      task: {
         id: '',
-        task: {
-          id: '',
-          taskId: 4,
-          ifDefault: false,
-          data: {
-            headImg: {
+        taskId: 4,
+        ifDefault: false,
+        data: {
+          headImg: {
             headUrl: "",
             backgroundUrl: ""
           },
@@ -69,15 +75,15 @@ export default {
             signature: "",
             nickname: ""
           }
-          }
-        },
-        uptoken: ''
-      };
-    },
-    methods: {
-      uploadimg:function(){
-        var self = this;
-        var uploader = Qiniu.uploader({
+        }
+      },
+      uptoken: ''
+    };
+  },
+  methods: {
+    uploadimg: function () {
+      var self = this;
+      var uploader = Qiniu.uploader({
         runtimes: 'html5,flash,html4', //上传模式,依次退化
         browse_button: 'img', //上传选择的点选按钮，**必需**
         uptoken: this.uptoken,
@@ -100,29 +106,29 @@ export default {
         auto_start: true, //选择文件后自动上传，若关闭需要自己绑定事件触发上传
         filters: {
           mime_types: [
-              {title : "Image files", extensions : "jpg,png"} // 限定flv后缀上传格式上传
+            { title: "Image files", extensions: "jpg,png" } // 限定flv后缀上传格式上传
           ]
         },
         multi_selection: false,
         init: {
-          'UploadProgress': function(up, files) {
+          'UploadProgress': function (up, files) {
           },
-          'FileUploaded': function(up, file, info) {
+          'FileUploaded': function (up, file, info) {
             var domain = up.getOption('domain');
             var res = JSON.parse(info);
             var urlImg = 'http://oe3slowqt.bkt.clouddn.com/' + res.key;
-            self.task.data.headImg.headUrl = urlImg            
+            self.task.data.headImg.headUrl = urlImg
           },
-          'Error': function(up, err, errTip) {
-                  //上传出错时，处理相关的事情
-                  alert("上传出错，请刷新重新上传")
-            }
+          'Error': function (up, err, errTip) {
+            //上传出错时，处理相关的事情
+            alert("上传出错，请刷新重新上传")
+          }
         }
       });
     },
-    uploadimg1:function(){
-        var self = this;
-        var uploader = Qiniu.uploader({
+    uploadimg1: function () {
+      var self = this;
+      var uploader = Qiniu.uploader({
         runtimes: 'html5,flash,html4', //上传模式,依次退化
         browse_button: 'img1', //上传选择的点选按钮，**必需**
         uptoken: this.uptoken,
@@ -145,90 +151,96 @@ export default {
         auto_start: true, //选择文件后自动上传，若关闭需要自己绑定事件触发上传
         filters: {
           mime_types: [
-              {title : "Image files", extensions : "jpg,png"} // 限定flv后缀上传格式上传
+            { title: "Image files", extensions: "jpg,png" } // 限定flv后缀上传格式上传
           ]
         },
         multi_selection: false,
         init: {
-          'UploadProgress': function(up, files) {
+          'UploadProgress': function (up, files) {
           },
-          'FileUploaded': function(up, file, info) {
+          'FileUploaded': function (up, file, info) {
             var domain = up.getOption('domain');
             var res = JSON.parse(info);
             var urlImg = 'http://oe3slowqt.bkt.clouddn.com/' + res.key;
 
             self.task.data.headImg.backgroundUrl = urlImg
           },
-          'Error': function(up, err, errTip) {
-                  //上传出错时，处理相关的事情
-                  alert("上传出错，请刷新重新上传")
-            }
+          'Error': function (up, err, errTip) {
+            //上传出错时，处理相关的事情
+            alert("上传出错，请刷新重新上传")
+          }
         }
       });
     },
-    getuptoken:function(){
-        var self = this;
-        this.axios.get('http://tym.taoyumin.cn/index.php?r=search/token').then((response) => {
-          var data = JSON.parse(response.data)        
-          if(data.state == 1000){
-            self.uptoken = data.data
-            self.uploadimg() 
-            self.uploadimg1()                         
-          }
-        }, (response) => {
-          // error callback
-        });
-      },
-      onSubmit: function () {
-        var self = this
-        this.task.data.basicInfo.sex = Number.parseInt(this.task.data.basicInfo.sex)
-        this.task.ifDefault = this.task.ifDefault ? 1 : 0
-        var task1 = this.task
-        task1.data = JSON.stringify(task1.data)
-        this.axios.post('/weixin/update_task', task1)
-          .then(function(res){
-              var data = res.data
-              console.log(data)    
-              if(data.code == 0){
-                self.$message("创建成功")
-                self.$router.push("/tasklist")
-              } 
-              else{
-                self.$message("创建失败")                
-              }   
-          })
-          .catch(function(err){
-              console.log(err);
-              self.$message("创建失败")                              
-          })
-      },
-      getupdateset: function () {
-        var self = this
-        this.axios.post('/weixin/get_task_from_id', {id: this.id})
-          .then(function(res){
-              var data = res.data
-              console.log(data)    
-              if(data.code == 0){
-                  data.data.data = JSON.parse(data.data.data)
-                  self.task = _.assign(self.task, data.data)  
-                  self.task.data.basicInfo.sex = self.task.data.basicInfo.sex == 1? '1': '2'                
-              }   
-          })
-          .catch(function(err){
-              console.log(err);
-          })
-      }
+    getuptoken: function () {
+      var self = this;
+      this.axios.get('http://tym.taoyumin.cn/index.php?r=search/token').then((response) => {
+        var data = JSON.parse(response.data)
+        if (data.state == 1000) {
+          self.uptoken = data.data
+          self.uploadimg()
+          self.uploadimg1()
+        }
+      }, (response) => {
+        // error callback
+      });
     },
-    created: function () {
-      this.getuptoken()
-      this.id = Number.parseInt(this.$route.query.id)
-      this.task.id = Number.parseInt(this.$route.query.id)
-      this.getupdateset()
+    onSubmit: function () {
+      var self = this
+      this.task.data.basicInfo.sex = Number.parseInt(this.task.data.basicInfo.sex)
+      this.task.ifDefault = this.task.ifDefault ? 1 : 0
+      var task1 = this.task
+      task1.data = JSON.stringify(task1.data)
+      this.axios.post('/weixin/update_task', task1)
+        .then(function (res) {
+          var data = res.data
+          console.log(data)
+          if (data.code == 0) {
+            self.$message("创建成功")
+            self.$router.push("/tasklist")
+          }
+          else {
+            self.$message("创建失败")
+          }
+        })
+        .catch(function (err) {
+          console.log(err);
+          self.$message("创建失败")
+        })
+    },
+    getupdateset: function () {
+      var self = this
+      this.axios.post('/weixin/get_task_from_id', { id: this.id })
+        .then(function (res) {
+          var data = res.data
+          console.log(data)
+          if (data.code == 0) {
+            data.data.data = JSON.parse(data.data.data)
+            self.task = _.assign(self.task, data.data)
+            self.task.data.basicInfo.sex = self.task.data.basicInfo.sex == 1 ? '1' : '2'
+          }
+        })
+        .catch(function (err) {
+          console.log(err);
+        })
     }
+  },
+  created: function () {
+    this.getuptoken()
+    this.id = Number.parseInt(this.$route.query.id)
+    this.task.id = Number.parseInt(this.$route.query.id)
+    this.getupdateset()
+  }
 }
 </script>
 
 <style>
-  .admin-userlist{width: 100%;padding: 20px}
-  .hide{display: none}
+.admin-userlist {
+  width: 100%;
+  padding: 20px
+}
+
+.hide {
+  display: none
+}
 </style>

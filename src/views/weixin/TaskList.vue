@@ -69,7 +69,8 @@
       <el-table-column property="interval" label="时间间隔"></el-table-column>
        <el-table-column property="textMsgs" label="文本消息"> </el-table-column>
        <el-table-column property="cardMsgs" label="名片消息"> </el-table-column>
-       <el-table-column property="picMsg" label="图片消息"> <template scope="scope"><img :src="scope.row.picMsg" alt="" width="100"></template></el-table-column>   
+       <el-table-column property="picMsg" label="图片消息"> <template scope="scope"><img :src="scope.row.picMsg" alt="" width="100"></template></el-table-column>
+       <el-table-column property="dataUrl" label="资源文件链接"></el-table-column>  
        <el-table-column label="链接消息">
           <template scope="scope">
             <div v-for="item in scope.row.linkMsgs">
