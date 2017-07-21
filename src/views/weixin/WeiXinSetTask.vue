@@ -5,6 +5,7 @@
       <el-button type="primary" @click="onSubmit">提交</el-button>
        <el-button @click="gotags">选择标签</el-button> 
     </div> -->
+    <div class="task">
     <el-row :gutter="20">
       <el-col :span="18"><p>选中任务id:{{ taskIds }}</p></el-col>
       <el-col :span="6" align="center"><el-button type="primary" @click="onSubmit">提交</el-button></el-col>
@@ -70,6 +71,7 @@
         </el-table-column>
       </el-table>
     </el-dialog>
+    </div>
   </div>
 </template>
 
@@ -155,27 +157,13 @@ export default {
           self.loading = false
         })
     },
-    // gofriends: function () {
-    //   if (this.taskIds.length == 0) {
-    //     this.$message("请选择任务")
-    //     return false
-    //   }
-    //   this.$router.push('/addtaskbyfriends?id=' + this.weixinId + '&taskids=' + this.taskIds);
-    // },
-    // gotags: function () {
-    //   if (this.taskIds.length == 0) {
-    //     this.$message("请选择任务")
-    //     return false
-    //   }
-    //   this.$router.push('/addtaskbytag?id=' + this.weixinId + '&taskids=' + this.taskIds);
-    // },
     onSubmit: function () {
       var self = this;
       this.selectfriends = this.$route.query.selectfri;
       console.log(this.selectfriends);
       this.axios.post('/weixin/create_selected_friends_task', {
         weixinId: self.weixinId,
-        weixinTaskId: this.taskIds,
+        weixinTaskId: Number.parseInt(this.taskIds),
         friends: this.selectfriends
       })
         .then(function (res) {
