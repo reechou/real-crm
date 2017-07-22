@@ -61,7 +61,10 @@
                             </template>
                         </el-table-column>
                         <el-table-column label="创建时间" width="150px">
-                            <template scope='scope'>{{formate(scope.row.createAt)}}</template>
+                            <template scope='scope'>
+                                <p v-if="scope.row.addContactTime != 0">{{formate(scope.row.addContactTime)}}</p>
+                                <p v-if="scope.row.addContactTime == 0">旧好友</p>
+                            </template>
                         </el-table-column>
                         <el-table-column label="备注" width="150px">
                             <template scope="scope">{{scope.row.remark}}</template>
@@ -161,51 +164,50 @@
 export default {
     data() {
         return {
-            alltagslist: [],
-            frilistbytime: [],
-            loading: false,
-            friendslist: [],
-            pagesize: 100,
+            alltagslist: [],      // 所有标签的列表
+            frilistbytime: [],     // 通过时间查询的好友列表
+            loading: false,        // 等待动画
+            friendslist: [],        // 用来再页面显示的好友列表
+            pagesize: 100,          // 单页列表显示的好友个数
             totalpage: 0,
             currentPage: 1,
-            tagfrilist: [],
+            tagfrilist: [],       // 根据标签得到的好友列表
             istag: false,  // 标记是否为根据tag查询得到的列表,
             tagid: null,         // 获取tagID
-            startT: null,
-            endT: null,
-            startTime: null,
-            endTime: null,
-            isTimelist: false,
-            wxIds: [],
-            checkall: false,
-            a: Date.now(),
-            time: null,
-            Clicktime: 0,
-            firstclick: {
+            startT: null,       // 开始时间的时间戳过渡变量
+            endT: null,          // 结束时间的时间戳过渡变量
+            startTime: null,       // 通过时间选择器选择到的开始时间（中国标准时间格式）
+            endTime: null,        // 通过时间选择器选择到的结束时间（中国标准时间格式）
+            isTimelist: false ,    //  用来判断当前显示的是否为以时间为条件显示的列表， 如果是 则分页功能需在客户端进行  为否 则在后端进行分页功能了 前端不用调用分页方法
+            wxIds: [],             //　用来存放通过checkbox选择到的列表的微信ID 
+            checkall: false,         // 用来判断列表的checkbox是否全选
+            a: Date.now(),          // 获取当前时间点
+            time: null,       
+            Clicktime: 0,           // 用来记录点击时间快捷键的次数
+            firstclick: {            // 用来记录第一次点击时间快捷键后得到的时间戳
+                startTime: null,
+                endTime: null
+            },                       
+            twoclick: {               // 用来记录第二次点击时间快捷键后得到的时间戳
                 startTime: null,
                 endTime: null
             },
-            twoclick: {
-                startTime: null,
-                endTime: null
-            },
-            backcolor0: '#20a0ff',
+            backcolor0: '#20a0ff',      // 几个时间快捷键按钮的初始背景颜色
             backcolor1: '#20a0ff',
             backcolor2: '#20a0ff',
             backcolor3: '#20a0ff',
             backcolor4: '#20a0ff',
-            tbuttoncolor: '#20a0ff',
-            issearch: false,
-            istaskpage: true,
-            taskIds: [],
-            tasklist: [],
-            tasklistby1: [],
-            dialogTableVisible1: false,
-            replylist1: [],
-            weixinId: 0,
-            weixinTaskId: '',
-            weixinids: [],
-            selectfriends: []
+            tbuttoncolor: '#20a0ff',      // 标签按钮的背景颜色
+            issearch: false,              // 用来判断是否是通过时间选择器选择时间后搜索得到的好友列表
+            istaskpage: true,             // 判断是否显示任务列表页面的信息
+            taskIds: [],                  //　用来存放通过checkbox选择的任务id
+            tasklist: [],                  // 存放任务的列表
+            tasklistby1: [],                  //  将任务显示出来的任务列表存放载体
+            dialogTableVisible1: false,     // 判断是否显示弹窗
+            replylist1: [],                 // 获得弹窗要显示的信息
+            weixinId: 0,                     //  当前操作者的微信id
+            weixinTaskId: '',       
+            weixinids: []
 
         }
     },
@@ -223,7 +225,9 @@ export default {
             var second = date.getSeconds();
             return year + "-" + this.formatTen(month) + "-" + this.formatTen(day);
         },
-        bindsex: function (val) {
+
+        // 通过得到后台数据转换为中文的男女
+        bindsex: function (val) {     
             if (val == 1) {
                 return '男';
             }
@@ -231,6 +235,8 @@ export default {
                 return '女';
             }
         },
+
+        // 全选函数
         checkAll: function () {
             if (!this.checkall) {
                 this.wxIds = [];
@@ -244,16 +250,22 @@ export default {
                 this.checkall = false;
             }
         },
+
+        // 判断是否时通过时间选择器选择的时间 来获得好友列表
         Issearch: function () {
             this.issearch = true;
             this.getfribytat(this.startTime, this.endTime);
         },
+
+        // 标签列表的按钮的点击选中后的颜色变化（暂时只有一个 等有其他标签还要加 或者通过css 优化）
         color2: function (val) {
             if (val == 0) {
                 this.tbuttoncolor = (this.tbuttoncolor == '#20a0ff' ? '#005494' : '#20a0ff');
             }
-        },
-        color: function (val) {
+        }, 
+        
+        // 按钮点击后background-color的变化
+        color: function (val) {     
             if (this.Clicktime == 1) {
                 this.backcolor0 = '#20a0ff';
                 this.backcolor1 = '#20a0ff';
@@ -277,11 +289,13 @@ export default {
                 this.backcolor4 = (this.backcolor4 == '#20a0ff' ? '#005494' : '#20a0ff');
             }
         },
-        getfriendslist: function (val) {
 
+        // 显示当前微信的所有好友的列表
+        getfriendslist: function (val) {
+            console.log(this.isTimelist);
             var self = this;
             this.tagid = null;
-            this.istag = false;
+            this.istag = false;        // 确定不是通过标签筛选
             var Id = Number.parseInt(this.$route.query.id);
             var offval = (val - 1) * self.pagesize;
             console.log(offval);
@@ -304,11 +318,24 @@ export default {
                     console.log(err);
                     self.loading = false
                 })
+
+               // 点击显示全部好友后， 时间快捷按钮全部初始化
+                this.backcolor0 = '#20a0ff';
+                this.backcolor1 = '#20a0ff';
+                this.backcolor2 = '#20a0ff';
+                this.backcolor3 = '#20a0ff';
+                this.backcolor4 = '#20a0ff';
+                this.firstclick.startTime = null;
+                this.firstclick.endTime = null;
+                this.twoclick.startTime = null;
+                this.twoclick.endTime = null;
         },
+
+        // 分页函数（部分） 
         handleCurrentChange: function (val) {
             var self = this;
             if (!this.isTimelist) {
-                this.getfriendslist(val)
+                this.getfriendslist(val)   // 后台直接分页 不用分页
             }
             else {
                 self.friendslist = [];
@@ -319,6 +346,8 @@ export default {
                 }
             }
         },
+
+        // 分页函数（部分） 页数的变化
         handleSizeChange: function () {
             var self = this;
             self.friendslist = [];
@@ -327,6 +356,8 @@ export default {
                 self.friendslist.push(self.frilistbytime[i]);
             }
         },
+
+        // 获取标签列表的函数
         gettaglist: function () {
             var self = this;
             var Id = Number.parseInt(this.$route.query.id);
@@ -339,17 +370,19 @@ export default {
                     }
                 })
         },
+
+        // 通过标签筛选得到的好友列表
         getfbytag: function (val) {
             var self = this;
             this.tagid = val;
-            this.istag = true;
-            this.isTimelist = false;
+            this.istag = true;           // 有标签筛选
+            this.isTimelist = false;    // 与时间筛选无关
 
-            self.startT = Math.floor(new Date(this.startTime).getTime() / 1000);
+            self.startT = Math.floor(new Date(this.startTime).getTime() / 1000);   // 将标准时间 转换为时间戳
             self.endT = Math.floor(new Date(this.endTime).getTime() / 1000);
 
             var Id = Number.parseInt(this.$route.query.id);
-            if (this.twoclick.startTime == 0 && this.twoclick.endTime == 0) {
+            if (this.twoclick.startTime == 0 && this.twoclick.endTime == 0) {    // 判断是第一次点击时间快捷按钮
                 this.axios.post('/weixin/get_weixin_friends_from_tag', {
                     weixinId: Id,
                     tagId: val,
@@ -369,7 +402,7 @@ export default {
                         }
                     })
             }
-            else {
+            else {                                                        // 点击了连个时间快捷按钮
                 this.istag = true;
                 this.axios.post('/weixin/get_weixin_friends_from_tag', {
                     weixinId: Id,
@@ -394,6 +427,8 @@ export default {
                     });
             }
         },
+
+        // 通过时间筛选得到的好友
         getfribytat: function (st, ed) {
             console.log(this.issearch);
             var self = this;
@@ -409,8 +444,8 @@ export default {
                 self.startT = Math.floor(new Date(this.startTime).getTime() / 1000);
                 self.endT = Math.floor(new Date(this.endTime).getTime() / 1000);
             }
-            if (this.Clicktime == 1) {
-                this.firstclick.startTime = self.startT;
+            if (this.Clicktime == 1) {                            // 判断点击了时间快捷按钮几次
+                this.firstclick.startTime = self.startT; 
                 this.firstclick.endTime = self.endT;
                 console.log(self.endT);
                 console.log(self.startT);
@@ -428,9 +463,9 @@ export default {
                 console.log(self.startT);
                 console.log(this.Clicktime);
             }
-            this.twoclick.startTime = self.startT;
-            this.twoclick.endTime = self.endT;
-            if (this.tagid == null) {
+            this.twoclick.startTime = self.startT;        // 第二次点击后处理后的初始时间
+            this.twoclick.endTime = self.endT;               // 第二次点击后处理后的结束时间
+            if (this.tagid == null) {                      // 判断时候有点击标签按钮
                 console.log(111111);
                 this.axios.post('/weixin/get_weixin_friends_from_time', {
                     weixinId: Id,
@@ -460,7 +495,7 @@ export default {
             else {
                 console.log(2222222);
                 console.log(this.tagid);
-                this.istag = true;
+                this.istag = true;           
                 this.axios.post('/weixin/get_weixin_friends_from_tag', {
                     weixinId: Id,
                     tagId: this.tagid,
@@ -483,8 +518,11 @@ export default {
                         }
                     })
             }
-            this.issearch = false;
+            this.issearch = false;      // 如果是通过搜索时间的 则得到好友列表后重新初始化为false
+            this.isTimelist = false;     
         },
+
+        // 删除确认弹窗
         confirm(val) {
             var self = this
             this.$confirm('是否删除？', '提示', {
@@ -496,6 +534,8 @@ export default {
             }).catch(() => {
             });
         },
+
+        // 删除当前标签下的好友
         delet: function (val) {
             var self = this;
             var Id = Number.parseInt(this.$route.query.id);
@@ -519,9 +559,17 @@ export default {
                     console.log(err);
                 })
         },
+
+        // 显示任务列表页面
         goweixinsettask: function () {
+            if(this.wxIds == ''){
+                this.$message("请选择好友");
+                return false;
+            }
             this.istaskpage = false;
         },
+
+        // 通过时间选择器选择时间获取好友列表
         searchbyTime: function () {
             var Id = Number.parseInt(this.$route.query.id);
             var self = this;
@@ -561,6 +609,8 @@ export default {
                     console.log(err);
                 })
         },
+
+        // 将时间戳转换为正常时间
         formate: function (t) {
             var d = new Date(t * 1000);
             var year = d.getFullYear();
@@ -574,33 +624,28 @@ export default {
         init: function (d) {
             return d > 9 ? d : "0" + d;
         },
+
+        // 任务列表的任务类别
         type: function (val) {
             if (val == 1) {
                 return '通讯录好友群发'
             }
         },
+        
+        // 获取当前任务的详情
         getreply: function (val, type) {
             if (type == 1) {
                 this.replylist1 = [JSON.parse(val)]
                 this.dialogTableVisible1 = true
             }
         },
+
+        // 将后台穿过的的false和true转换为是和否
         ifAutoVerified: function (val) {
             return val ? '是' : '否'
         },
-        formate: function (t) {
-            var d = new Date(t * 1000);
-            var year = d.getFullYear();
-            var day = d.getDate();
-            var month = d.getMonth() + 1;
-            var hour = d.getHours();
-            var minute = d.getMinutes();
-            var f = year + "-" + this.init(month) + "-" + this.init(day) + " " + this.init(hour) + ":" + this.init(minute);
-            return f;
-        },
-        init: function (d) {
-            return d > 9 ? d : "0" + d;
-        },
+
+        // 获取任务列表
         gettasklist: function () {
             var self = this;
             self.loading = true;
@@ -624,10 +669,10 @@ export default {
                     self.loading = false
                 })
         },
+
+        // 提交创建好友任务的方法
         onSubmit: function () {
             var self = this;
-            this.selectfriends = this.$route.query.selectfri;
-            console.log(this.selectfriends);
             this.axios.post('/weixin/create_selected_friends_task', {
                 weixinId: self.weixinId,
                 weixinTaskId: Number.parseInt(this.taskIds),
@@ -646,9 +691,19 @@ export default {
                     console.log(err);
                     self.$message("创建失败");
                 })
-        },
+        }, 
+
+        // 返回按钮
         goback:function() {
             this.istaskpage = true;
+            this.isTimelist= false;
+            this.checkall = false;
+            this.time = null;
+            this.Clicktime = 0,
+            this.firstclick.startTime = null;
+            this.firstclick.endTime = null;
+            this.twoclick.startTime = null;
+            this.twoclick.endTime = null;    
         }
 
 },
