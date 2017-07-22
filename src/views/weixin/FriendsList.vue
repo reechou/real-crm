@@ -77,10 +77,10 @@
                     </el-table>
                 </el-checkbox-group>
             </template>
-            <div style="margin-bottom: 40px" v-if="!isTimelist">
+            <div style="margin-bottom: 40px" v-if="!isTimelist&&!istag">
                 <el-pagination @current-change="handleCurrentChange" :current-page="currentPage" :page-size='pagesize' ayout="total, prev, pager, next" :total='totalpage'></el-pagination>
             </div>
-            <div style="margin-bottom:40px" v-if="isTimelist">
+            <div style="margin-bottom:40px" v-if="isTimelist ||　istag">
                 <el-pagination @current-change="handleCurrentChange" @size-change="handleSizeChange" :current-page="currentPage" :page-size='pagesize' ayout="total, prev, pager, next" :total='totalpage'></el-pagination>
             </div>
         </div>
@@ -325,35 +325,61 @@ export default {
                 this.backcolor2 = '#20a0ff';
                 this.backcolor3 = '#20a0ff';
                 this.backcolor4 = '#20a0ff';
+                this.tbuttoncolor = '#20a0ff';
                 this.firstclick.startTime = null;
                 this.firstclick.endTime = null;
                 this.twoclick.startTime = null;
                 this.twoclick.endTime = null;
+                this.tagid = null;
+                this.istag = false;     
+                this.isTimelist = false;
         },
 
         // 分页函数（部分） 
         handleCurrentChange: function (val) {
             var self = this;
-            if (!this.isTimelist) {
+            if (!this.isTimelist && !this.istag) {
                 this.getfriendslist(val)   // 后台直接分页 不用分页
             }
             else {
-                self.friendslist = [];
-                self.currentPage = val;
-                var j = val == Math.ceil(self.frilistbytime.length / self.pagesize) ? self.frilistbytime.length : val * self.pagesize;
-                for (var i = (val - 1) * self.pagesize; i < j; i++) {
-                    self.friendslist.push(self.frilistbytime[i]);
+                if(!this.istag){
+                    self.friendslist = [];
+                    self.currentPage = val;
+                    var j = val == Math.ceil(self.frilistbytime.length / self.pagesize) ? self.frilistbytime.length : val * self.pagesize;
+                    for (var i = (val - 1) * self.pagesize; i < j; i++) {
+                        self.friendslist.push(self.frilistbytime[i]);
+                    }
+                }
+                else{
+                    self.friendslist = [];
+                    self.currentPage = val;
+                    var j = val == Math.ceil(self.tagfrilist.length / self.pagesize) ? self.tagfrilist.length : val * self.pagesize;
+                    for (var i = (val - 1) * self.pagesize; i < j; i++) {
+                        self.friendslist.push(self.tagfrilist[i].contact);
+                    }  
+                    console.log(self.friendslist)                 
                 }
             }
         },
 
         // 分页函数（部分） 页数的变化
         handleSizeChange: function () {
-            var self = this;
-            self.friendslist = [];
-            var j = self.currentPage == Math.ceil(self.frilistbytime.length / self.pagesize) ? self.frilistbytime.length : self.currentPage * self.pagesize;
-            for (var i = (sefl.currentPage - 1) * self.pagesize; i < j; i++) {
-                self.friendslist.push(self.frilistbytime[i]);
+            if(!this.istag){ 
+                var self = this;
+                self.friendslist = [];
+                var j = self.currentPage == Math.ceil(self.frilistbytime.length / self.pagesize) ? self.frilistbytime.length : self.currentPage * self.pagesize;
+                for (var i = (sefl.currentPage - 1) * self.pagesize; i < j; i++) {
+                    self.friendslist.push(self.frilistbytime[i]);
+                }
+            }
+            else{
+                var self = this;
+                self.friendslist = [];
+                var j = self.currentPage == Math.ceil(self.tagfrilist.length / self.pagesize) ? self.tagfrilist.length : self.currentPage * self.pagesize;
+                for (var i = (sefl.currentPage - 1) * self.pagesize; i < j; i++) {
+                    self.friendslist.push(self.tagfrilist[i].contact);
+                }    
+                console.log(1111111111111111111);           
             }
         },
 
@@ -395,10 +421,13 @@ export default {
                             self.tagfrilist = data.data;
                             self.totalpage = self.tagfrilist.length;
                             self.friendslist = [];
-                            for (var i = 0; i < self.tagfrilist.length; i++) {
+                            var currentSize = self.currentPage * self.pagesize;
+                            if (currentSize > self.tagfrilist.length) {
+                                currentSize = self.tagfrilist.length;
+                            }
+                            for (var i = (self.currentPage - 1) * self.pagesize; i < currentSize; i++) {
                                 self.friendslist.push(self.tagfrilist[i].contact);
                             }
-                            console.log(self.friendslist);
                         }
                     })
             }
@@ -518,8 +547,7 @@ export default {
                         }
                     })
             }
-            this.issearch = false;      // 如果是通过搜索时间的 则得到好友列表后重新初始化为false
-            this.isTimelist = false;     
+            this.issearch = false;      // 如果是通过搜索时间的 则得到好友列表后重新初始化为false    
         },
 
         // 删除确认弹窗
