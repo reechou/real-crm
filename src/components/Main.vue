@@ -10,7 +10,18 @@
     <div class="main">
       <div class="admin-slider">
         <el-menu :default-active="active" class="el-menu-vertical-demo" @select='handselect'>
-          <el-menu-item index="/weixinlist"><i class="el-icon-menu"></i>微信列表</el-menu-item> 
+
+           <!-- <el-menu-item index="/weixinlist"><i class="el-icon-menu"></i>微信列表</el-menu-item>   -->
+          <el-submenu index="3">
+            <template slot="title"><i class="el-icon-menu"></i>微信列表</template>
+            <el-menu-item-group>
+              <el-menu-item index="/weixinlist">微信池</el-menu-item>
+              <el-menu-item index="/weixingroup">微信分组</el-menu-item>
+              <el-menu-item index="/fissionlist">裂变池</el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>
+
+
           <el-submenu index="2">
             <template slot="title"><i class="el-icon-setting"></i>微信设置</template>
             <el-menu-item-group>

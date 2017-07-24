@@ -120,6 +120,18 @@ export default new Router({
         {
           path: '/weixinsettask',
           component: require('views/weixin/WeiXinSetTask')
+        },
+        {
+          path: '/weixingroup',
+          component: require('views/weixin/WeiXinGroup')
+        },
+        {
+          path: '/fissionlist',
+          component: require('views/weixin/FissionList')
+        },
+        {
+          path: '/timinglist',
+          component: require('views/weixin/TimingList')
         }
       ]
     }

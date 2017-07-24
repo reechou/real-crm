@@ -28,6 +28,7 @@
               <option>查看设置</option>
               <option>删除</option>
               <option>查看好友</option>
+              <option>定时任务</option>
           </select> 
         </template></el-table-column>               
       </el-table>
@@ -77,10 +78,12 @@ export default {
         else if(this.selected == "删除"){
           this.confirm(val);
         }
-        else{
+        else if(this.selected == "查看好友"){
           this.gofriendslsit(val);
         }
-          console.log(val);
+        else{
+          this.gotiminglist(val)
+        }
       },
       goset: function (val) {
           this.$router.push("/setweixin?id="+val)
@@ -229,6 +232,9 @@ export default {
       },
       gofriendslsit: function(val) {
         this.$router.push('/friendslist?id=' + val);
+      },
+      gotiminglist: function(val) {
+        this.$router.push('/timinglist?id=' + val);
       }
     },
     created: function () {
