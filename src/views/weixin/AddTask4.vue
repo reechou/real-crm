@@ -180,6 +180,7 @@ export default {
       onSubmit: function () {
         var self = this
         this.task.data.basicInfo.sex = Number.parseInt(this.task.data.basicInfo.sex)
+        this.task.ifDefault = this.ifDefault ? 1 : 0;
         this.axios.post('/weixin/create_task', this.task)
           .then(function(res){
               var data = res.data
