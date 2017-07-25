@@ -109,7 +109,7 @@ export default {
         auto_start: true, //选择文件后自动上传，若关闭需要自己绑定事件触发上传
         filters: {
           mime_types: [
-              {title : "Image files", extensions : "jpg,png"} // 限定flv后缀上传格式上传
+              {title : "Image files", extensions : "jpg,png,x-icon,gif,jpeg"} // 限定flv后缀上传格式上传
           ]
         },
         multi_selection: false,
@@ -154,7 +154,7 @@ export default {
         auto_start: true, //选择文件后自动上传，若关闭需要自己绑定事件触发上传
         filters: {
           mime_types: [
-              {title : "Video files", extensions : "flv,mpg,mpeg,avi,wmv,mov,asf,rm,rmvb,mkv,m4v,mp4"} // 限定flv后缀上传格式上传
+              {title : "Video files", extensions : "flv,mpg,mpeg,avi,wmv,mov,asf,rm,rmvb,mkv,m4v,mp4,mp3"} // 限定flv后缀上传格式上传
 
           ]
         },
@@ -178,17 +178,17 @@ export default {
     },
       getuptoken:function(){
         var self = this;
-        this.axios.get('http://tym.taoyumin.cn/index.php?r=search/token').then((response) => {
-          var data = JSON.parse(response.data)        
-          if(data.state == 1000){
-            self.uptoken = data.data
+        this.axios.get('http://wxmp.gatao.cn/mypic/gettoken').then((response) => {
+          var data = response.data;        
+          // if(data.code == 0){
+            self.uptoken = data.token;
             for(var i in self.media){
                 self.uploadimg(i)
             }
             for(var i in self.media1){
                 self.uploadaudio(i)
             }         
-          }
+          // }
         }, (response) => {
           // error callback
         });

@@ -198,15 +198,15 @@ export default {
     },
       getuptoken:function(){
         var self = this;
-        this.axios.get('http://tym.taoyumin.cn/index.php?r=search/token').then((response) => {
-          var data = JSON.parse(response.data)        
-          if(data.state == 1000){
-            self.uptoken = data.data
+        this.axios.get('http://wxmp.gatao.cn/mypic/gettoken').then((response) => {
+          var data = response.data;        
+          // if(data.state == 1000){
+            self.uptoken = data.token;
             self.uploadimg()
             for(var i in self.task.data.linkMsgs){
                 self.uploadaudio(i)
             }        
-          }
+          // }
         }, (response) => {
           // error callback
         });
