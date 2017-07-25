@@ -74,7 +74,9 @@
           <el-table-column label="任务内容">
             <template scope='scope'> 
               <el-tooltip placement="bottom">
-                <div slot="content" >{{ scope.row.data | jiexi }}</div>
+                 <div slot="content" style="width:400px;" >{{ scope.row.data | linkjiexi }}</div> 
+                 <div slot="content" style="width:400px;" >{{ scope.row.data | textjiexi }}</div> 
+                 <div slot="content" style="width:400px;" ><img :src="scope.row.data | picjiexi" alt="" width="100"></div>  
                 <el-button type="text">查看</el-button>
               </el-tooltip>
             </template>
@@ -140,6 +142,7 @@ export default {
       dialogTableVisible: false,
       dialogTableVisible1: false,
       loading: false,
+      ispic:false,
       options:[{
         label:1,value:'提前半小时到一个半小时'
       },{
@@ -168,14 +171,17 @@ export default {
     }
   },
   filters:{
-    jiexi: function(val){
+    textjiexi: function(val){
       var d = JSON.parse(val);
-      if(d.textMsgs != ''){
         return d.textMsgs;
-      }
-      else{
-        return d.picMsg;
-      }
+    },
+    picjiexi: function(val){
+      var d = JSON.parse(val);
+      return d.picMsg;
+    },
+    linkjiexi: function(val){
+      var d = JSON.parse(val);
+      return d.linkMsgs;
     }
   },
   methods:{
