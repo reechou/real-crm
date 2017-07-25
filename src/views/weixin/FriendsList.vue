@@ -27,7 +27,7 @@
     
             <template>
                 <el-checkbox-group v-model="wxIds">
-                    <input type="checkbox" @click="checkAll()">全选</input>
+                    <input type="checkbox" @click="checkAll()" v-model="btcheckall">全选</input>
                     <p align="right">已选人数:{{ wxIds.length }}</p>
                     <el-table :data="friendslist" style="width: 100%;margin-bottom: 80px" v-loading="loading" element-loading-text="拼命加载中">
                         <el-table-column label="选择" width="80px">
@@ -207,7 +207,8 @@ export default {
             replylist1: [],                 // 获得弹窗要显示的信息
             weixinId: 0,                     //  当前操作者的微信id
             weixinTaskId: '',       
-            weixinids: []
+            weixinids: [],
+            btcheckall: false              // 控制全选checkbox的选择框是否选中
 
         }
     },
@@ -238,6 +239,7 @@ export default {
 
         // 全选函数
         checkAll: function () {
+          if(this.wxIds == null){
             if (!this.checkall) {
                 this.wxIds = [];
                 this.friendslist.forEach((item) => {
@@ -249,6 +251,20 @@ export default {
                 this.wxIds = [];
                 this.checkall = false;
             }
+           }
+           else{
+            if (!this.checkall) {
+                this.friendslist.forEach((item) => {
+                    this.wxIds.push(item.userName);
+                });
+                this.checkall = true;
+            }
+            else {
+                this.wxIds = [];
+                this.checkall = false;
+            }
+           }
+           console.log(this.wxIds)
         },
 
         // 判断是否时通过时间选择器选择的时间 来获得好友列表
@@ -338,6 +354,8 @@ export default {
         // 分页函数（部分） 
         handleCurrentChange: function (val) {
             var self = this;
+            this.btcheckall = false;
+            this.checkall = false;
             if (!this.isTimelist && !this.istag) {
                 this.getfriendslist(val)   // 后台直接分页 不用分页
             }
@@ -378,8 +396,7 @@ export default {
                 var j = self.currentPage == Math.ceil(self.tagfrilist.length / self.pagesize) ? self.tagfrilist.length : self.currentPage * self.pagesize;
                 for (var i = (sefl.currentPage - 1) * self.pagesize; i < j; i++) {
                     self.friendslist.push(self.tagfrilist[i].contact);
-                }    
-                console.log(1111111111111111111);           
+                }              
             }
         },
 
@@ -701,6 +718,7 @@ export default {
         // 提交创建好友任务的方法
         onSubmit: function () {
             var self = this;
+            console.log(this.wxIds);
             this.axios.post('/weixin/create_selected_friends_task', {
                 weixinId: self.weixinId,
                 weixinTaskId: Number.parseInt(this.taskIds),
