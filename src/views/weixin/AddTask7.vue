@@ -55,11 +55,17 @@
           </el-form-item>
         </template>
       </el-form-item>
+      <div class="" v-for="item in dataUrl">
+        <el-form-item label="资源文件链接">
+          <el-input v-model="item.value"></el-input>
+        </el-form-item>
+      </div>
       <el-form-item>
         <el-button type="primary" @click="onSubmit">立即创建</el-button>
         <el-button @click="addtext">新增文本</el-button>
         <el-button @click="addlink">新增链接消息</el-button>
         <el-button @click="addcard">新增名片</el-button>
+        <el-button @click="adddataUrl">新增资源文件链接</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -78,16 +84,25 @@ export default {
           textMsgs: [],
           cardMsgs: [],
           picMsg: '',
-          linkMsgs: []
+          linkMsgs: [{
+            title:'',
+            decs:'',
+            linkUrl: '',
+            showPicUrl: ''
+          }]
         }
       },
       textMsgs: [{ value: '' }],
-      cardMsgs: [{ value: '' }]
+      cardMsgs: [{ value: '' }],
+      dataUrl:[{value: ''}]
     };
   },
   methods: {
     addtext: function () {
       this.textMsgs.push({ value: '' })
+    },
+    adddataUrl: function() {
+      this.dataUrl.push({value: ''});
     },
     addlink: function () {
       var self = this
@@ -119,7 +134,7 @@ export default {
         // 默认 false，key为文件名。若开启该选项，SDK会为每个文件自动生成key（文件名）
         save_key: true,
         // 默认 false。若在服务端生成uptoken的上传策略中指定了 `sava_key`，则开启，SDK在前端将不对key进行任何处理
-        domain: 'http://oe3slowqt.bkt.clouddn.com/',
+        domain: 'http://7xld1x.com1.z0.glb.clouddn.com/',
         //bucket 域名，下载资源时用到，**必需**
         container: 'container', //上传区域DOM ID，默认是browser_button的父元素，
         max_file_size: '5mb', //最大文件体积限制
@@ -141,7 +156,7 @@ export default {
           'FileUploaded': function (up, file, info) {
             var domain = up.getOption('domain');
             var res = JSON.parse(info);
-            var urlImg = 'http://oe3slowqt.bkt.clouddn.com/' + res.key;
+            var urlImg = 'http://7xld1x.com1.z0.glb.clouddn.com/' + res.key;
             self.task.data.picMsg = urlImg
             console.log(self.task.data)
           },
@@ -165,7 +180,7 @@ export default {
         // 默认 false，key为文件名。若开启该选项，SDK会为每个文件自动生成key（文件名）
         save_key: true,
         // 默认 false。若在服务端生成uptoken的上传策略中指定了 `sava_key`，则开启，SDK在前端将不对key进行任何处理
-        domain: 'http://oe3slowqt.bkt.clouddn.com/',
+        domain: 'http://7xld1x.com1.z0.glb.clouddn.com/',
         //bucket 域名，下载资源时用到，**必需**
         container: 'containerimg' + val, //上传区域DOM ID，默认是browser_button的父元素，
         max_file_size: '5mb', //最大文件体积限制
@@ -187,7 +202,7 @@ export default {
           'FileUploaded': function (up, file, info) {
             var domain = up.getOption('domain');
             var res = JSON.parse(info);
-            var urlImg = 'http://oe3slowqt.bkt.clouddn.com/' + res.key;
+            var urlImg = 'http://7xld1x.com1.z0.glb.clouddn.com/' + res.key;
             self.task.data.linkMsgs[val].showPicUrl = urlImg
           },
           'Error': function (up, err, errTip) {
@@ -214,28 +229,33 @@ export default {
     },
     onSubmit: function () {
       var self = this
-      console.log(self.task.data)
+      // console.log(self.task.data)
+     if (this.task.data.linkMsgs[0].title != '' && this.task.data.linkMsgs[0].decs != '' && this.task.data.linkMsgs[0].linkUrl !='' && this.task.data.linkMsgs[0].showPicUrl != '') {
       for (var i in this.textMsgs) {
         this.task.data.textMsgs.push(this.textMsgs[i].value)
       }
       for (var i in this.cardMsgs) {
         this.task.data.cardMsgs.push(this.cardMsgs[i].value)
       }
+      for ( var i in this.dataUrl ) {
+        this.task.data.dataUrl.push(this.dataUrl[i].value)
+      }
       if (this.task.data.picMsg == "") {
         this.task.data = _.omit(this.task.data, 'picMsg')
       }
-      if (this.task.data.linkMsgs == "") {
-        this.task.data = _.omit(this.task.data, 'linkMsgs')
-      }
+
       if (this.task.data.cardMsgs == "") {
         this.task.data = _.omit(this.task.data, 'cardMsgs')
       }
       if (this.task.data.textMsgs == "") {
         this.task.data = _.omit(this.task.data, 'textMsgs')
       }
+      if (this.task.data.dataUrl == "") {
+        this.task.data = _.omit(this.task.data, 'dataUrl')
+      }
       this.task.IfDefault = this.task.IfDefault ? 1 : 0
       this.task.data.interval = Number.parseInt(this.task.data.interval);
-      console.log(this.task);
+      console.log(this.task.data);
       this.axios.post('/weixin/create_task', this.task)
         .then(function (res) {
           var data = res.data
@@ -252,6 +272,11 @@ export default {
           console.log(err);
           self.$message("创建失败")
         })
+       }
+       else{
+          this.$message("链接消息不能为空");
+          return false;
+       }
     }
   },
   created() {

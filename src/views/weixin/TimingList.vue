@@ -71,8 +71,13 @@
           <el-table-column label="任务类型">
             <template scope="scope">{{type(scope.row.taskType)}} </template>
           </el-table-column>
-          <el-table-column label="创建日期">
-            <template scope='scope'>{{formate(scope.row.createAt)}}</template>
+          <el-table-column label="任务内容">
+            <template scope='scope'> 
+              <el-tooltip placement="bottom">
+                <div slot="content" >{{ scope.row.data | jiexi }}</div>
+                <el-button type="text">查看</el-button>
+              </el-tooltip>
+            </template>
           </el-table-column>
         </el-table>
         </el-checkbox-group>
@@ -142,7 +147,7 @@ export default {
       },{
         label:3,value:'提前两个半小时到三个半小时'
       },{
-        label:4,value:'提前三个半半小时到四个半小时'
+        label:4,value:'提前三个半小时到四个半小时'
       },{
         label:5,value:'提前四个半小时到五个半小时'
       },{
@@ -160,6 +165,17 @@ export default {
       },{
         label:12,value:'提前十一个半小时到十二个半小时'        
       }]
+    }
+  },
+  filters:{
+    jiexi: function(val){
+      var d = JSON.parse(val);
+      if(d.textMsgs != ''){
+        return d.textMsgs;
+      }
+      else{
+        return d.picMsg;
+      }
     }
   },
   methods:{
