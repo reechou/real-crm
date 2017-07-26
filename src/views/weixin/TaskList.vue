@@ -12,7 +12,7 @@
       <el-table-column prop="id" label="选择"><template scope="scope">
             <el-checkbox :label="scope.row.id"></el-checkbox>
           </template></el-table-column>         
-      <el-table-column prop="id" label="id"></el-table-column>      
+      <!-- <el-table-column prop="id" label="id"></el-table-column>       -->
       <el-table-column label="是否默认"><template scope="scope">{{scope.row.ifDefault?"是":"否"}} </template></el-table-column>
       <el-table-column label="任务类型"><template scope="scope">{{type(scope.row.taskType)}} </template></el-table-column>      
       <el-table-column label="任务内容"> <template scope='scope'><el-button type="text" size="small" @click="getreply(scope.row.data, scope.row.taskType)">查看</el-button></template></el-table-column>
