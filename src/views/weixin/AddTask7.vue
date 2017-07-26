@@ -30,7 +30,7 @@
           <input type="file" id="img" class="hide" />
         </div>
       </el-form-item>
-      <el-form-item label="链接消息">
+      <el-form-item label="链接消息" v-show="clickaddlink != 0">
         <template v-for="(item, key) in task.data.linkMsgs">
           <el-form-item label="标题">
             <el-input v-model="item.title"></el-input>
@@ -84,14 +84,11 @@ export default {
           textMsgs: [],
           cardMsgs: [],
           picMsg: '',
-          linkMsgs: [{
-            title:'',
-            decs:'',
-            linkUrl: '',
-            showPicUrl: ''
-          }]
+          dataUrl:[],
+          linkMsgs: []
         }
       },
+      clickaddlink: 0,
       textMsgs: [{ value: '' }],
       cardMsgs: [{ value: '' }],
       dataUrl:[{value: ''}]
@@ -106,6 +103,8 @@ export default {
     },
     addlink: function () {
       var self = this
+      this.clickaddlink = this.clickaddlink+1;
+      console.log(this.clickaddlink);
       this.task.data.linkMsgs.push({
         title: "",
         decs: "",
@@ -230,7 +229,7 @@ export default {
     onSubmit: function () {
       var self = this
       // console.log(self.task.data)
-     if (this.task.data.linkMsgs[0].title != '' && this.task.data.linkMsgs[0].decs != '' && this.task.data.linkMsgs[0].linkUrl !='' && this.task.data.linkMsgs[0].showPicUrl != '') {
+     if (this.clickaddlink > 0 && this.task.data.linkMsgs[0].title != '' && this.task.data.linkMsgs[0].decs != '' && this.task.data.linkMsgs[0].linkUrl !='' && this.task.data.linkMsgs[0].showPicUrl != '') {
       for (var i in this.textMsgs) {
         this.task.data.textMsgs.push(this.textMsgs[i].value)
       }
@@ -256,6 +255,7 @@ export default {
       this.task.IfDefault = this.task.IfDefault ? 1 : 0
       this.task.data.interval = Number.parseInt(this.task.data.interval);
       console.log(this.task.data);
+      console.log('successs');
       this.axios.post('/weixin/create_task', this.task)
         .then(function (res) {
           var data = res.data
@@ -272,6 +272,50 @@ export default {
           console.log(err);
           self.$message("创建失败")
         })
+       }
+       else if(this.clickaddlink == 0){
+          for (var i in this.textMsgs) {
+            this.task.data.textMsgs.push(this.textMsgs[i].value)
+          }
+          for (var i in this.cardMsgs) {
+            this.task.data.cardMsgs.push(this.cardMsgs[i].value)
+          }
+          for ( var i in this.dataUrl ) {
+            this.task.data.dataUrl.push(this.dataUrl[i].value)
+          }
+          if (this.task.data.picMsg == "") {
+            this.task.data = _.omit(this.task.data, 'picMsg')
+          }
+
+          if (this.task.data.cardMsgs == "") {
+            this.task.data = _.omit(this.task.data, 'cardMsgs')
+          }
+          if (this.task.data.textMsgs == "") {
+            this.task.data = _.omit(this.task.data, 'textMsgs')
+          }
+          if (this.task.data.dataUrl == "") {
+            this.task.data = _.omit(this.task.data, 'dataUrl')
+          }
+          this.task.IfDefault = this.task.IfDefault ? 1 : 0
+          this.task.data.interval = Number.parseInt(this.task.data.interval);
+          console.log(this.task.data);
+          console.log('success');
+          this.axios.post('/weixin/create_task', this.task)
+            .then(function (res) {
+              var data = res.data
+              console.log(data)
+              if (data.code == 0) {
+                self.$message("创建成功")
+                self.$router.push("/tasklist")
+              }
+              else {
+                self.$message("创建失败")
+              }
+            })
+            .catch(function (err) {
+              console.log(err);
+              self.$message("创建失败")
+            })
        }
        else{
           this.$message("链接消息不能为空");
