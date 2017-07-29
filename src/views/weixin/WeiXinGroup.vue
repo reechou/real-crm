@@ -108,8 +108,7 @@ export default {
       isshowgroup: false,
       groupormember:0,
       showaddgroup:false,
-      newName:'',
-      slztest:[18,19,20]
+      newName:''
 
     }
   },
@@ -238,11 +237,10 @@ export default {
     memberdelet: function(val){
       
       var self = this;
-      console.log(this.slztest);
       console.log(this.alllist[val].weixinGroupMember.id );
-      this.axios.post('/weixin/delete_weixin_group_member',this.slztest)                      //,{
-      //   id: this.alllist[val].weixinGroupMember.id                // 微信分组成员唯一id
-      // })
+      this.axios.post('/weixin/delete_weixin_group_member',{
+        id: this.alllist[val].weixinGroupMember.id                // 微信分组成员唯一id
+      })
       .then(function(res){
         var data = res.data;
         if(data.code == 0){
