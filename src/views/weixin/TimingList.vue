@@ -23,7 +23,7 @@
         :value="item.label">
         </el-option>
       </el-select>
-      <el-button type="primary" @click="onSubmit">提交</el-button>
+      <el-button type="primary" @click="onSubmit">确定</el-button>
     </div>
     <template>
         <el-table :data="timetasklist" style="width: 100%;margin-bottom: 80px" v-loading="loading" element-loading-text="拼命加载中">

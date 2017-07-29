@@ -132,6 +132,14 @@ export default new Router({
         {
           path: '/timinglist',
           component: require('views/weixin/TimingList')
+        },
+        {
+          path: '/addgroupmember',
+          component: require('views/weixin/AddGroupMember')
+        },
+        {
+          path: '/addfissionmember',
+          component: require('views/weixin/AddFissionmember')
         }
       ]
     }
