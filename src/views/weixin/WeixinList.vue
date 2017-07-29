@@ -155,7 +155,7 @@ export default {
           self.getweixinlist();
         }
         else{
-          this.gotiminglist(val)
+          self.$message("上传失败");
         }
       })
       .catch(function(err){
