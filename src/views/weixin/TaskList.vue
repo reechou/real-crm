@@ -34,8 +34,9 @@
   </el-dialog>
    <el-dialog title="回复内容" v-model="dialogTableVisible2">
     <el-table :data="replylist2">
+      <el-table-column property="title" label="标题"></el-table-column>
       <el-table-column property="text" label="文字"></el-table-column>
-       <el-table-column property="nickname" label="媒体"> 
+       <el-table-column property="nickname" label="图片"> 
        <template scope = "scope">
           <div v-if="scope.row.type == 'img'">
             <div v-for="item in scope.row.media">
@@ -43,14 +44,15 @@
             </div>
           </div>
           <div v-else>
-            视频：
-            <div v-for="item in scope.row.media">
-                  {{item}}          
-            </div>
+            <img :src="scope.row.picUrl">
           </div>
        </template>
         </el-table-column>
-             
+      <el-table-column label="链接">
+        <template scope="scope">
+          <a :href="scope.row.linkUrl" target="_blank">{{scope.row.linkUrl}}</a>
+        </template>
+      </el-table-column>       
     </el-table>
   </el-dialog>
    <el-dialog title="回复内容" v-model="dialogTableVisible3">

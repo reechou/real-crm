@@ -9,46 +9,44 @@
             :key="item.liebianType"
             :label="item.desc"
             :value="item.liebianType">
-              <i class="el-icon-delete" @click="clickicon(item.id)"></i>&nbsp;&nbsp;<span style="width:80%">{{ item.desc }}</span>
+              <i class="el-icon-delete" @click="clickicon(item.id)"></i>&nbsp;&nbsp;<span style="width:80%">{{item.liebianType}}-{{ item.desc }}</span>
             </el-option>
           </el-select>
         </el-col>
          <el-col :span="2">
-          <el-button type="primary" @click="showaddliebian = !showaddliebian">创建分组</el-button>
+          <el-button type="primary" @click="showaddliebian = true">创建分组</el-button>
         </el-col> 
         <el-col :span="3">
-          <el-button type="primary" @click="goaddmember">添加裂变成员</el-button>
+          <el-button type="primary" @click="goaddmember" sytle="width:100%">添加裂变成员</el-button>
         </el-col>
         <el-col :span="6">
           <el-button type="primary" @click="confirm">批量删除</el-button>
         </el-col>
       </el-row>
     </div>
-
-    <transition name="bounce">
-      <div class="addtype" style="padding:20px" v-show="showaddliebian">
-        <el-row :gutter="20">
-          <el-col :span="3">
+    
+    <el-dialog title="新增裂变类别" v-model="showaddliebian">
+        <el-row :gutter="20" style="margin-bottom:20px;">
+          <el-col :span="4">
             <label>裂变类型:</label>
           </el-col>
-          <el-col :span="6">
-            <el-input type="text" v-model="newType"></el-input>
-          </el-col>
-          <el-col :span="3">
-            <label>描述:</label>
-          </el-col>
-          <el-col :span="6">
-            <el-input type="text" v-model="newDesc"></el-input>
-          </el-col>
-          <el-col :span="2">
-            <el-button type="primary" @click="addtype">确定</el-button>
-          </el-col>
-          <el-col :span="2">
-            <el-button type="primary" @click="showaddliebian = !showaddliebian">取消</el-button>
+          <el-col :span="20">
+            <el-input type="number" v-model="newType"></el-input>
           </el-col>
         </el-row>
-      </div>
-    </transition>
+        <el-row :gutter="20" style="margin-bottom:20px;">
+          <el-col :span="4">
+            <label>描述:</label>
+          </el-col>
+          <el-col :span="20">
+            <el-input type="text" v-model="newDesc"  ></el-input>
+          </el-col>
+        </el-row>
+        <el-row type="flex"  justify="center" >
+          <el-col :span="6"><el-button type="primary" @click="addtype">确定</el-button></el-col>
+          <el-col :span="6"><el-button type="primary" @click="showaddliebian = false">取消</el-button></el-col>
+        </el-row>
+    </el-dialog>
 
     <template>
       <el-checkbox-group v-model="wxIds">
@@ -121,7 +119,9 @@ export default {
       typeormember:1,
       newType: null,
       newDesc:'',
-      liebianid:[]
+      liebianid:[],
+      showaddtype:false,
+      showweixinlist:false
     }
   },
   methods:{
