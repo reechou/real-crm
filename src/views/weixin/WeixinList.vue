@@ -153,6 +153,7 @@ export default {
         if(data.code == 0){
           self.$message("上传成功");
           self.getweixinlist();
+          self.$router.go(0);
         }
         else{
           self.$message("上传失败");
@@ -161,6 +162,7 @@ export default {
       .catch(function(err){
         self.$message("上传失败");
         console.log(err);
+        self.qrcodeUrl = '';
       })
       // 获取上传的图片url 上传
     },
@@ -327,6 +329,7 @@ export default {
           }
 
           self.gettoken();
+          self.qrcodeUrl = '';
 
         })
         .catch(function (err) {
