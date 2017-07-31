@@ -1,7 +1,7 @@
 <template>
   <div class="admin-userlist">
     <div class="contrue-button">
-      <el-row :gutter="100">
+      <el-row :gutter="20">
         <el-col :span="2">
           <el-button type="primary" @click="islinkorpic(0)" v-bind:style="{background:backcolor0}">文字+图片</el-button>
         </el-col>

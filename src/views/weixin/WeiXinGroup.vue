@@ -114,26 +114,32 @@ export default {
   methods:{
     addgroup:function(){
       var self = this;
-      this.axios.post('/weixin/create_weixin_group',{
-         groupName: this.newName
-      })
-      .then(function(res){
-        var data = res.data;
-        if(data.code == 0){
-          self.$message("创建成功");
-          self.getweixingroup();
-          self.showaddgroup = false;
-        }
-        else{
+      if(this.newName == ''){
+        this.$message("请输入新建组名");
+        return false;
+      }
+      else{
+        this.axios.post('/weixin/create_weixin_group',{
+          groupName: this.newName
+        })
+        .then(function(res){
+          var data = res.data;
+          if(data.code == 0){
+            self.$message("创建成功");
+            self.getweixingroup();
+            self.showaddgroup = false;
+          }
+          else{
+            self.$message("创建失败");
+            console.log(11111);
+          }
+        })
+        .catch(function(err){
           self.$message("创建失败");
-          console.log(11111);
-        }
-      })
-      .catch(function(err){
-        self.$message("创建失败");
-        console.log(22222);
-        console.log(err);
-      })
+          console.log(22222);
+          console.log(err);
+        })
+      }
     },
     clickicon:function(val){
       this.groupormember = 0;

@@ -190,31 +190,36 @@ export default {
     },
     addtype:function(){
       var self = this;
-      this.axios.post('/weixin/create_liebian_type',{
-        liebianType: Number.parseInt(this.newType),
-        desc: this.newDesc
-      })
-      .then(function(res){
-        var data = res.data;
-        if(data.code == 0){
-          self.$message("创建成功");
-          self.getlianbianlist();
-          self.showaddliebian = false;
-          self.newDesc = '';
-          self.newType = null;
-        }
-        else{
+      if(this.newType == null || this.newDesc ==  ''){
+        this.$message("请输入新增信息");
+      }
+      else{
+        this.axios.post('/weixin/create_liebian_type',{
+          liebianType: Number.parseInt(this.newType),
+          desc: this.newDesc
+        })
+        .then(function(res){
+          var data = res.data;
+          if(data.code == 0){
+            self.$message("创建成功");
+            self.getlianbianlist();
+            self.showaddliebian = false;
+            self.newDesc = '';
+            self.newType = null;
+          }
+          else{
+            self.$message("创建失败");
+            self.newDesc = '';
+            self.newType = null;
+          }
+        })
+        .catch(function(err){
           self.$message("创建失败");
-          self.newDesc = '';
-          self.newType = null;
-        }
-      })
-      .catch(function(err){
-        self.$message("创建失败");
-          self.newDesc = '';
-          self.newType = null;
-        console.log(err);
-      })
+            self.newDesc = '';
+            self.newType = null;
+          console.log(err);
+        })
+      }
     },
     clickicon:function(val){
       this.typeormember = 0;
