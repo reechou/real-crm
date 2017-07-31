@@ -14,16 +14,16 @@
           </el-select>
         </el-col>
         <el-col :span="2">
-          <el-button @click="showaddgroup = true">创建分组</el-button>
+          <el-button type="primary" @click="showaddgroup = true">创建分组</el-button>
         </el-col>
         <el-col :span="3">
-          <el-button @click="goaddmember">添加分组成员</el-button>
+          <el-button type="primary" @click="goaddmember">添加分组成员</el-button>
         </el-col>
       </el-row>
     </div>
 
     <el-dialog title="新增微信分组" v-model="showaddgroup">
-      <el-row :gutter="20">
+      <el-row :gutter="20" style="margin-bottom:20px;">
         <el-col :span="4">
           <label>新组组名:</label>
         </el-col>
@@ -32,8 +32,8 @@
         </el-col>
       </el-row>
       <el-row type="flex" justify="center">
-        <el-col :span="6"><el-button type="primary" @click="addgroup"></el-button></el-col>
-        <el-col :span="6"><el-button type="primary" @click="showaddgroup = false"></el-button></el-col>
+        <el-col :span="6"><el-button type="primary" @click="addgroup">确定</el-button></el-col>
+        <el-col :span="6"><el-button type="primary" @click="showaddgroup = false">取消</el-button></el-col>
       </el-row>
     </el-dialog>
 

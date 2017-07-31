@@ -11,6 +11,9 @@
       </el-row>
     </div>
     <el-form ref="verifysetting" :model="task" label-width="80px" v-show="linkorpic">
+      <el-form-item label="是否默认">
+        <el-switch on-text="" off-text="" v-model="task.ifDefault"></el-switch>
+      </el-form-item>
       <el-form-item label="文字">
         <el-input v-model="task.data.text" type="textarea" :rows="3"></el-input>
       </el-form-item>
@@ -56,6 +59,9 @@
     </el-form>
 
     <el-form ref="verifysetting" :model="task2" label-width="80px" v-show="!linkorpic">
+      <el-form-item label="是否默认">
+        <el-switch on-text="" off-text="" v-model="task2.ifDefault"></el-switch>
+      </el-form-item>
       <el-form-item label="标题">
         <el-input v-model="task2.data.title" type="textarea" :rows="2"></el-input>
       </el-form-item>
@@ -102,6 +108,7 @@ export default {
     return {
       task: {
         taskId: 2,
+        ifDefault: false,
         data: {
           text: '',
           media: [],
@@ -110,6 +117,7 @@ export default {
       },
       task2:{
         taskId:2,
+        ifDefault: false,
         data:{
           linkUrl:'',
           picUrl:'',
@@ -281,44 +289,50 @@ export default {
     onSubmit: function () {
       var self = this
       if (this.linkorpic) {
+        this.task.data.media = [];     // 初始化，将页面一开始显示的数据先清除
         for (var i in this.media) {
           this.task.data.media.push(this.media[i].value)
         }
+        console.log(this.task.data.media);
+        this.task.ifDefault = this.task.ifDefault ? 1 : 0;
+        this.task.data = JSON.stringify(this.task.data);
         console.log(this.task);
-        this.axios.post('/weixin/create_task', this.task)
+        this.axios.post('/weixin/update_task', this.task)
           .then(function (res) {
             var data = res.data
             console.log(data)
             if (data.code == 0) {
-              self.$message("创建成功")
+              self.$message("更新成功")
               self.$router.push("/tasklist")
             }
             else {
-              self.$message("创建失败")
+              self.$message("更新失败")
             }
           })
           .catch(function (err) {
             console.log(err);
-            self.$message("创建失败")
+            self.$message("更新失败")
           })
         }
         else{
+          this.task2.ifDefault = this.task2.ifDefault ? 1 : 0;
+          this.task2.data = JSON.stringify(this.task2.data);
           console.log(this.task2);
-        this.axios.post('/weixin/create_task', this.task2)
+        this.axios.post('/weixin/update_task', this.task2)
           .then(function (res) {
             var data = res.data
             console.log(data)
             if (data.code == 0) {
-              self.$message("创建成功")
+              self.$message("更新成功")
               self.$router.push("/tasklist")
             }
             else {
-              self.$message("创建失败")
+              self.$message("更新失败")
             }
           })
           .catch(function (err) {
             console.log(err);
-            self.$message("创建失败")
+            self.$message("更新失败")
           })
         }
     },
