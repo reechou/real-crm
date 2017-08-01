@@ -296,7 +296,7 @@ export default {
         console.log(err);
       })
 
-      // this.Tmedia();
+      this.Tmedia();
     },
     memhandleSizeChange: function(){
       var self = this;
@@ -537,7 +537,15 @@ export default {
   },
   created(){
     this.getweixingroup();
-  }
+  },
+  beforeDestroy() {            
+    console.log("销毁前");   
+    clearInterval(this.timer);      // 确保万一生成多个定时器，多执行几次清除指令
+    clearInterval(this.timer);
+    clearInterval(this.timer);
+    clearInterval(this.timer);
+    console.log(this.timer);                   
+  }, 
 }
 </script>
 
