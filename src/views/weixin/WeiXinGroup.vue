@@ -296,7 +296,7 @@ export default {
         console.log(err);
       })
 
-      this.Tmedia();
+      // this.Tmedia();
     },
     memhandleSizeChange: function(){
       var self = this;

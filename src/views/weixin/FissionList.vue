@@ -390,7 +390,7 @@ export default {
       .catch(function(err){
         console.log(err);
       })
-          this.Tmedia();
+          // this.Tmedia();
     },
     memhandleSizeChange: function(){
       var self = this;
@@ -565,6 +565,8 @@ export default {
       this.timer = setInterval(() => {
         if(this.tie == 0 ){  
          this.tie = 60;
+         clearInterval(this.timer);
+         this.timer;
 
       console.log(val);
       var self = this;
