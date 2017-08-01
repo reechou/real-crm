@@ -14,15 +14,16 @@
             :value="item.liebianType">
               <i class="el-icon-delete" @click="clickicon(item.id)"></i>&nbsp;&nbsp;<span style="width:80%">{{item.liebianType}}-{{ item.desc }}</span>
             </el-option>
+            <el-option value=""><i class="el-icon-plus" style="width:100%;" @click="showaddliebian = true">&nbsp;&nbsp;<span>创建分组</span></i></el-option>
           </el-select>
         </el-col>
-         <el-col :span="2">
+         <!-- <el-col :span="2">
           <el-button type="primary" @click="showaddliebian = true">创建分组</el-button>
-        </el-col> 
-        <el-col :span="3">
-          <el-button type="primary" @click="getweixinlist" sytle="width:100%">添加裂变成员</el-button>
+        </el-col>  -->
+        <el-col :span="2">
+          <el-button type="primary" @click="getweixinlist" sytle="width:100%">添加成员</el-button>
         </el-col>
-        <el-col :span="6">
+        <el-col :span="16">
           <el-button type="primary" @click="confirm">批量删除</el-button>
         </el-col>
       </el-row>
@@ -619,7 +620,7 @@ export default {
     clearInterval(this.timer);
     clearInterval(this.timer);
     console.log(this.timer);                   
-  },      
+  }  
 }
 </script>
 
@@ -632,7 +633,7 @@ select{
   width:100%;
 }
 .el-icon-delete{
-  background-color:  #eef1f6;
+  background-color: #20a0ff;
 }
 .el-icon-delete:hover{
   background-color:cyan;
