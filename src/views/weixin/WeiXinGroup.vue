@@ -1,6 +1,9 @@
 <template>
   <div class="weixingroup">
     <div class="selectgroup" style="padding:10px">
+      <el-row :gutter="20" style="margin-bottom:20px;">
+        <el-col :span="4" :offset="20"><span size="small">{{ tie }} 后自动刷新列表</span></el-col>
+      </el-row>
       <el-row :gutter="20">
         <el-col :span="3">
           <el-select v-model="groupNum" placeholder="请选择" @change="getgroupmember(groupNum)" style="padding:0;margin:0">
@@ -17,7 +20,7 @@
           <el-button type="primary" @click="showaddgroup = true">创建分组</el-button>
         </el-col>
         <el-col :span="3">
-          <el-button type="primary" @click="goaddmember">添加分组成员</el-button>
+          <el-button type="primary" @click="getweixinlist">添加分组成员</el-button>
         </el-col>
       </el-row>
     </div>
@@ -36,6 +39,52 @@
         <el-col :span="6"><el-button type="primary" @click="showaddgroup = false">取消</el-button></el-col>
       </el-row>
     </el-dialog>
+
+    <el-dialog title="新增裂变成员" v-model="showaddmember">
+      <el-row :gutter="20" style="margin-bottom:20px;">
+        <el-col :span="3" :offset="21">
+          <el-button type="primary" @click="addmember">添加</el-button>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20" style="margin-bottom:20px;">
+        <el-col :span="4">
+          <el-button type="primary" @click="getweixinlist" >显示全部微信</el-button>
+        </el-col>
+        <el-col :span = "20">
+          <el-input placeholder="请输入微信号" icon="search" v-model="searchcontent" :on-icon-click="handleIconClick" @keyup.enter.native="show($event)"></el-input>
+        </el-col>
+      </el-row>
+      <template>
+        <el-checkbox-group v-model="members">
+          <input type="checkbox" @click="checkAllformember()" v-model="diabtcheckall">全选
+          <p align="right">已选人数:{{ members.length }}</p>
+          <el-table :data="weixinlist" style="width: 100%;margin-bottom: 80px" v-loading="loading" element-loading-text="拼命加载中">
+              <el-table-column label="id">
+                  <template scope="scope">
+                      <el-checkbox :label="scope.row.id"></el-checkbox>
+                  </template>
+              </el-table-column>
+              <el-table-column prop="nickName" label="微信昵称"> </el-table-column>
+              <!-- <el-table-column prop="wxId" label="微信id"></el-table-column>  -->
+              <el-table-column prop="wechat" label="微信号"> </el-table-column>
+
+              <el-table-column label="最后心跳时间">
+              <template scope='scope'>{{formate(scope.row.lastHeartbeat)}}</template>
+              </el-table-column>
+              <el-table-column align="center" label="今日添加人数" prop="todayAddContactNum"> </el-table-column>
+              <el-table-column label="描述">
+              <template scope="scope">
+                {{scope.row.desc}}
+              </template>
+              </el-table-column>
+
+          </el-table>
+        </el-checkbox-group>
+      </template>
+      <div style="margin-bottom: 40px">
+        <el-pagination @size-change="memhandleSizeChange" @current-change="memhandleCurrentChange" :current-page="diacurrentPage" :page-size='diapagesize' ayout="total, prev, pager, next" :total='diatotalpage'></el-pagination>
+      </div>
+    </el-dialog>   
 
     <template>
       <el-table :data="weixingroup" style="width:100%;margin-bottom:80px" v-loading="loading" element-loading-text="拼命加载中">
@@ -60,6 +109,18 @@
         <el-table-column label="昵称">
           <template scope="scope">
             {{ scope.row.nickName }}
+          </template>
+        </el-table-column>
+
+        <el-table-column label="最后心跳时间">
+          <template scope="scope">
+            {{ formate(scope.row.lastHeartbeat) }}
+          </template>
+        </el-table-column>
+
+        <el-table-column label="今日添加人数">
+          <template scope="scope">
+            {{ scope.row.todayAddContactNum }}
           </template>
         </el-table-column>
 
@@ -89,16 +150,23 @@ export default {
   data(){
     return {
       groupNum: null,
-      wxgroup:[{
-        id:1, groupName:"one"
-      },{
-        id:2, groupName:"two"
-      },{
-        id:3, groupName:"three"
-      },{
-        id:4, groupName:"four"
-      }],
+      wxgroup:[],
       weixingroup:[],
+      tie:60,
+      timer:null,
+
+      members:[],      
+      weixinlist: [],
+      checkallformember: false,
+      diallist:[],
+      diapagesize:100,
+      diacurrentPage:1,
+      diatotalpage:1,
+      diabtcheckall: false,
+      searchcontent: '',
+      numpack:[],
+      showaddmember: false,
+
       alllist:[],
       pagesize:100,
       currentPage:1,
@@ -112,6 +180,19 @@ export default {
     }
   },
   methods:{
+    formate: function (t) {
+      var d = new Date(t * 1000);
+      var year = d.getFullYear();
+      var day = d.getDate();
+      var month = d.getMonth() + 1;
+      var hour = d.getHours();
+      var minute = d.getMinutes();
+      var f = year + "-" + this.init(month) + "-" + this.init(day) + " " + this.init(hour) + ":" + this.init(minute);
+      return f;
+    },
+    init: function (d) {
+      return d > 9 ? d : "0" + d;
+    },
     addgroup:function(){
       var self = this;
       if(this.newName == ''){
@@ -141,6 +222,34 @@ export default {
         })
       }
     },
+    checkAllformember: function(){
+      if(this.members == null){
+        if(!this.checkallformember){
+          this.members = [];
+          this.weixinlist.forEach((item) => {
+            this.members.push(item.id);
+          });
+          this.checkallformember = true;
+        }
+        else{
+          this.members = [];
+          this.checkallformember = false;
+        }
+      }
+      else{
+        if(!this.checkallformember){
+          this.weixinlist.forEach((item) => {
+            this.members.push(item.id);
+          });
+          this.checkallformember = true;
+        }
+        else{
+          this.members = [];
+          this.checkallformember = false;
+        }
+      }
+      console.log(this.members);
+    },
     clickicon:function(val){
       this.groupormember = 0;
       this.confirm(val);
@@ -152,11 +261,15 @@ export default {
             var data = res.data;
             if(data.code == 0){
               self.wxgroup = data.data;
+              console.log(self.wxgroup);
+              self.groupNum = self.wxgroup[0].id;
+              console.log(self.groupNum);
             }
           })
           .catch(function(err){
             console.log(err);
           })
+          this.getgroupmember(self.groupNum);
     },
     getgroupmember:function(groupid){
       var self = this;
@@ -182,6 +295,49 @@ export default {
       .catch(function(err){
         console.log(err);
       })
+
+      this.Tmedia();
+    },
+    memhandleSizeChange: function(){
+      var self = this;
+      self.weixinlist = [];
+      var j = self.diacurrentPage == Math.ceil(self.diallist.length / self.diapagesize) ? self.diallist.length : self.diacurrentPage * self.diapagesize;
+      for(var i = (self.diacurrentPage - 1) * self.diapagesize; i < j; i++) {
+        self.weixinlist.push(self.diallist[i]);
+      }
+    },
+    memhandleCurrentChange: function (val) {
+      var self = this;
+      this.diabtcheckall  = false;
+      this.checkallformember = false;
+      self.weixinlist = [];
+      self.diacurrentPage = val;
+      var j = val == Math.ceil(self.diallist.length / self.diapagesize) ? self.diallist.length : val * self.diapagesize;
+      for (var i = (val - 1) * self.diapagesize; i < j; i++) {
+        self.weixinlist.push(self.diallist[i]);
+      }
+    },
+    handleIconClick: function() {
+      if(this.searchcontent == '') {
+        this.weixinlist = this.diallist;
+      }
+      else {
+        var self = this;
+        this.weixinlist = [_.find(self.diallist, function(chr){return chr.id == self.searchcontent; })];
+      }
+    },
+    show: function(ev){
+      if(ev.keyCode == 13) {
+        if(this.searchcontent == '') {
+          this.weixinlist = this.diallist;
+        }
+        else {
+          var self = this;
+          this.weixinlist = [_.find(self.diallist, function(chr){
+            return chr.id == self.searchcontent;
+          })]
+        }
+      }
     },
     handleSizeChange: function () {
       var self = this
@@ -261,9 +417,123 @@ export default {
         console.log(err);
       })
     },
-    goaddmember:function(){
-      this.$router.push('/addgroupmember');
+    getweixinlist: function() {
+      var self = this;
+      self.loading = true;
+      this.axios.post('/weixin/get_all_weixin')
+          .then(function (res) {
+            var data = res.data;
+            self.loading = false;
+            if(data.code == 0){
+              self.diallist = data.data.map(v => {
+                v.edit = false;
+                return v;
+              });
+              self.diatotalpage = self.diallist.length;
+              self.weixinlist = [];
+              var diacurrentSize = self.diacurrentPage * self.diapagesize;
+              if(diacurrentSize > self.diallist.length) {
+                diacurrentSize = self.diallist.length;
+              }
+              for(var i = (self.diacurrentPage - 1) * self.diapagesize; i < diacurrentSize; i++) {
+                self.weixinlist.push(self.diallist[i]);
+              }
+            }
+          })
+          .catch(function (err) {
+            console.log(err);
+            self.loading = false;
+          })
+          if(this.groupNum == null)
+          {
+            this.$message("请选择组别")
+            return false;
+          }
+          else{
+            this.showaddmember = true;
+          }
+    },
+    addmember: function() {
+      var self = this;
+      if(this.members == ''){
+        this.$message("请选择好友");
+        return false;
+      }
+      else{
+        console.log(this.members);
+        for(var i in this.members){
+          this.numpack.push({
+            groupId: Number.parseInt(this.groupNum),
+            weixinId: Number.parseInt(this.members[i])
+          })
+        }
+        console.log(this.members);
+        console.log(this.numpack)
+        this.axios.post('/weixin/create_weixin_group_member_list', this.numpack)
+            .then(function(res){
+              var data = res.data;
+              if(data.code == 0){
+                self.$message("创建成功");
+                self.showaddmember = false;
+                self.members = [];
+                self.numpack = [];
+                self.getgroupmember(self.groupNum);
+              }
+              else{
+                self.$message("创建失败");
+              }
+            })
+            .catch(function(err){
+              console.log(err);
+              self.$message("创建失败");
+            })
+      }
+    },
+    Timer:function(val) {
+      this.timer = setInterval(() => {
+        if(this.tie == 0){
+          this.tie = 60;
+
+          var self = this;
+          console.log(val);
+          this.axios.post('/weixin/get_weixin_group_member_list',{
+            groupId: val
+          })
+          .then(function(res){
+            var data = res.data;
+            if(data.code == 0){
+              self.alllist = data.data;
+              self.totalpage = self.alllist.length;
+              self.weixingroup = [];
+              var currentSize = self.currentPage * self.pagesize;
+              if(currentSize > self.alllist.length){
+                currentSize = self.alllist.length;
+              }
+              for(var i=(self.currentPage -1) * self.pagesize; i< currentSize; i++){
+                self.weixingroup.push(self.alllist[i].weixin);
+              }
+            }
+          })
+          .catch(function(err){
+            console.log(err);
+          })
+        }
+        else{
+          this.tie--;
+        }
+      }, 1000)
+    },
+    Tmedia: function(){
+      var media = null;
+      if(media != this.groupNum){
+        clearInterval(this.timer);
+        media = this.groupNum;
+        this.Timer(media);
+      }
     }
+    // goaddmember:function(){
+    //   this.$router.push('/addgroupmember');
+    // }
   },
   created(){
     this.getweixingroup();
