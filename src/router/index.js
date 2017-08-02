@@ -140,6 +140,10 @@ export default new Router({
         {
           path: '/addfissionmember',
           component: require('views/weixin/AddFissionmember')
+        },
+        {
+          path: '/datastatistics',
+          component: require('views/weixin/DataStatistics')
         }
       ]
     }

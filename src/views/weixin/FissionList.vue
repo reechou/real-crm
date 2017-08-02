@@ -68,8 +68,9 @@
       </el-row>
       <template>
         <el-checkbox-group v-model="members">
-          <input type="checkbox" @click="checkAllformember()" v-model="diabtcheckall">全选
-          <p align="right">已选人数:{{ members.length }}</p>
+          <input type="checkbox" @click="checkAllformember()" v-model="diabtcheckall">全选&nbsp;&nbsp;
+          (已选人数:{{ members.length }})
+
           <el-table :data="weixinlist" style="width: 100%;margin-bottom: 80px" v-loading="loading" element-loading-text="拼命加载中">
               <el-table-column label="id">
                   <template scope="scope">
@@ -102,7 +103,7 @@
     <template>
       <el-checkbox-group v-model="wxIds">
         <input type="checkbox" @click="checkAll()" v-model="btcheckall">全选
-        <p align="right">已选人数:{{ wxIds.length }}</p>
+        &nbsp;&nbsp;(已选人数:{{ wxIds.length }})
         <el-table :data="lieBianPool" style="width:200%;margin-bottom:80px" v-loading="loading" element-loading-text="拼命加载中">
           <el-table-column label="选择" width="80px">
             <template scope="scope">
@@ -632,11 +633,8 @@ export default {
 select{
   width:100%;
 }
-.el-icon-delete{
-  background-color: #20a0ff;
-}
 .el-icon-delete:hover{
-  background-color:cyan;
+  background-color:#20a0ff;
 }
 
   /*设置本地动画*/
