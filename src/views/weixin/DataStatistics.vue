@@ -122,10 +122,6 @@ export default {
                             data: self.sharelist
                         }]
                     })
-                    this.startN = null;
-                    this.endN = null;
-                    this.start = null;
-                    this.end = null;
                 }
             })
         },
