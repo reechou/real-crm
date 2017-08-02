@@ -81,6 +81,7 @@ export default {
                 var data = res.data;
                 self.friendlist = [];
                 self.friendid = [];
+                self.friendsmul = 0;
                 if(data.code == 0){
                     self.alllist = data.data;
                     for( var i in self.alllist){
@@ -119,6 +120,7 @@ export default {
             .then(function(res){
                 self.alllist = [];
                 self.sharelist = [];
+                self.sharemul = 0;
                 var data = res.data;
                 if(data.code == 0){
                     self.alllist = data.data;
