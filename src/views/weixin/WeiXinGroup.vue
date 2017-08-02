@@ -2,7 +2,7 @@
   <div class="weixingroup">
     <div class="selectgroup" style="padding:10px">
       <el-row :gutter="20" style="margin-bottom:20px;">
-        <el-col :span="4" :offset="20"><span size="small">{{ tie }} 后自动刷新列表</span></el-col>
+        <el-col :span="4" :offset="20"><span size="small" style="color:red" >{{ tie }} </span>后自动刷新列表</el-col>
       </el-row>
       <el-row :gutter="20">
         <el-col :span="3">

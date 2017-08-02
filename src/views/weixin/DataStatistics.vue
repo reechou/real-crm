@@ -9,7 +9,7 @@
         <el-button type="primary" @click="getdata(),limitbt()" :disabled="stopbt">查询</el-button>
       </div></el-col>
       <el-col :span="4">
-      <span>{{ tie }}后刷新</span>
+      <span style="color:red">{{ tie }}</span>后刷新
       </el-col>
     </el-row>
       <div id="myChart" :style="{width:'1200px', height:'600px'}"></div> 
@@ -279,6 +279,12 @@ export default {
                     {
                         name:'占比',
                         type:'line',
+                        lineStyle:{
+                            normal:{
+                                width:0
+                            }
+                        },
+                        symbolSize: 0,
                         data:[]
                     }
                 ]
