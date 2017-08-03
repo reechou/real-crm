@@ -122,7 +122,8 @@ export default {
       backcolor0:'#005494',
       media: [{ value: '' }],
       media1: [{ value: '' }],
-      linkorpic:true
+      linkorpic:true,
+      uptoken:''
     };
   },
   methods: {
@@ -264,7 +265,7 @@ export default {
       this.axios.get('http://wxmp.gatao.cn/mypic/gettoken').then((response) => {
         var data = response.data;
         // if(data.code == 0){
-        self.uptoken = data.token;
+        this.uptoken = data.token;
         if(this.linkorpic){
           for (var i in self.media) {
             self.uploadimg(i);

@@ -348,7 +348,7 @@ export default {
       var uploader = Qiniu.uploader({
         runtimes: 'html5,flash,html4', //上传模式,依次退化
         browse_button: val + 'img', //上传选择的点选按钮，**必需**
-        uptoken: self.uptoken,
+        uptoken: this.token,
         //Ajax请求upToken的Url，**强烈建议设置**（服务端提供）
         // uptoken : '<Your upload token>',
         //若未指定uptoken_url,则必须指定 uptoken ,uptoken由其他程序生成
@@ -400,7 +400,8 @@ export default {
       this.axios.get('http://wxmp.gatao.cn/mypic/gettoken')
         .then((response) => {
           var data = response.data;
-          self.uptoken = data.token;
+          this.token = data.token;
+          console.log(this.token);
           for (var i in self.allweixinlist) {
             self.upload(i);
           }
