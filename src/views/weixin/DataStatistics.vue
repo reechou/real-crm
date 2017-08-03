@@ -145,6 +145,7 @@ export default {
             .then(function(res){
                 self.alllist = [];
                 self.sharelist = [];
+                self.proportion = [];
                 self.sharemul = 0;
                 var data = res.data;
                 if(data.code == 0){
@@ -310,19 +311,21 @@ export default {
                 clearInterval(this.timer);
                 smedia = this.startN;
                 emedia = this.endN;
+                console.log(smedia);
+                console.log(emedia);
                 this.Timer(smedia,emedia);
             }
             
         },
-        Timer: function(sstart, eend){
+        Timer: function(){                            // sstart, eend
             this.timer = setInterval(() => {
                 if(this.tie == 0){
                     this.tie = 60;
                     var self = this;
                     this.axios.post('/monitor/get_data',{
                         typeId: 0,
-                        startTime: sstart,
-                        endTime: eend
+                        startTime: self.startN,
+                        endTime: self.endN
                     })
                     .then(function (res){
                         var data = res.data;
