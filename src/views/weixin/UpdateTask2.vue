@@ -1,14 +1,8 @@
 <template>
   <div class="admin-userlist">
     <div class="contrue-button">
-      <el-row :gutter="100">
-        <el-col :span="2">
-          <el-button type="primary"  :disabled="!linkorpic">文字+图片</el-button>
-        </el-col>
-        <el-col :span="2">
-          <el-button type="primary" :disabled="linkorpic" >文字+链接</el-button>    <!--@click="islinkorpic(1)" v-bind:style="{background:backcolor1}"-->
-        </el-col>
-      </el-row>
+      <el-button type="primary"  :disabled="!linkorpic">文字+图片</el-button>
+      <el-button type="primary" :disabled="linkorpic" >文字+链接</el-button>
     </div>
     <el-form ref="verifysetting" :model="task" label-width="80px" v-show="linkorpic">
       <el-form-item label="是否默认">
