@@ -20,13 +20,19 @@ export default {
       },
       checklogin: function(){
         self =this;
+        console.log(this.$route.path);
         var ca = this.getCookie('token');
         this.axios.get('http://wxmp.gatao.cn/realtech/check_login?token='+ca)
             .then(function(res){
               var data = res.data;
-              if(data.code == 0)
+              if(data.code == 0 )
               {
-                self.$router.push('/weixinlist?user=' +　data.msg.username);
+                if(self.$route.path == '/') {      // 判断当前页面是否是登录页面， 如果是， 就跳转到首页，否则在当前页面刷新
+                  self.$router.push('/weixinlist?user=' +　data.msg.username);
+                }
+                else {
+                  self.$router.push('');
+                }
               }
               else
               {
