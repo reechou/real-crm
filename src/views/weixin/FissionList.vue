@@ -146,12 +146,13 @@
 
     <template>
       <el-checkbox-group v-model="wxIds">
+        {{wxIds}}
         <input type="checkbox" @click="checkAll()" v-model="btcheckall">全选
         &nbsp;&nbsp;(已选人数:{{ wxIds.length }})&nbsp;&nbsp;&nbsp;&nbsp;当前成员总数: <span style="color:red">{{ lieBianPool.length}}</span>
         <el-table :data="lieBianPool" style="width:200%;margin-bottom:80px" v-loading="loading" element-loading-text="拼命加载中">
           <el-table-column label="选择" width="80px">
             <template scope="scope">
-                <input type="checkbox" :id="scope.row.id" :value="scope.$index" v-model="wxIds"></input> 
+                <input type="checkbox" :id="scope.row.id" :value="scope.row.liebianid" v-model="wxIds"></input> 
                <!-- <el-checkbox :label="scope.$index"></el-checkbox> -->
             </template>
           </el-table-column>
@@ -265,6 +266,8 @@ export default {
       errpagesize:100,
       errcurrentPage:1,
       errtotalpage:1,
+     
+      guanlishuju:[]
     }
   },
   methods:{
@@ -295,16 +298,17 @@ export default {
         return false;
       }
       else{
-          var selectme = [];
-          for(var i in this.wxIds){
-            selectme.push(this.alllist[this.wxIds[i]].liebianPool);
-          }
-          console.log(selectme);
-          for(var i in selectme){
-          this.liebianid.push(selectme[i].id);
-        }
-        console.log(this.liebianid);
-        this.axios.post('/weixin/delete_lianbian_pool',this.liebianid)
+        //   var selectme = [];
+        //   for(var i in this.wxIds){
+        //     selectme.push(this.alllist[this.wxIds[i]].liebianPool);
+        //   }
+        //   console.log(selectme);
+        //   for(var i in selectme){
+        //   this.liebianid.push(selectme[i].id);
+        // }
+        // console.log(this.liebianid);
+        console.log(this.wxIds);
+        this.axios.post('/weixin/delete_lianbian_pool',this.wxIds)
         .then(function(res){
           var data = res.data;
           if(data.code == 0){
@@ -464,7 +468,11 @@ export default {
           }
           for(var i=(self.currentPage -1) * self.pagesize; i< currentSize; i++){
             self.lieBianPool.push(self.alllist[i].weixin);
+            self.$set(self.lieBianPool[i], 'liebianid', self.alllist[i].liebianPool.id);
           }
+          // for(var i in self.alllist){
+          //   self.$set(self.lieBianPool[i], 'liebianid', self.alllist[i].liebianPool.id);
+          // }
           self.lieBianPool.sort(function(a,b){
             return b.todayAddContactNum - a.todayAddContactNum;
           })
@@ -523,7 +531,8 @@ export default {
       self.lieBianPool = []
       var j = self.currentPage == Math.ceil(self.alllist.length / self.pagesize) ? self.alllist.length : self.currentPage * self.pagesize
       for (var i = (self.currentPage - 1) * self.pagesize; i < j; i++) {
-        self.lieBianPool.push(self.alllist[i].weixin)
+        self.lieBianPool.push(self.alllist[i].weixin);
+        self.$set(self.lieBianPool[i], 'liebianid', self.alllist[i].liebianPool.id);
       }
     },
     handleCurrentChange: function (val) {
@@ -534,7 +543,8 @@ export default {
       self.currentPage = val
       var j = val == Math.ceil(self.alllist.length / self.pagesize) ? self.alllist.length : val * self.pagesize
       for (var i = (val - 1) * self.pagesize; i < j; i++) {
-        self.lieBianPool.push(self.alllist[i].weixin)
+        self.lieBianPool.push(self.alllist[i].weixin);
+        self.$set(self.lieBianPool[i], 'liebianid', self.alllist[i].liebianPool.id);
       }
       console.log(self.lieBianPool);
     },
