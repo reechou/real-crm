@@ -38,7 +38,7 @@
             </div>
             <el-button type="text" size="small" @click="scope.row.edit=true" v-if="!scope.row.edit">更新</el-button>
             <el-tooltip placement="bottom" v-if="!scope.row.edit">
-              <div slot="content" style="width:200px;height:200px;"><img :src="scope.row.qrcodeUrl" style="width:200px;height:200px"></div>
+              <div slot="content" style="width:200px;height:300px;"><img :src="scope.row.qrcodeUrl" style="width:200px;height:300px"></div>
               <el-button type="text">查看</el-button>
             </el-tooltip>
           </template>

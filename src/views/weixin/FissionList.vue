@@ -4,8 +4,8 @@
       <el-row :gutter="20" style="margin-bottom:20px;">
         <el-col :span="4" :offset="20"><span size="small" style="color:red" >{{ tie }} </span>后自动刷新列表</el-col>
       </el-row>
-      <el-row :gutter="20">
-        <el-col :span="4">
+      <!-- <el-row :gutter="20">
+        <el-col :span="4"> -->
           <el-select v-model="lbTypenum" placeholder="请选择" @change="getliebianpool(lbTypenum)">
             <el-option
             v-for="item in lbType"
@@ -16,17 +16,18 @@
             </el-option>
             <el-option value=""><i class="el-icon-plus" style="width:100%;" @click="showaddliebian = true">&nbsp;&nbsp;<span>创建分组</span></i></el-option>
           </el-select>
-        </el-col>
+        <!-- </el-col> -->
          <!-- <el-col :span="2">
           <el-button type="primary" @click="showaddliebian = true">创建分组</el-button>
         </el-col>  -->
-        <el-col :span="2">
+        <!-- <el-col :span="2"> -->
           <el-button type="primary" @click="getweixinlist" sytle="width:100%">添加成员</el-button>
-        </el-col>
-        <el-col :span="16">
+        <!-- </el-col>
+        <el-col :span="16"> -->
           <el-button type="primary" @click="confirm">批量删除</el-button>
-        </el-col>
-      </el-row>
+          <el-button type="primary" @click="geterrorlist">错误信息列表</el-button>
+        <!-- </el-col>
+      </el-row> -->
     </div>
     
     <el-dialog title="新增裂变类别" v-model="showaddliebian">
@@ -99,12 +100,40 @@
       </div>
     </el-dialog>
 
+    <el-dialog title="裂变错误信息列表" v-model="showerrlist">
+      <template>
+          <el-table :data="errlist" style="width: 100%;margin-bottom: 80px" v-loading="loading" element-loading-text="拼命加载中">
+
+            <el-table-column label="id">
+              <template scope="scope">
+                {{ scope.row.id }}
+              </template>
+            </el-table-column>
+
+            <el-table-column label="错误信息">
+              <template scope="scope">
+                {{ scope.row.msg }}
+              </template>
+            </el-table-column>
+
+            <el-table-column label="发生时间">
+              <template scope="scope">
+                {{ formate(scope.row.createAt) }}
+              </template>
+            </el-table-column>
+
+          </el-table>
+      </template>
+      <div style="margin-bottom: 40px">
+        <el-pagination @size-change="errhandleSizeChange" @current-change="errhandleCurrentChange" :current-page="diacurrentPage" :page-size='errpagesize' ayout="total, prev, pager, next" :total='errtotalpage'></el-pagination>
+      </div>
+    </el-dialog>
 
     <template>
       <el-checkbox-group v-model="wxIds">
         <input type="checkbox" @click="checkAll()" v-model="btcheckall">全选
-        &nbsp;&nbsp;(已选人数:{{ wxIds.length }})
-        <el-table :data="lieBianPool" style="width:200%;margin-bottom:80px" v-loading="loading" element-loading-text="拼命加载中">
+        &nbsp;&nbsp;(已选人数:{{ wxIds.length }})&nbsp;&nbsp;&nbsp;&nbsp;当前成员总数: <span style="color:red">{{ lieBianPool.length}}</span>
+        <el-table :data="lieBianPool" style="width:200%;margin-bottom:80px" v-loading="loading" element-loading-text="拼命加载中" :row-class-name="tableRowClassName">
           <el-table-column label="选择" width="80px">
             <template scope="scope">
                 <input type="checkbox" :id="scope.row.id" :value="scope.$index" v-model="wxIds"></input> 
@@ -124,7 +153,7 @@
             </template>
           </el-table-column>
 
-          <el-table-column label="微信id">
+          <!-- <el-table-column label="微信id">
             <template scope="scope">
               {{ scope.row.wxId }}
             </template>
@@ -133,6 +162,12 @@
           <el-table-column label="呢称">
             <template scope="scope">
               {{ scope.row.nickName }}
+            </template>
+          </el-table-column> -->
+
+          <el-table-column label="二维码">
+            <template scope="scope">
+              <img :src="scope.row.qrcodeUrl" width="100" height="150">
             </template>
           </el-table-column>
 
@@ -147,7 +182,13 @@
               {{ scope.row.todayAddContactNum }}
             </template>
           </el-table-column>
-          
+
+          <el-table-column label="标记提示">
+            <template scope="scope">
+              <span v-if="scope.row.tipword != ''">{{ scope.row.tipword }}</span>
+              <span v-if="scope.row.tipword == ''">正常</span>
+            </template>
+          </el-table-column>
         </el-table>
       </el-checkbox-group>
     </template>
@@ -201,10 +242,23 @@ export default {
       showaddtype:false,
       showaddmember: false,
       showweixinlist:false,
-      timer: null
+      timer: null,
+
+      errlist:[],
+      showerrlist:false,
+      errall:[],
+      errpagesize:100,
+      errcurrentPage:1,
+      errtotalpage:1,
     }
   },
   methods:{
+    tableRowClassName: function(row,index){
+      var nowtime = Date.now()/1000;
+      if(row.qrcodeUrl == '' || row.status != 0 ||　nowtime - row.lastHeartbeat > 300){
+        return 'info-row';
+      }
+    },
     formate: function (t) {
       var d = new Date(t * 1000);
       var year = d.getFullYear();
@@ -370,6 +424,8 @@ export default {
     },
     getliebianpool: function(type){
       console.log(type);
+      var tipword = '';
+      var nowtime = Date.now()/1000;
       var self = this;
       this.axios.post('/weixin/get_lianbian_pool',{
         liebianType: Number.parseInt(type)
@@ -387,6 +443,23 @@ export default {
           for(var i=(self.currentPage -1) * self.pagesize; i< currentSize; i++){
             self.lieBianPool.push(self.alllist[i].weixin);
           }
+          self.lieBianPool.sort(function(a,b){
+            return b.todayAddContactNum - a.todayAddContactNum;
+          })
+          for(var i=0; i<self.lieBianPool.length; i++){
+            tipword = '';
+            if(self.lieBianPool[i].qrcodeUrl == ''){
+              tipword = tipword + '⑴未添加二维码;';
+            }
+            if(self.lieBianPool[i].status != 0){
+              tipword = tipword + '⑵状态不正常;';
+            }
+            if(nowtime - self.lieBianPool[i].lastHeartbeat > 300){
+              tipword = tipword + '⑶最后心跳时间超过5分钟;'
+            }
+            self.$set(self.lieBianPool[i], 'tipword', tipword);
+          }
+          console.log(self.lieBianPool);
         }
       })
       .catch(function(err){
@@ -570,6 +643,8 @@ export default {
 
       console.log(val);
       var self = this;
+      var tipword = '';
+      var nowtime = Date.now()/1000;
       this.axios.post('/weixin/get_lianbian_pool',{
         liebianType: Number.parseInt(val)
       })
@@ -585,6 +660,22 @@ export default {
           }
           for(var i=(self.currentPage -1) * self.pagesize; i< currentSize; i++){
             self.lieBianPool.push(self.alllist[i].weixin);
+          }
+          self.lieBianPool.sort(function(a,b){
+            return b.todayAddContactNum - a.todayAddContactNum;
+          })
+          for(var i=0; i<self.lieBianPool.length; i++){
+            tipword = '';
+            if(self.lieBianPool[i].qrcodeUrl == ''){
+              tipword = tipword + '⑴未添加二维码;';
+            }
+            if(self.lieBianPool[i].status != 0){
+              tipword = tipword + '⑴状态不正常;';
+            }
+            if(nowtime - self.lieBianPool[i].lastHeartbeat > 300){
+              tipword = tipword + '⑴最后心跳时间超过5分钟;'
+            }
+            self.$set(self.lieBianPool[i], 'tipword', tipword);
           }
         }
       })
@@ -606,10 +697,49 @@ export default {
 
           this.Timer(media);
         }
-    }
-    // goaddmember:function(){
-    //   this.$router.push('/addfissionmember');
-    // }
+    },
+    geterrorlist: function(){
+      var self = this;
+      this.axios.post('/weixin/get_liebian_error_msg',{
+        liebianType: Number.parseInt(this.lbTypenum)
+      })
+        .then(function(res){
+          var data = res.data;
+          if(data.code == 0){
+            self.errall = data.data;
+            self.errtotalpage = self.errall.length;
+            self.errlist = [];
+            var errcurrentSize = self.errcurrentPage * self.errpagesize;
+            if(errcurrentSize > self.errall.length) {
+              errcurrentSize = self.errall.length;
+            }
+              for(var i = (self.errcurrentPage - 1) * self.errpagesize; i < errcurrentSize; i++) {
+                self.errlist.push(self.errall[i]);
+              }
+          }
+        })
+        .catch(function (err) {
+          console.log(err);
+        })
+        this.showerrlist = true;
+    },
+    errhandleSizeChange: function(){
+      var self = this;
+      self.errlist = [];
+      var j = self.errcurrentPage == Math.ceil(self.errllist.length / self.errpagesize) ? self.errall.length : self.errcurrentPage * self.errpagesize;
+      for(var i = (self.errcurrentPage - 1) * self.errpagesize; i < j; i++) {
+        self.errlist.push(self.errall[i]);
+      }
+    },
+    errhandleCurrentChange: function (val) {
+      var self = this;
+      self.errlist = [];
+      self.errcurrentPage = val;
+      var j = val == Math.ceil(self.errall.length / self.errpagesize) ? self.errall.length : val * self.errpagesize;
+      for (var i = (val - 1) * self.errpagesize; i < j; i++) {
+        self.errlist.push(self.errall[i]);
+      }
+    },
   },
   created(){
     this.getlianbianlist();
@@ -626,6 +756,9 @@ export default {
 </script>
 
 <style>
+.el-table .info-row {
+  background: #FFAEB9;
+}
 .fission{
   width: 100%;
   padding:20px
