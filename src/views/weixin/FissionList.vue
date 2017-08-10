@@ -54,6 +54,7 @@
     </el-dialog>
 
     <el-dialog title="新增裂变成员" v-model="showaddmember">
+        选择id:<span>{{ members }}</span>
       <el-row :gutter="20" style="margin-bottom:20px;">
         <el-col :span="3" :offset="21">
           <el-button type="primary" @click="addmember">添加</el-button>
@@ -72,10 +73,15 @@
           <input type="checkbox" @click="checkAllformember()" v-model="diabtcheckall">全选&nbsp;&nbsp;
           (已选人数:{{ members.length }})
 
-          <el-table :data="weixinlist" style="width: 100%;margin-bottom: 80px" v-loading="loading" element-loading-text="拼命加载中">
+          <el-table :data="weixinlist" style="width: 100%;margin-bottom: 80px" v-loading="loading" element-loading-text="拼命加载中" :row-class-name="tableRowClassName">
               <el-table-column label="id">
                   <template scope="scope">
-                      <el-checkbox :label="scope.row.id"></el-checkbox>
+                    <div v-if="scope.row.tipword == ''">
+                      <el-checkbox :label="scope.row.id"></el-checkbox>                      
+                    </div>
+                    <div v-if="scope.row.tipword != ''">
+                      <span>{{scope.row.id}}</span>
+                    </div>
                   </template>
               </el-table-column>
               <el-table-column prop="nickName" label="微信昵称"> </el-table-column>
@@ -91,7 +97,16 @@
                 {{scope.row.desc}}
               </template>
               </el-table-column>
-
+              <el-table-column label="标记提示">
+                <template scope='scope'>
+                    <div v-if="scope.row.tipword == ''">
+                      正常                      
+                    </div>
+                    <div v-if="scope.row.tipword != ''">
+                      <span>{{ scope.row.tipword }}</span>
+                    </div>
+                </template>
+              </el-table-column>
           </el-table>
         </el-checkbox-group>
       </template>
@@ -133,7 +148,7 @@
       <el-checkbox-group v-model="wxIds">
         <input type="checkbox" @click="checkAll()" v-model="btcheckall">全选
         &nbsp;&nbsp;(已选人数:{{ wxIds.length }})&nbsp;&nbsp;&nbsp;&nbsp;当前成员总数: <span style="color:red">{{ lieBianPool.length}}</span>
-        <el-table :data="lieBianPool" style="width:200%;margin-bottom:80px" v-loading="loading" element-loading-text="拼命加载中" :row-class-name="tableRowClassName">
+        <el-table :data="lieBianPool" style="width:200%;margin-bottom:80px" v-loading="loading" element-loading-text="拼命加载中">
           <el-table-column label="选择" width="80px">
             <template scope="scope">
                 <input type="checkbox" :id="scope.row.id" :value="scope.$index" v-model="wxIds"></input> 
@@ -157,13 +172,13 @@
             <template scope="scope">
               {{ scope.row.wxId }}
             </template>
-          </el-table-column>
+          </el-table-column>  -->
 
-          <el-table-column label="呢称">
+           <el-table-column label="备注">
             <template scope="scope">
-              {{ scope.row.nickName }}
+              {{ scope.row.desc }}
             </template>
-          </el-table-column> -->
+          </el-table-column>
 
           <el-table-column label="二维码">
             <template scope="scope">
@@ -183,12 +198,12 @@
             </template>
           </el-table-column>
 
-          <el-table-column label="标记提示">
+          <!-- <el-table-column label="标记提示">
             <template scope="scope">
               <span v-if="scope.row.tipword != ''">{{ scope.row.tipword }}</span>
               <span v-if="scope.row.tipword == ''">正常</span>
             </template>
-          </el-table-column>
+          </el-table-column> -->
         </el-table>
       </el-checkbox-group>
     </template>
@@ -342,12 +357,19 @@ export default {
        console.log(this.wxIds);
     },
     checkAllformember: function(){
-      if(this.members == null){
+      console.log(this.members);
+      if(this.members.length == 0){
         if(!this.checkallformember){
           this.members = [];
-          this.weixinlist.forEach((item) => {
-            this.members.push(item.id);
-          });
+          // this.weixinlist.forEach((item) => {
+            console.log(1111111);
+            for(var i = 0; i < this.weixinlist.length; i++){
+              if(this.weixinlist[i].tipword == ''){
+                this.members.push(this.weixinlist[i].id);
+              }
+
+              }
+          // });
           this.checkallformember = true;
         }
         else{
@@ -357,9 +379,11 @@ export default {
       }
       else{
         if(!this.checkallformember){
-          this.weixinlist.forEach((item) => {
-            this.members.push(item.id);
-          });
+            for(var i = 0; i < this.weixinlist.length; i++){
+              if(this.weixinlist[i].tipword == ''){
+                this.members.push(this.weixinlist[i].id);
+              }
+            }
           this.checkallformember = true;
         }
         else{
@@ -424,8 +448,6 @@ export default {
     },
     getliebianpool: function(type){
       console.log(type);
-      var tipword = '';
-      var nowtime = Date.now()/1000;
       var self = this;
       this.axios.post('/weixin/get_lianbian_pool',{
         liebianType: Number.parseInt(type)
@@ -446,19 +468,6 @@ export default {
           self.lieBianPool.sort(function(a,b){
             return b.todayAddContactNum - a.todayAddContactNum;
           })
-          for(var i=0; i<self.lieBianPool.length; i++){
-            tipword = '';
-            if(self.lieBianPool[i].qrcodeUrl == ''){
-              tipword = tipword + '⑴未添加二维码;';
-            }
-            if(self.lieBianPool[i].status != 0){
-              tipword = tipword + '⑵状态不正常;';
-            }
-            if(nowtime - self.lieBianPool[i].lastHeartbeat > 300){
-              tipword = tipword + '⑶最后心跳时间超过5分钟;'
-            }
-            self.$set(self.lieBianPool[i], 'tipword', tipword);
-          }
           console.log(self.lieBianPool);
         }
       })
@@ -485,6 +494,7 @@ export default {
       for (var i = (val - 1) * self.diapagesize; i < j; i++) {
         self.weixinlist.push(self.diallist[i]);
       }
+      console.log(self.weixinlist);
     },
     handleIconClick: function() {
       if(this.searchcontent == '') {
@@ -565,6 +575,8 @@ export default {
     },
     getweixinlist: function() {
       var self = this;
+      var tipword = '';
+      var nowtime = Date.now()/1000;
       self.loading = true;
       this.axios.post('/weixin/get_all_weixin')
           .then(function (res) {
@@ -581,9 +593,24 @@ export default {
               if(diacurrentSize > self.diallist.length) {
                 diacurrentSize = self.diallist.length;
               }
+              for(var i=0; i<self.diallist.length; i++){
+                 tipword = '';
+                if(self.diallist[i].qrcodeUrl == ''){
+                  tipword = tipword + '⑴未添加二维码;';
+                }
+                if(self.diallist[i].status != 0){
+                  tipword = tipword + '⑴状态不正常;';
+                }
+                if(nowtime - self.diallist[i].lastHeartbeat > 300){
+                  tipword = tipword + '⑴最后心跳时间超过5分钟;'
+                }
+                self.$set(self.diallist[i], 'tipword', tipword);
+              }
               for(var i = (self.diacurrentPage - 1) * self.diapagesize; i < diacurrentSize; i++) {
                 self.weixinlist.push(self.diallist[i]);
               }
+
+              console.log(self.weixinlist);
             }
           })
           .catch(function (err) {
@@ -664,19 +691,6 @@ export default {
           self.lieBianPool.sort(function(a,b){
             return b.todayAddContactNum - a.todayAddContactNum;
           })
-          for(var i=0; i<self.lieBianPool.length; i++){
-            tipword = '';
-            if(self.lieBianPool[i].qrcodeUrl == ''){
-              tipword = tipword + '⑴未添加二维码;';
-            }
-            if(self.lieBianPool[i].status != 0){
-              tipword = tipword + '⑴状态不正常;';
-            }
-            if(nowtime - self.lieBianPool[i].lastHeartbeat > 300){
-              tipword = tipword + '⑴最后心跳时间超过5分钟;'
-            }
-            self.$set(self.lieBianPool[i], 'tipword', tipword);
-          }
         }
       })
       .catch(function(err){

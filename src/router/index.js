@@ -144,6 +144,14 @@ export default new Router({
         {
           path: '/datastatistics',
           component: require('views/weixin/DataStatistics')
+        },
+        {
+          path: '/resourcepool',
+          component: require('views/weixin/resourcePool')
+        },
+        {
+          path: '/addresource',
+          component: require('views/weixin/Addresource')
         }
       ]
     }

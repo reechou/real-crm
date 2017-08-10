@@ -12,11 +12,12 @@
         <el-menu :default-active="active" class="el-menu-vertical-demo" @select='handselect'>
 
            <!-- <el-menu-item index="/weixinlist"><i class="el-icon-menu"></i>微信列表</el-menu-item>   -->
-          <el-submenu index="4">
+          <el-submenu index="5">
             <template slot="title"><i class="el-icon-menu"></i>微信列表</template>
             <el-menu-item-group>
               <el-menu-item index="/weixinlist">微信池</el-menu-item>
               <el-menu-item index="/weixingroup">微信分组</el-menu-item>
+              <el-menu-item index="/resourcepool">资源池</el-menu-item>
               <el-menu-item index="/fissionlist">裂变池</el-menu-item>
               <el-menu-item index="/datastatistics">数据统计</el-menu-item>
             </el-menu-item-group>
