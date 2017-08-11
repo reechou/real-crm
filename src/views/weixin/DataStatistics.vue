@@ -6,12 +6,18 @@
           <span>选择时间范围</span>
         <el-date-picker v-model="start" type="datetime"  placeholder="选择起始日期时间"></el-date-picker>-
         <el-date-picker v-model="end" type="datetime"  placeholder="选择结束日期时间"></el-date-picker>
-        <el-button type="primary" @click="getdata(),limitbt()" :disabled="stopbt">查询</el-button>
+        <el-button type="primary" @click="isinit(0),limitbt()" :disabled="stopbt">查询</el-button>
       </div></el-col>
       <el-col :span="4">
       <span style="color:red">{{ tie }}</span>后刷新
       </el-col>
     </el-row>
+    <div class="quickbtn" style="margin-button:20px;">
+        <el-button type="primary" @click="isinit(1)">距当前一天</el-button>
+        <el-button type="primary" @click="isinit(3)">距当前三天</el-button>
+        <el-button type="primary" @click="isinit(7)">距当前七天</el-button>
+        <el-button type="primary" @click="realtime">实时</el-button>
+    </div>
       <div id="myChart" :style="{width:'1200px', height:'600px'}"></div> 
   </div>
 </template>
@@ -51,6 +57,44 @@ export default {
         this.drawLine();
     },
     methods: {
+        realtime:function(){         // 实时按钮
+            this._init = 1;
+            var time = Date.now() / 1000;
+            var today = new Date(this.fortime(time)).getTime() / 1000;
+            this.start = this.formate(today);
+            this.end =  this.formate(Number.parseInt(time));
+            this.startN = today;
+            this.endN = Number.parseInt(time);
+            this.getdata();
+        },
+        isinit:function(val){    // 当按具体时间段查询时
+            this._init  = 0;
+            var time = Date.now() / 1000;
+            if(val == 0){
+                this.getdata();
+            }
+            else if(val == 1){
+                this.startN = new Date(this.fortime(time-86400)).getTime()/1000;
+                this.start = this.formate(this.startN);
+                this.endN = Number.parseInt(time);
+                this.end = this.formate(this.endN);
+                this.getdata();
+            }
+            else if(val == 3){
+                this.startN = new Date(this.fortime(time-259200)).getTime()/1000;
+                this.start = this.formate(this.startN);
+                this.endN = Number.parseInt(time);
+                this.end = this.formate(this.endN);
+                this.getdata();               
+            }
+            else{
+                this.startN = new Date(this.fortime(time-604800)).getTime()/1000;
+                this.start = this.formate(this.startN);
+                this.endN = Number.parseInt(time);
+                this.end = this.formate(this.endN);
+                this.getdata();                
+            }
+        },
         limitbt:function(){
             var self = this;
             console.log(this.stopbt);
@@ -317,11 +361,16 @@ export default {
             }
             
         },
-        Timer: function(){                            // sstart, eend
+        Timer: function(){      
+                                                // sstart, eend
             this.timer = setInterval(() => {
                 if(this.tie == 0){
                     this.tie = 60;
                     var self = this;
+                    if(this._init == 1){
+                        self.endN =  Number.parseInt(Date.now() / 1000);
+                        self.end = this.formate(Number.parseInt(self.endN))
+                    }
                     this.axios.post('/monitor/get_data',{
                         typeId: 0,
                         startTime: self.startN,
