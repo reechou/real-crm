@@ -12,13 +12,23 @@
       <span style="color:red">{{ tie }}</span>后刷新
       </el-col>
     </el-row>
-    <div class="quickbtn" style="margin-button:20px;">
+    <div class="quickbtn" style="margin-bottom:20px;">
         <el-button type="primary" @click="isinit(1)">距当前一天</el-button>
         <el-button type="primary" @click="isinit(3)">距当前三天</el-button>
         <el-button type="primary" @click="isinit(7)">距当前七天</el-button>
         <el-button type="primary" @click="realtime">实时</el-button>
     </div>
-      <div id="myChart" :style="{width:'1200px', height:'600px'}"></div> 
+      <div id="myChart" :style="{width:'1200px', height:'400px'}"></div> 
+      <div style="background:#eef1f6;margin-top:20px;">
+          <el-button type="text" @click="getcomplete(1)" v-bind:style="{background:backcolor1}">与前一天比较</el-button>
+          <el-button type="text" @click="getcomplete(7)" v-bind:style="{background:backcolor7}">与前一周比较</el-button>
+      </div>
+<el-row>
+  <el-col :span="12"><CNewadd :startN="startN" :endN="endN" :tiee="tie" :complete="completeNum"></CNewadd></el-col>
+  <el-col :span="12"><Sharepic :startN="startN" :endN="endN" :tiee="tie" :complete="completeNum"></Sharepic></el-col>
+</el-row>
+      <!-- <CNewadd :startN="startN" :endN="endN" :tiee="tie" :complete="completeNum"></CNewadd>
+      <Sharepic :startN="startN" :endN="endN" :tiee="tie" :complete="completeNum"></Sharepic> -->
   </div>
 </template>
 
@@ -29,6 +39,8 @@
 // require('echarts/lib/component/toolbox');
 // require('echarts/lib/component/title');            // title组件
 import echarts from 'echarts'
+import CNewadd from './NewaddComplete'
+import Sharepic from './SharePicComplete'
 
 export default {
     name: 'data_statistics',
@@ -49,14 +61,32 @@ export default {
             stopbt:false,
             tie : 60,
             timer:null,
-            proportion:[]
-            // data2:['0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24']
+            proportion:[],
+            completeNum: 1,   // 通过这个变量来判断是比较一天数据还是一周数据
+            backcolor1:'#005494',
+            backcolor7:null
         }
+    },
+    components:{
+        CNewadd,
+        Sharepic
     },
     mounted() {
         this.drawLine();
     },
     methods: {
+        getcomplete:function(val){      // 判断是比较一天数据还是一周数据的函数
+            if(val == 1){
+                this.completeNum = val;
+                this.backcolor1 = '#005494';
+                this.backcolor7 = null; 
+            }
+            else{
+                this.completeNum = val;
+                this.backcolor1 = null;
+                this.backcolor7 = '#005494'; 
+            }
+        },
         realtime:function(){         // 实时按钮
             this._init = 1;
             var time = Date.now() / 1000;
@@ -173,7 +203,6 @@ export default {
                 }
 
             })
-                            this._init = 0;
             }
         },
         getdatapic: function(){
@@ -367,9 +396,10 @@ export default {
                 if(this.tie == 0){
                     this.tie = 60;
                     var self = this;
-                    if(this._init == 1){
+                    if(self._init == 1){
                         self.endN =  Number.parseInt(Date.now() / 1000);
-                        self.end = this.formate(Number.parseInt(self.endN))
+                        self.end = this.formate(Number.parseInt(self.endN));
+                        console.log(self.end);
                     }
                     this.axios.post('/monitor/get_data',{
                         typeId: 0,
@@ -405,7 +435,6 @@ export default {
                         }
 
                     })
-                                    this._init = 0;
                     }
                     else{
                         this.tie--;
