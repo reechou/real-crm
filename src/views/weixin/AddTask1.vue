@@ -36,7 +36,7 @@
             <el-input v-model="item.title"></el-input>
           </el-form-item>
           <el-form-item label="描述">
-            <el-input v-model="item.decs"></el-input>
+            <el-input v-model="item.desc"></el-input>
           </el-form-item>
           <el-form-item label="链接">
             <el-input v-model="item.linkUrl"></el-input>
@@ -53,19 +53,16 @@
               <input type="file" :id="'img'+key" class="hide" />
             </div>
           </el-form-item>
-        </template>
+          <el-form-item label="资源文件链接">
+            <el-input v-model="item.dataUrl"></el-input>
+          </el-form-item>
+          </template>
       </el-form-item>
-      <div class="" v-for="item in dataUrl">
-        <el-form-item label="资源文件链接">
-          <el-input v-model="item.value"></el-input>
-        </el-form-item>
-      </div>
       <el-form-item>
         <el-button type="primary" @click="onSubmit">立即创建</el-button>
         <el-button @click="addtext">新增文本</el-button>
         <el-button @click="addlink">新增链接消息</el-button>
         <el-button @click="addcard">新增名片</el-button>
-        <el-button @click="adddataUrl">新增资源文件链接</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -81,7 +78,6 @@ export default {
         IfDefault: false,
         data: {
           interval: 3,
-          dataUrl:[],
           textMsgs: [],
           cardMsgs: [],
           picMsg: '',
@@ -98,17 +94,15 @@ export default {
     addtext: function () {
       this.textMsgs.push({ value: '' })
     },
-    adddataUrl: function() {
-      this.dataUrl.push({value: ''})
-    },
     addlink: function () {
       var self = this
       this.clickaddlink = this.clickaddlink+1;
       this.task.data.linkMsgs.push({
         title: "",
-        decs: "",
+        desc: "",
         linkUrl: "",
-        showPicUrl: ""
+        showPicUrl: "",
+        dataUrl:""
       })
       this.$nextTick(function () {
         setTimeout(function () {
@@ -235,9 +229,6 @@ export default {
       for (var i in this.cardMsgs) {
         this.task.data.cardMsgs.push(this.cardMsgs[i].value)
       }
-      for ( var i in this.dataUrl ) {
-        this.task.data.dataUrl.push(this.dataUrl[i].value)
-      }
       if (this.task.data.picMsg == "") {
         this.task.data = _.omit(this.task.data, 'picMsg')
       }
@@ -248,12 +239,9 @@ export default {
       if (this.task.data.textMsgs == "") {
         this.task.data = _.omit(this.task.data, 'textMsgs')
       }
-      if (this.task.data.dataUrl == "") {
-        this.task.data = _.omit(this.task.data, 'dataUrl')
-      }
       this.task.IfDefault = this.task.IfDefault ? 1 : 0
       this.task.data.interval = Number.parseInt(this.task.data.interval);
-      console.log(this.task.data);
+      console.log(this.task);
       console.log('successs');
       this.axios.post('/weixin/create_task', this.task)
         .then(function (res) {
@@ -279,9 +267,6 @@ export default {
           for (var i in this.cardMsgs) {
             this.task.data.cardMsgs.push(this.cardMsgs[i].value)
           }
-          for ( var i in this.dataUrl ) {
-            this.task.data.dataUrl.push(this.dataUrl[i].value)
-          }
           if (this.task.data.picMsg == "") {
             this.task.data = _.omit(this.task.data, 'picMsg')
           }
@@ -292,12 +277,9 @@ export default {
           if (this.task.data.textMsgs == "") {
             this.task.data = _.omit(this.task.data, 'textMsgs')
           }
-          if (this.task.data.dataUrl == "") {
-            this.task.data = _.omit(this.task.data, 'dataUrl')
-          }
           this.task.IfDefault = this.task.IfDefault ? 1 : 0
           this.task.data.interval = Number.parseInt(this.task.data.interval);
-          console.log(this.task.data);
+          console.log(this.task);
           console.log('success');
           this.axios.post('/weixin/create_task', this.task)
             .then(function (res) {
