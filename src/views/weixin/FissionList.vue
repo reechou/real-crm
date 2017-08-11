@@ -435,8 +435,13 @@ export default {
             var data = res.data;
             if(data.code == 0){
               self.lbType = data.data;
-              console.log(self.lbType[0].liebianType);
-              self.lbTypenum = self.lbType[0].liebianType;
+              if(self.lbType == null){
+                self.lbTypenum = null;
+              }
+              else{
+                console.log(self.lbType[0].liebianType);
+                self.lbTypenum = self.lbType[0].liebianType;
+              }
             }
           })
           .catch(function(err){
@@ -454,23 +459,28 @@ export default {
         var data = res.data;
         if(data.code == 0){
           self.alllist = data.data;
-          self.totalpage = self.alllist.length;
-          self.lieBianPool = [];
-          var currentSize = self.currentPage * self.pagesize;
-          if(currentSize > self.alllist.length){
-            currentSize = self.alllist.length;
+          if(self.alllist == null){
+            self.lieBianPool = [];
           }
-          for(var i=(self.currentPage -1) * self.pagesize; i< currentSize; i++){
-            self.lieBianPool.push(self.alllist[i].weixin);
-            self.$set(self.lieBianPool[i], 'liebianid', self.alllist[i].liebianPool.id);
+          else{
+            self.totalpage = self.alllist.length;
+            self.lieBianPool = [];
+            var currentSize = self.currentPage * self.pagesize;
+            if(currentSize > self.alllist.length){
+              currentSize = self.alllist.length;
+            }
+            for(var i=(self.currentPage -1) * self.pagesize; i< currentSize; i++){
+              self.lieBianPool.push(self.alllist[i].weixin);
+              self.$set(self.lieBianPool[i], 'liebianid', self.alllist[i].liebianPool.id);
+            }
+            // for(var i in self.alllist){
+            //   self.$set(self.lieBianPool[i], 'liebianid', self.alllist[i].liebianPool.id);
+            // }
+            self.lieBianPool.sort(function(a,b){
+              return b.todayAddContactNum - a.todayAddContactNum;
+            })
+            console.log(self.lieBianPool);
           }
-          // for(var i in self.alllist){
-          //   self.$set(self.lieBianPool[i], 'liebianid', self.alllist[i].liebianPool.id);
-          // }
-          self.lieBianPool.sort(function(a,b){
-            return b.todayAddContactNum - a.todayAddContactNum;
-          })
-          console.log(self.lieBianPool);
         }
       })
       .catch(function(err){
@@ -591,30 +601,36 @@ export default {
                 v.edit = false;
                 return v;
               });
-              self.diatotalpage = self.diallist.length;
-              self.weixinlist = [];
-              var diacurrentSize = self.diacurrentPage * self.diapagesize;
-              if(diacurrentSize > self.diallist.length) {
-                diacurrentSize = self.diallist.length;
+              if(self.diallist == null){
+                self.weixinlist = [];
               }
-              for(var i=0; i<self.diallist.length; i++){
-                 tipword = '';
-                if(self.diallist[i].qrcodeUrl == ''){
-                  tipword = tipword + '⑴未添加二维码;';
+              else
+              {
+                self.diatotalpage = self.diallist.length;
+                self.weixinlist = [];
+                var diacurrentSize = self.diacurrentPage * self.diapagesize;
+                if(diacurrentSize > self.diallist.length) {
+                  diacurrentSize = self.diallist.length;
                 }
-                if(self.diallist[i].status != 0){
-                  tipword = tipword + '⑴状态不正常;';
+                for(var i=0; i<self.diallist.length; i++){
+                  tipword = '';
+                  if(self.diallist[i].qrcodeUrl == ''){
+                    tipword = tipword + '⑴未添加二维码;';
+                  }
+                  if(self.diallist[i].status != 0){
+                    tipword = tipword + '⑴状态不正常;';
+                  }
+                  if(nowtime - self.diallist[i].lastHeartbeat > 300){
+                    tipword = tipword + '⑴最后心跳时间超过5分钟;'
+                  }
+                  self.$set(self.diallist[i], 'tipword', tipword);
                 }
-                if(nowtime - self.diallist[i].lastHeartbeat > 300){
-                  tipword = tipword + '⑴最后心跳时间超过5分钟;'
+                for(var i = (self.diacurrentPage - 1) * self.diapagesize; i < diacurrentSize; i++) {
+                  self.weixinlist.push(self.diallist[i]);
                 }
-                self.$set(self.diallist[i], 'tipword', tipword);
-              }
-              for(var i = (self.diacurrentPage - 1) * self.diapagesize; i < diacurrentSize; i++) {
-                self.weixinlist.push(self.diallist[i]);
-              }
 
-              console.log(self.weixinlist);
+                console.log(self.weixinlist);
+              }
             }
           })
           .catch(function (err) {

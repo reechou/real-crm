@@ -40,6 +40,19 @@
               </template>
             </el-table-column>
 
+            <el-table-column label="状态">
+                <template scope="scope">
+                    <el-select v-model="scope.row.status" placeholder="请选择">
+                        <el-option
+                        v-for="item in statuslist"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                        </el-option>
+                    </el-select>
+                </template>
+            </el-table-column>
+
             <el-table-column label="操作">
               <template scope="scope">
                 <el-button @click="confirm(scope.row.id)">删除</el-button>
@@ -65,6 +78,13 @@ export default {
                 label: '公众号', value: 1
             },{
                 label: '群', value:　2
+            }],
+            statuslist:[{
+                label: '正常', value: 0
+            },{
+                label: '满好友', value:1
+            },{
+                label: '封号', value: 2
             }],
             nickname: '',
             mypic: '',
@@ -147,18 +167,23 @@ export default {
                     if(data.code == 0){
                         self.alllist = data.data;
                         console.log(self.alllist);
-                        self.totalpage = self.alllist.length;
-                        console.log(self.totalpage);
-                        self.resourcelist = [];
-                        var currentSize = self.currentPage * self.pagesize;
-                        if(currentSize > self.alllist.length){
-                            currentSize = self.alllist.length;
+                        if(self.alllist == null){
+                            self.resourcelist = [];
                         }
-                        for(var i =(self.currentPage - 1) * self.pagesize; i < currentSize; i++){
-                            self.resourcelist.push(self.alllist[i]);
-                            console.log(self.alllist[i]);
+                        else{
+                            self.totalpage = self.alllist.length;
+                            console.log(self.totalpage);
+                            self.resourcelist = [];
+                            var currentSize = self.currentPage * self.pagesize;
+                            if(currentSize > self.alllist.length){
+                                currentSize = self.alllist.length;
+                            }
+                            for(var i =(self.currentPage - 1) * self.pagesize; i < currentSize; i++){
+                                self.resourcelist.push(self.alllist[i]);
+                                console.log(self.alllist[i]);
+                            }
+                            console.log(self.resourcelist);
                         }
-                        console.log(self.resourcelist);
                     }
                 })
         },

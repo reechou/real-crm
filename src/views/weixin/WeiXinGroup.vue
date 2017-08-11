@@ -262,9 +262,14 @@ export default {
             var data = res.data;
             if(data.code == 0){
               self.wxgroup = data.data;
-              console.log(self.wxgroup);
-              self.groupNum = self.wxgroup[0].id;
-              console.log(self.groupNum);
+              if(self.wxgroup == null){
+                self.groupNum = null;
+              }
+              else{
+                console.log(self.wxgroup);
+                self.groupNum = self.wxgroup[0].id;
+                console.log(self.groupNum);
+              }
             }
           })
           .catch(function(err){
@@ -282,14 +287,19 @@ export default {
         var data = res.data;
         if(data.code == 0){
           self.alllist = data.data;
-          self.totalpage = self.alllist.length;
-          self.weixingroup = [];
-          var currentSize = self.currentPage * self.pagesize;
-          if(currentSize > self.alllist.length){
-            currentSize = self.alllist.length;
+          if(self.alllist == null){
+            self.weixingroup = [];
           }
-          for(var i=(self.currentPage -1) * self.pagesize; i< currentSize; i++){
-            self.weixingroup.push(self.alllist[i].weixin);
+          else{
+            self.totalpage = self.alllist.length;
+            self.weixingroup = [];
+            var currentSize = self.currentPage * self.pagesize;
+            if(currentSize > self.alllist.length){
+              currentSize = self.alllist.length;
+            }
+            for(var i=(self.currentPage -1) * self.pagesize; i< currentSize; i++){
+              self.weixingroup.push(self.alllist[i].weixin);
+            }
           }
         }
       })
@@ -430,14 +440,19 @@ export default {
                 v.edit = false;
                 return v;
               });
-              self.diatotalpage = self.diallist.length;
-              self.weixinlist = [];
-              var diacurrentSize = self.diacurrentPage * self.diapagesize;
-              if(diacurrentSize > self.diallist.length) {
-                diacurrentSize = self.diallist.length;
+              if(self.diallist == null){
+                self.weixinlist = [];
               }
-              for(var i = (self.diacurrentPage - 1) * self.diapagesize; i < diacurrentSize; i++) {
-                self.weixinlist.push(self.diallist[i]);
+              else{
+                self.diatotalpage = self.diallist.length;
+                self.weixinlist = [];
+                var diacurrentSize = self.diacurrentPage * self.diapagesize;
+                if(diacurrentSize > self.diallist.length) {
+                  diacurrentSize = self.diallist.length;
+                }
+                for(var i = (self.diacurrentPage - 1) * self.diapagesize; i < diacurrentSize; i++) {
+                  self.weixinlist.push(self.diallist[i]);
+                }
               }
             }
           })

@@ -436,14 +436,19 @@ export default {
                         var data = res.data;
                         if (data.code == 0) {
                             self.tagfrilist = data.data;
-                            self.totalpage = self.tagfrilist.length;
-                            self.friendslist = [];
-                            var currentSize = self.currentPage * self.pagesize;
-                            if (currentSize > self.tagfrilist.length) {
-                                currentSize = self.tagfrilist.length;
+                            if(self.tagfrilist == null){
+                                self.friendslist = [];
                             }
-                            for (var i = (self.currentPage - 1) * self.pagesize; i < currentSize; i++) {
-                                self.friendslist.push(self.tagfrilist[i].contact);
+                            else{
+                                self.totalpage = self.tagfrilist.length;
+                                self.friendslist = [];
+                                var currentSize = self.currentPage * self.pagesize;
+                                if (currentSize > self.tagfrilist.length) {
+                                    currentSize = self.tagfrilist.length;
+                                }
+                                for (var i = (self.currentPage - 1) * self.pagesize; i < currentSize; i++) {
+                                    self.friendslist.push(self.tagfrilist[i].contact);
+                                }
                             }
                         }
                     })
@@ -460,14 +465,19 @@ export default {
                         var data = res.data;
                         if (data.code == 0) {
                             self.tagfrilist = data.data;
-                            self.totalpage = self.tagfrilist.length;
-                            self.friendslist = [];
-                            var currentSize = self.currentPage * self.pagesize;
-                            if (currentSize > self.tagfrilist.length) {
-                                currentSize = self.tagfrilist.length;
+                            if(self.tagfrilist == null){
+                                self.friendslist = [];
                             }
-                            for (var i = (self.currentPage - 1) * self.pagesize; i < currentSize; i++) {
-                                self.friendslist.push(self.tagfrilist[i].contact);
+                            else{
+                                self.totalpage = self.tagfrilist.length;
+                                self.friendslist = [];
+                                var currentSize = self.currentPage * self.pagesize;
+                                if (currentSize > self.tagfrilist.length) {
+                                    currentSize = self.tagfrilist.length;
+                                }
+                                for (var i = (self.currentPage - 1) * self.pagesize; i < currentSize; i++) {
+                                    self.friendslist.push(self.tagfrilist[i].contact);
+                                }
                             }
                         }
                     });
@@ -522,14 +532,19 @@ export default {
                         var data = res.data;
                         if (data.code == 0) {
                             self.frilistbytime = data.data;
-                            self.totalpage = self.frilistbytime.length;
-                            self.friendslist = [];
-                            var currentSize = self.currentPage * self.pagesize;
-                            if (currentSize > self.frilistbytime.length) {
-                                currentSize = self.frilistbytime.length;
+                            if(self.frilistbytime == null){
+                                self.friendslist = [];
                             }
-                            for (var i = (self.currentPage - 1) * self.pagesize; i < currentSize; i++) {
-                                self.friendslist.push(self.frilistbytime[i]);
+                            else{
+                                self.totalpage = self.frilistbytime.length;
+                                self.friendslist = [];
+                                var currentSize = self.currentPage * self.pagesize;
+                                if (currentSize > self.frilistbytime.length) {
+                                    currentSize = self.frilistbytime.length;
+                                }
+                                for (var i = (self.currentPage - 1) * self.pagesize; i < currentSize; i++) {
+                                    self.friendslist.push(self.frilistbytime[i]);
+                                }
                             }
                         }
                     })
@@ -552,14 +567,19 @@ export default {
                         var data = res.data;
                         if (data.code == 0) {
                             self.tagfrilist = data.data;
-                            self.totalpage = self.tagfrilist.length;
-                            self.friendslist = [];
-                            var currentSize = self.currentPage * self.pagesize;
-                            if (currentSize > self.tagfrilist.length) {
-                                currentSize = self.tagfrilist.length;
+                            if(self.tagfrilist == null){
+                                self.friendslist = [];
                             }
-                            for (var i = (self.currentPage - 1) * self.pagesize; i < currentSize; i++) {
-                                self.friendslist.push(self.tagfrilist[i].contact);
+                            else{
+                                self.totalpage = self.tagfrilist.length;
+                                self.friendslist = [];
+                                var currentSize = self.currentPage * self.pagesize;
+                                if (currentSize > self.tagfrilist.length) {
+                                    currentSize = self.tagfrilist.length;
+                                }
+                                for (var i = (self.currentPage - 1) * self.pagesize; i < currentSize; i++) {
+                                    self.friendslist.push(self.tagfrilist[i].contact);
+                                }
                             }
                         }
                     })
@@ -639,14 +659,19 @@ export default {
                     var data = res.data;
                     if (data.code == 0) {
                         self.frilistbytime = data.data;
-                        self.totalpage = self.frilistbytime.length;
-                        self.friendslist = [];
-                        var currentSize = self.currentPage * self.pagesize;
-                        if (currentSize > self.frilistbytime.length) {
-                            currentSize = self.frilistbytime.length;
+                        if(self.frilistbytime == null){
+                            self.friendslist = [];
                         }
-                        for (var i = (self.currentPage - 1) * self.pagesize; i < currentSize; i++) {
-                            self.friendslist.push(self.frilistbytime[i]);
+                        else{
+                            self.totalpage = self.frilistbytime.length;
+                            self.friendslist = [];
+                            var currentSize = self.currentPage * self.pagesize;
+                            if (currentSize > self.frilistbytime.length) {
+                                currentSize = self.frilistbytime.length;
+                            }
+                            for (var i = (self.currentPage - 1) * self.pagesize; i < currentSize; i++) {
+                                self.friendslist.push(self.frilistbytime[i]);
+                            }
                         }
                     }
                 })
