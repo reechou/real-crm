@@ -119,19 +119,13 @@
       <template>
           <el-table :data="errlist" style="width: 100%;margin-bottom: 80px" v-loading="loading" element-loading-text="拼命加载中">
 
-            <el-table-column label="id">
-              <template scope="scope">
-                {{ scope.row.id }}
-              </template>
-            </el-table-column>
-
             <el-table-column label="错误信息">
               <template scope="scope">
                 {{ scope.row.msg }}
               </template>
             </el-table-column>
 
-            <el-table-column label="发生时间">
+            <el-table-column label="发生时间" width="160px">
               <template scope="scope">
                 {{ formate(scope.row.createAt) }}
               </template>
