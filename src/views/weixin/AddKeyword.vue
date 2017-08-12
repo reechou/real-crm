@@ -1,6 +1,10 @@
 <template>
   <div class="admin-userlist">
     <el-form ref="verifysetting" :model="keywords" label-width="80px">
+      <div class="titlebyhuifu">
+        <label>回复关键字判断:</label>
+      </div>
+      <div class="panduan">
       <el-form-item label="回复方式">
         <el-radio-group v-model="keywords.chatType">
           <el-radio label="group">群发</el-radio>
@@ -15,13 +19,25 @@
           <el-radio label=34>语音</el-radio>
         </el-radio-group>
       </el-form-item>
+      <div v-show="keywords.msgType == 1">
       <el-form-item label="关键字">
         <el-input v-model="keywords.keyword"></el-input>
       </el-form-item>
-      <el-form-item label="时间间隔">
+      </div>
+      </div>
+      <div class="titlebyhuifu">
+        <label>每条回复时间间隔:</label>
+      </div>
+      <div class="panduan">
+      <el-form-item label="时间间隔" style="margin-top:20px;">
         <el-input v-model="keywords.interval"></el-input>
       </el-form-item>
-      <div class="" v-for="(item, key) in keywords.reply">
+      </div>
+      <div class="titlebyhuifu">
+        <label>回复内容:</label>
+      </div>
+      <div class="panduan">
+      <div class="huifu" v-for="(item, key) in keywords.reply">
         <template v-if="item.msgType == 1">
           <el-form-item label="文本">
             <el-input v-model="item.content" type="textarea" :rows="3"></el-input>
@@ -63,6 +79,7 @@
           </el-form-item>
         </template>
       </div>
+      </div>
       <el-form-item>
         <el-button type="primary" @click="onSubmit">立即创建</el-button>
         <el-button @click="addtext">新增文本</el-button>
@@ -81,7 +98,7 @@ export default {
     return {
       keywords: {
         chatType: 'people',
-        msgType: 1,
+        msgType: 0,
         interval: 3,
         reply: [{
           msgType: 1,
@@ -231,11 +248,16 @@ export default {
       var self = this
       this.keywords.msgType = Number.parseInt(this.keywords.msgType)
       this.keywords.interval = Number.parseInt(this.keywords.interval)
+      if(this.keywords.msgType == 0){
+        this.$message("选择回复判断方式");
+      }
+      else{
       for (var i in this.keywords.reply) {
         if (this.keywords.reply[i].msgType == 34) {
           this.keywords.reply[i].content = this.keywords.reply[i].content + "||" + document.getElementById("content" + i).duration
         }
       }
+      console.log(this.keywords);
       this.axios.post('/weixin/create_keyword_setting', this.keywords)
         .then(function (res) {
           var data = res.data
@@ -252,6 +274,7 @@ export default {
           console.log(err);
           self.$message("创建失败")
         })
+      }
     }
   },
   created: function () {
@@ -268,5 +291,15 @@ export default {
 
 .hide {
   display: none
+}
+.panduan{
+  border:2px dashed 	#B4CDCD;
+  margin-bottom: 20px;
+}
+.huifu{
+  margin-top: 20px;
+}
+.titlebyhuifu{
+  margin-bottom:10px;
 }
 </style>

@@ -94,8 +94,17 @@
     <el-dialog title="关键字设置列表" v-model="showerrlist">
       选择设置{{keywords}}
       <div style="margin-bottom:20px;">
-        <el-button type="primary" @click="onsubmit()">提交</el-button>
-        <el-button @click="showerrlist = false">取消</el-button>
+        
+        
+        
+        <el-row type="flex" class="row-bg">
+          <el-col :span="20">
+            <el-button type="primary" @click="onsubmit()">提 交</el-button>
+            <el-button @click="showerrlist = false">取 消</el-button>
+          </el-col>
+
+          <el-col :span="3"><el-button type="primary" @click="go()">添加关键字</el-button></el-col>
+        </el-row>
       </div>
       <template>
         <el-checkbox-group v-model="keywords">
@@ -163,6 +172,9 @@ export default {
       };
     },
     methods: {
+      go: function () {
+        this.$router.push("/addkeyword")
+      },
       getkeycontent:function(val){
         this.keycontent = val;
       },
