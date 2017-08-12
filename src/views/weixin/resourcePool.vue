@@ -42,7 +42,7 @@
 
             <el-table-column label="状态">
                 <template scope="scope">
-                    <el-select v-model="scope.row.status" placeholder="请选择">
+                    <el-select v-model="scope.row.status" placeholder="请选择" @change="updatestatus(scope.row.status,scope.row.id)" :id="scope.row.id">
                         <el-option
                         v-for="item in statuslist"
                         :key="item.value"
@@ -97,6 +97,28 @@ export default {
         }
     },
     methods:{
+        updatestatus: function(val,id){
+            var self = this;
+            this.axios.post("/weixin/update_weixin_status",{
+                id: id,
+                status: val
+            })
+             .then(function(res){
+                 var data = res.data;
+                 if(data.code == 0){
+                     self.$message("更新成功");
+                     self.getlist();
+                 }
+                 else{
+                     self.$message("更新失败");
+                 }
+             })
+             .catch(function(err){
+                 self.$message("上传失败");
+                 console.log(err);
+             })
+
+        },
         addrescource:function (){
             this.$router.push('/addresource');
         },
