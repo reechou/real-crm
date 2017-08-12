@@ -8,42 +8,139 @@
         <el-table-column label="是否自动通过好友添加"> <template scope='scope'>{{ifAutoVerified(scope.row.ifAutoVerified)}}</template></el-table-column>
         <el-table-column label="回复内容"> 
           <template scope='scope'>
-            <el-table :data="scope.row.reply">
+            <!-- <el-table :data="scope.row.reply">
               <el-table-column property="content" label="内容">
               <template scope="scope">
               <div v-if="scope.row.msgType == 3"><img v-bind:src="scope.row.content" width="100"></div>
               <div v-else>{{scope.row.content}}</div>      
               </template>
               </el-table-column>
-            </el-table>
+            </el-table> -->
+            <el-button type="text" @click="showcontentlist = true">查看</el-button>
           </template>
         </el-table-column>   
         <el-table-column label="操作"> <template scope='scope'><el-button type="text" size="small" @click="confirmvertify(scope.row.bindId)">删除</el-button></template></el-table-column>                   
       </el-table>
     </template>
-    <h1>关键字设置</h1>
+
+    
+    
+    <el-row :gutter="20" style="margin-bottom:10px;">
+      <el-col :span="3"><h1>关键字设置</h1></el-col>
+      <el-col :span="6"><el-button type="primary" size="small" @click="showerrlist = true">新增关键字</el-button></el-col>
+    </el-row>
     <template>
       <el-table
         :data="keywordSetting" style="width: 100%;margin-bottom: 80px" v-loading="loading" element-loading-text="拼命加载中">
-        <el-table-column prop="id" label="id"></el-table-column>      
+        <el-table-column prop="bindId" label="id"></el-table-column>      
         <el-table-column prop="interval" label="时间间隔"> </el-table-column>
         <el-table-column prop="chatType" label="chatType"> </el-table-column>            
         <el-table-column prop="keyword" label="关键字"> </el-table-column>      
         <el-table-column label="回复内容"> <template scope='scope'>
-          <el-table :data="scope.row.reply">
-            <el-table-column property="content" label="内容">
+          <!-- <el-table :data="scope.row.reply">
+             <el-table-column property="content" label="内容">
             <template scope="scope">
             <div v-if="scope.row.msgType == 3"><img v-bind:src="scope.row.content" width="100"></div>
             <div v-else>{{scope.row.content}}</div>      
             </template>
             </el-table-column>
-          </el-table>
+          </el-table>  -->
+          <el-button type="text" @click="getkeycontent(scope.row.reply),showkeylist = true">查看</el-button>
         </template></el-table-column>
         <el-table-column label="操作"> <template scope='scope'><el-button type="text" size="small" @click="confirmkeyword(scope.row.bindId)">删除</el-button></template></el-table-column>                           
       </el-table>
     </template>
+
+    <el-dialog title="好友通过验证回复内容" v-model="showcontentlist">
+      <template>
+          <el-table :data="contentlist" style="width: 100%;margin-bottom: 80px" >
+
+            <el-table-column label="内容" align="center">
+              <template scope="scope">
+                <div v-if="scope.row.msgType == 3">
+                  <img :src="scope.row.content" width="100">
+                </div>
+                <div v-else>
+                  <span>{{ scope.row.content }}</span>
+                </div>
+                
+              </template>
+            </el-table-column>
+
+          </el-table>
+      </template>
+    </el-dialog>
+
+    <el-dialog title="关键字回复内容" v-model="showkeylist">
+      <template>
+          <el-table :data="keycontent" style="width: 100%;margin-bottom: 80px" >
+
+            <el-table-column label="内容" align="center">
+              <template scope="scope">
+                <div v-if="scope.row.msgType == 3">
+                  <img :src="scope.row.content" width="100">
+                </div>
+                <div v-else>
+                  <span>{{ scope.row.content }}</span>
+                </div>
+                
+              </template>
+            </el-table-column>
+
+          </el-table>
+      </template>
+    </el-dialog>
+
+    <el-dialog title="关键字设置列表" v-model="showerrlist">
+      选择设置{{keywords}}
+      <div style="margin-bottom:20px;">
+        <el-button type="primary" @click="onsubmit()">提交</el-button>
+        <el-button @click="showerrlist = false">取消</el-button>
+      </div>
+      <template>
+        <el-checkbox-group v-model="keywords">
+          <input type="checkbox" @click="checkAll()"> 全选 &nbsp;&nbsp;
+          (已选人数:{{ keywords.length }})
+          <el-table :data="keywordlist" style="width: 100%;margin-bottom: 80px" >
+            <el-table-column label="id">
+              <template scope="scope">
+                <el-checkbox :label="scope.row.id"></el-checkbox>
+              </template>
+            </el-table-column>
+
+            <el-table-column label="时间间隔">
+              <template scope="scope">
+                {{ scope.row.interval }}
+              </template>
+            </el-table-column>
+
+            <el-table-column label="chatType">
+              <template scope="scope">
+                {{ scope.row.chatType }}
+              </template>
+            </el-table-column>
+
+            <el-table-column label="内容" width="300px">
+              <template scope="scope">
+                <el-table :data="scope.row.replly">
+                  <el-table-column property="content" label="内容详情">
+                  <template scope="scope">
+                  <div v-if="scope.row.msgType == 3"><img v-bind:src="scope.row.content" width="100"></div>
+                  <div v-else>{{scope.row.content}}</div>      
+                  </template>
+                  </el-table-column>
+                </el-table>
+              </template>
+            </el-table-column>
+
+          </el-table>
+        </el-checkbox-group>
+      </template>
+    </el-dialog>
+
   </div>
 </template>
+
 
 <script>
 export default {
@@ -54,10 +151,34 @@ export default {
         loading: false,
         verifySetting: [],
         keywordSetting: [],
-        id: ''
+        contentlist: [],
+        showcontentlist:false,
+        showerrlist: false,
+        showkeylist:false,
+        keywordlist:[],
+        keycontent:[],
+        id: '',
+        checkall: false,
+        keywords: []
       };
     },
     methods: {
+      getkeycontent:function(val){
+        this.keycontent = val;
+      },
+      checkAll:function(){
+        if(!this.checkall){
+          this.keywords = [];
+          this.keywordlist.forEach((item) =>{
+            this.keywords.push(item.id);
+          });
+          this.checkall = true;
+        }
+        else{
+          this.keywords = [];
+          this.checkall = false;
+        }
+      },
       confirmvertify(val) {
         var self = this
         this.$confirm('是否删除?', '提示', {
@@ -72,7 +193,7 @@ export default {
       },
       deletverify: function (val) {
           var self = this
-          this.axios.post('/weixin/delete_verify', {id: this.id})
+          this.axios.post('/weixin/delete_verify', {id: val})
           .then(function(res){
               var data = res.data
               if(data.code == 0){
@@ -102,7 +223,7 @@ export default {
       },
       deletkeyword: function (val) {
           var self = this
-          this.axios.post('/weixin/delete_keyword', {id: this.id})
+          this.axios.post('/weixin/delete_keyword', {id: val})
           .then(function(res){
               var data = res.data
               if(data.code == 0){
@@ -144,21 +265,70 @@ export default {
           .then(function(res){
               var data = res.data
               self.loading = false
-              console.log(data)    
+              self.contentlist = [];
+              self.keycontent = [];   
               if(data.code == 0){
                 self.verifySetting = [data.data.verifySetting]
-                self.keywordSetting = data.data.keywordSetting                
+                self.contentlist = data.data.verifySetting.reply;
+                self.keywordSetting = data.data.keywordSetting;             
               }    
           })
           .catch(function(err){
               console.log(err);
               self.loading = false
           })
+      },
+      getkeywordlist: function () {
+        var self = this
+        this.axios.post('/weixin/get_all_keyword')
+          .then(function(res){
+              var data = res.data  
+              if(data.code == 0){
+                self.keywordlist = data.data
+              }    
+              for(var i=0; i < self.keywordlist.length; i++){
+                self.$set(self.keywordlist[i], 'replly', JSON.parse(self.keywordlist[i].reply));
+              }
+          })
+          .catch(function(err){
+              console.log(err);
+          })
+      },
+      onsubmit:function(){
+        var self = this;
+        var weixinid = Number.parseInt(this.$route.query.id)
+        if(this.keywords.length == 0){
+          self.$message("请选择关键字设置");
+        }
+        else{
+          for(var i=0; i < this.keywords.length; i++){
+            this.axios.post('/weixin/create_keyword',{
+              weixinId: weixinid,
+              weixinKeywordSettingId: this.keywords[i]
+            })
+              .then(function(res){
+                var data = res.data;
+                if(data.code == 0){
+                  self.$message("创建成功");
+                  self.showerrlist = false;
+                  self.getweixinlist();
+                }
+                else{
+                  self.$message("创建失败");
+                }
+              })
+              .catch(function(err){
+                console.log(err);
+                self.$message("创建失败");
+              })
+          }
+        }
       }
     },
     created: function () {
       this.id = Number.parseInt(this.$route.query.id)
-      this.getweixinlist()
+      this.getweixinlist();
+      this.getkeywordlist();
     }
 }
 </script>
