@@ -7,7 +7,7 @@
       <div class="panduan">
       <el-form-item label="回复方式">
         <el-radio-group v-model="keywords.chatType">
-          <el-radio label="group">群发</el-radio>
+          <el-radio label="group">群聊</el-radio>
           <el-radio label="people">个人</el-radio>
         </el-radio-group>
       </el-form-item>
