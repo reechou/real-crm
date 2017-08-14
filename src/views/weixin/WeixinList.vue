@@ -62,13 +62,13 @@
               <el-button type="text" size="small" @click="gosetting(scope.row.id)">查看设置</el-button>  
               <el-button type="text" size="small" @click="confirm(scope.row.id)">删除</el-button>
               <el-button type="text" size="small" @click="gofriendslsit(scope.row.id)">查看好友</el-button>  -->
-            <select :id="scope.row.id" @change="selectevent(scope.row.id)" v-model="selected">
-              <option selected>请选择</option>
-              <option>创建任务</option>
-              <option>查看设置</option>
-              <option>删除</option>
-              <option>查看好友</option>
-              <option>定时任务</option>
+            <select :id="scope.row.id" @change="selectevent(scope.row.id, scope.row.operat)" v-model="scope.row.operat" >
+              <option
+              v-for="item in operate"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+              </option>
             </select>
           </template>
         </el-table-column>
@@ -102,10 +102,23 @@ export default {
       dialogVisible: false,
       desc: '',
       id: '',
-      selected: '请选择',
+      selected: 0,
       token: '',           // 获取七牛token
       shows: true,          // 是否显示图片选择按钮
       qrcodeUrl: '',
+      operate:[{
+        label: '请选择', value: 0
+      },{
+        label: '创建任务', value: 1
+      },{
+        label: '查看设置', value: 2
+      },{
+        label: '删除', value: 3
+      },{
+        label: '查看好友', value: 4
+      },{
+        label: '定时任务', value: 5
+      }],
       status:[{
         label:'正常', value:0
         },{
@@ -166,21 +179,25 @@ export default {
       })
       // 获取上传的图片url 上传
     },
-    selectevent: function (val) {
-      if (this.selected == "创建任务") {
+    selectevent: function (val,sls) {
+      console.log(sls);
+      if (sls == 1) {
         this.settask(val);
       }
-      else if (this.selected == "查看设置") {
+      else if (sls == 2) {
         this.gosetting(val);
       }
-      else if (this.selected == "删除") {
+      else if (sls == 3) {
         this.confirm(val);
       }
-      else if (this.selected == "查看好友") {
+      else if (sls == 4) {
         this.gofriendslsit(val);
       }
-      else {
+      else if (sls == 5){
         this.gotiminglist(val)
+      }
+      else{
+        return false;
       }
     },
     goset: function (val) {
@@ -314,6 +331,7 @@ export default {
           if (data.code == 0) {
             self.allweixinlist = data.data.map(v => {
               v.edit = false;
+              v.operat = 0;
               return v
             });
             console.log(self.allweixinlist);
