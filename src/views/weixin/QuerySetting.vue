@@ -99,11 +99,19 @@
         
         <el-row type="flex" class="row-bg">
           <el-col :span="20">
+            <el-select v-model="chatTypeNum" placeholder="请选择" @change="keytype">
+              <el-option
+              v-for="item in chatType"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+              </el-option>
+            </el-select>
             <el-button type="primary" @click="onsubmit()">提 交</el-button>
             <el-button @click="showerrlist = false">取 消</el-button>
           </el-col>
 
-          <el-col :span="3"><el-button type="primary" @click="go()">添加关键字</el-button></el-col>
+          <el-col :span="3"><el-button type="primary" @click="go()">新增关键字回复</el-button></el-col>
         </el-row>
       </div>
       <template>
@@ -165,13 +173,30 @@ export default {
         showerrlist: false,
         showkeylist:false,
         keywordlist:[],
+        allkeywordlist:[],
+        people:[],
+        group:[],
         keycontent:[],
         id: '',
         checkall: false,
-        keywords: []
+        keywords: [],
+        chatType:[{
+          label:'people', value: 0
+        },{
+          label:'group', value:1
+        }],
+        chatTypeNum: 0
       };
     },
     methods: {
+      keytype:function(){
+        if(this.chatTypeNum == 0){
+          this.keywordlist = this.people;
+        }
+        else{
+          this.keywordlist = this.group;
+        }
+      },
       go: function () {
         this.$router.push("/addkeyword")
       },
@@ -295,12 +320,25 @@ export default {
         this.axios.post('/weixin/get_all_keyword')
           .then(function(res){
               var data = res.data  
+              self.people = [];
+              self.group = [];
+              self.allkeywordlist = [];
               if(data.code == 0){
-                self.keywordlist = data.data
+                self.allkeywordlist = data.data
               }    
-              for(var i=0; i < self.keywordlist.length; i++){
-                self.$set(self.keywordlist[i], 'replly', JSON.parse(self.keywordlist[i].reply));
+              for(var i=0; i < self.allkeywordlist.length; i++){
+                self.$set(self.allkeywordlist[i], 'replly', JSON.parse(self.allkeywordlist[i].reply));
               }
+              for(var i=0; i< self.allkeywordlist.length; i++){
+                if(self.allkeywordlist[i].chatType == 'people'){
+                  self.people.push(self.allkeywordlist[i]);
+                }
+                else{
+                  self.group.push(self.allkeywordlist[i]);
+                }
+              }
+              console.log(self.people)
+              self.keytype();
           })
           .catch(function(err){
               console.log(err);
@@ -334,6 +372,7 @@ export default {
                 self.$message("创建失败");
               })
           }
+          self.keywords = [];
         }
       }
     },
