@@ -231,7 +231,7 @@ export default {
         },
         limitbt: function () {
             var self = this;
-            console.log(this.stopbt);
+            // console.log(this.stopbt);
             this.stopbt = true;
             // console.log(this.stopbt);
             setTimeout(function () {
@@ -308,7 +308,7 @@ export default {
                                 })
                                 self.getdataPV();
 
-                                console.log(self.friendlist);
+                                // console.log(self.friendlist);
                             }
                             else {
                                 self.$message("获取失败");
@@ -347,7 +347,7 @@ export default {
                                 subtext: '截图分享总数: ' + self.sharemul + '\n' + '新加好友总数: ' + self.friendsmul + '\n' + 'PV: ' + self.PVmul + '\n' + 'UV: ' + self.UVmul
                             },
                             tooltip: {
-                                formatter: '时间: {b0}<br />{a0}: {c0}<br />{a1}: {c1}<br />分享占比: {c2}%<br />{a3}: {c3}<br />{a4}: {c4}'
+                                formatter: '时间: {b0}<br />{a0}: {c0}<br />{a1}: {c1}<br />{a3}: {c3}<br />{a4}: {c4}<br />分享占比: {c2}%'
                             },
                             xAxis: {
                                 data: self.friendtime
@@ -395,8 +395,8 @@ export default {
                                 }
                             }
                         }
-                        console.log(self.PVlist);
-                        console.log(self.friendlist);
+                        // console.log(self.PVlist);
+                        // console.log(self.friendlist);
                             self.myChart.setOption({
                                 xAxis: {
                                     data: self.friendtime
@@ -443,8 +443,8 @@ export default {
                                 }
                             }
                         }
-                        console.log(self.UVlist);
-                        console.log(self.friendlist);
+                        // console.log(self.UVlist);
+                        // console.log(self.friendlist);
                             self.myChart.setOption({
                                 xAxis: {
                                     data: self.friendtime
@@ -620,7 +620,7 @@ export default {
                             for(var i =0; i< alllist.length; i++){
                                 self.lbType.push(alllist[i])
                             }
-                            console.log(self.lbType);
+                            // console.log(self.lbType);
                             self.lbTypenum = 0;
                         }
                     }
@@ -650,8 +650,8 @@ export default {
                 clearInterval(this.timer);
                 smedia = this.startN;
                 emedia = this.endN;
-                console.log(smedia);
-                console.log(emedia);
+                // console.log(smedia);
+                // console.log(emedia);
                 this.Timer(smedia, emedia);
             }
 
@@ -665,7 +665,7 @@ export default {
                     if (self._init == 1) {
                         self.endN = Number.parseInt(Date.now() / 1000);
                         self.end = this.formate(Number.parseInt(self.endN));
-                        console.log(self.end);
+                        // console.log(self.end);
                     }
                     this.axios.post('/monitor/get_data', {
                         typeId: 0,
@@ -699,7 +699,7 @@ export default {
                                         }]
                                     })
                                     self.getdataPV();
-                                    console.log(self.friendlist);
+                                    // console.log(self.friendlist);
                                 }
                                 else {
                                     self.$message("获取失败");
