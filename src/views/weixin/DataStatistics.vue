@@ -106,6 +106,11 @@ export default {
     mounted() {
         this.drawLine();
     },
+    watch:{
+        lbTypenum(value,oldval){
+            this.drawLine();
+        }
+    },
     methods: {
         otherchart:function(){
             var self = this;
