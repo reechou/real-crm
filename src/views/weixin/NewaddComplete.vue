@@ -14,7 +14,8 @@ export default {
         startN: Number,
         endN: Number,
         tiee: [Number,String],
-        complete: Number
+        complete: Number,
+        typenum: Number
     },
     data(){
         return{
@@ -33,6 +34,18 @@ export default {
     },
     watch:{
         complete(value,oldval){
+            this.getcompletedata();
+        },
+        typenum(value,oldval){
+            this.getdata();
+            this.getcompletedata();
+        },
+        startN(value,oldval){
+            this.getdata();
+            this.getcompletedata();
+        },
+        endN(value,oldval){
+            this.getdata();
             this.getcompletedata();
         }
     },
@@ -60,7 +73,8 @@ export default {
             this.axios.post('/monitor/get_data',{
                 typeId: 0,
                 startTime: self.startN,
-                endTime: self.endN
+                endTime: self.endN,
+                liebianType: self.typenum
             })
                 .then(function(res){
                     var data = res.data;
@@ -103,7 +117,8 @@ export default {
             this.axios.post('/monitor/get_data',{
                 typeId: 0,
                 startTime: self.startC,
-                endTime: self.endC
+                endTime: self.endC,
+                liebianType: self.typenum
             })
                 .then(function(res){
                     var data = res.data;
@@ -217,9 +232,9 @@ export default {
                             type:'line',
                             itemStyle : {  
                                 normal : {  
-                                     color:'#00CD66',
+                                     color:'#008B00',
                                     lineStyle:{  
-                                        color:'#00CD66'  
+                                        color:'#008B00'  
                                     }  
                                 }  
                             },  

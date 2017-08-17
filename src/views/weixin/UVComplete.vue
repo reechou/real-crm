@@ -1,6 +1,6 @@
 <template>
   <div class="charts1">
-       <div id="shareChart" :style="{width:'600px',height:'400px'}">
+       <div id="UVChart" :style="{width:'600px',height:'400px'}">
        </div> 
   </div>
 </template>
@@ -36,7 +36,7 @@ export default {
         complete(value,oldval){
             this.getcompletedata();
         },
-        typenum(value, oldval){
+        typenum(value,oldval){
             this.getdata();
             this.getcompletedata();
         },
@@ -71,7 +71,7 @@ export default {
         getdata:function(){
             var self = this;
             this.axios.post('/monitor/get_data',{
-                typeId: 1,
+                typeId: 3,
                 startTime: self.startN,
                 endTime: self.endN,
                 liebianType: self.typenum
@@ -98,7 +98,7 @@ export default {
                                 data:self.friendid
                             },
                             series:[{
-                                name:'当天每小时分享图片数',
+                                name:'UV',
                                 data: self.friendlist
                             }]
                         })
@@ -112,8 +112,10 @@ export default {
             var self = this;
             self.startC = this.startN - (this.complete*86400);
             self.endC = this.endN - (this.complete*86400);
+            console.log(self.startC);
+            console.log(self.endC);
             this.axios.post('/monitor/get_data',{
-                typeId: 1,
+                typeId: 3,
                 startTime: self.startC,
                 endTime: self.endC,
                 liebianType: self.typenum
@@ -143,11 +145,11 @@ export default {
         },
         drawLine: function() {
             var self = this;
-            this.myChart = echarts.init(document.getElementById('shareChart'));
+            this.myChart = echarts.init(document.getElementById('UVChart'));
             this.myChart.setOption({
                 backgroundColor: '#eef1f6',
                 title: {
-                    text: '分享图片比较',
+                    text: 'UV比较',
                     textAlign: 'left',
                     textBaseline:'top',
                     subtext: '',
@@ -160,7 +162,7 @@ export default {
                         trigger: 'axis'
                     },
                     legend:{
-                        data:['当天每小时分享图片数','比较线']
+                        data:['UV','比较线']
                     },
                     toolbox:{
                         show: false,
@@ -210,7 +212,7 @@ export default {
                     }],
                     series: [
                         {
-                            name:'当天每小时分享图片数',
+                            name:'UV',
                             type:'line',
                             data:[],
                             markPoint: {
