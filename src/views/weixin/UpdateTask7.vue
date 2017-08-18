@@ -19,6 +19,7 @@
       </div>
       <el-form-item label="图片消息">
         <div id="container">
+          <el-button size="small" @click="delpic">删除图片</el-button>
           <label for="img" class="el-button el-button--primary el-button--small">
             <i class="el-icon-upload"></i>
             <span>点击上传图片</span>
@@ -93,6 +94,9 @@ export default {
     };
   },
   methods: {
+    delpic:function(){
+      this.task.data.picMsg = '';
+    },
     addtext: function () {
       this.textMsgs.push({ value: '' })
     },

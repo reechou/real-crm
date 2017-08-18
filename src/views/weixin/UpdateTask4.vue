@@ -24,6 +24,7 @@
       </el-form-item>
       <el-form-item label="头像">
         <div id="container">
+          <el-button size="small" @click="delpic">删除图片</el-button>
           <label for="img" class="el-button el-button--primary el-button--small">
             <i class="el-icon-upload"></i>
             <span>点击上传图片</span>
@@ -36,6 +37,7 @@
       </el-form-item>
       <el-form-item label="背景">
         <div id="container1">
+          <el-button size="small" @click="delback">删除图片</el-button>
           <label for="img1" class="el-button el-button--primary el-button--small">
             <i class="el-icon-upload"></i>
             <span>点击上传图片</span>
@@ -81,6 +83,12 @@ export default {
     };
   },
   methods: {
+    delpic:function(){
+      this.task.data.headImg.headUrl = '';
+    },
+    delback:function(){
+      this.task.data.headImg.backgroundUrl = '';
+    },
     uploadimg: function () {
       var self = this;
       var uploader = Qiniu.uploader({

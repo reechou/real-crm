@@ -19,11 +19,12 @@
       </div>
        <el-form-item label="图片消息">
           <div id="container">
+            <el-button size="small" @click="delpic">删除图片</el-button>
             <label for="img" class="el-button el-button--primary el-button--small">
               <i class="el-icon-upload"></i><span>点击上传图片</span>
+              <input type="file" id="img" class="hide" />
             </label>
-            <div><img :src="task.data.picMsg" alt="" width="100"></div>
-            <input type="file" id="img" class="hide" />
+            <div><img :src="URL" alt="" width="100"></div>
           </div>
       </el-form-item> 
       <el-form-item label="链接消息">
@@ -83,10 +84,19 @@ export default {
           }
         },
         textMsgs: [{value: ''}],
-        cardMsgs: [{value: ''}]
-      };
+        cardMsgs: [{value: ''}],
+        uptoken:'',
+        URL: '',
+        isdelpic: null,
+        isdel: false
+      }
     },
     methods: {
+      delpic:function(){
+        this.isdel = true;
+        console.log(this.isdelpic);
+        this.URL = '';
+      },
       addtext: function (){
         this.textMsgs.push({value: ''})
       },
@@ -142,7 +152,8 @@ export default {
             var domain = up.getOption('domain');
             var res = JSON.parse(info);
             var urlImg = 'http://7xld1x.com1.z0.glb.clouddn.com/' + res.key;
-            self.task.data.picMsg = urlImg
+            self.URL = urlImg
+            console.log(self.URL);
           },
           'Error': function(up, err, errTip) {
                   //上传出错时，处理相关的事情
@@ -201,7 +212,8 @@ export default {
         this.axios.get('http://wxmp.gatao.cn/mypic/gettoken').then((response) => {
           var data = response.data;        
           // if(data.state == 1000){
-            self.uptoken = data.token;
+            this.uptoken = data.token;
+            console.log(this.uptoken);
             self.uploadimg()
             for(var i in self.task.data.linkMsgs){
                 self.uploadaudio(i)
@@ -213,29 +225,46 @@ export default {
       },
       onSubmit: function () {
         var self = this
-        this.task.data.textMsgs = []
-        this.task.data.cardMsgs = []        
-        for(var i in this.textMsgs){
-          this.task.data.textMsgs.push(this.textMsgs[i].value)
+        if(!this.isdel){
+          this.task.data.textMsgs = []
+          this.task.data.cardMsgs = []        
+          for(var i in this.textMsgs){
+            this.task.data.textMsgs.push(this.textMsgs[i].value)
+          }
+          for(var i in this.cardMsgs){
+            this.task.data.cardMsgs.push(this.cardMsgs[i].value)
+          }
+          if(this.URL == ""){
+            this.task.data =  _.omit(this.task.data, 'picMsg')
+            }
+            else{
+              this.task.data.picMsg = this.URL;
+            }
+            if('linkMsgs' in this.task.data && this.task.data.linkMsgs.length == 0){
+            this.task.data =  _.omit(this.task.data, 'linkMsgs')
+            }
+            if(this.task.data.cardMsgs == ""){
+            this.task.data =  _.omit(this.task.data, 'cardMsgs')
+            }
+            if(this.task.data.textMsgs == ""){
+            this.task.data =  _.omit(this.task.data, 'textMsgs')
+            }
+          this.task.data.interval = Number.parseInt(this.task.data.interval)
+          this.task.data = JSON.stringify(this.task.data)
         }
-        for(var i in this.cardMsgs){
-          this.task.data.cardMsgs.push(this.cardMsgs[i].value)
+        else{
+          if(this.URL == ""){
+            this.isdelpic =  _.omit(this.task.data, 'picMsg')
+            }
+            else{
+              this.isdelpic.picMsg = this.URL;
+            }
+            this.isdelpic.interval = Number.parseInt(this.isdelpic.interval);
+          this.task.data = JSON.stringify(this.isdelpic);
         }
-         if(this.task.data.picMsg == ""){
-          this.task.data =  _.omit(this.task.data, 'picMsg')
-          }
-           if('linkMsgs' in this.task.data && this.task.data.linkMsgs.length == 0){
-          this.task.data =  _.omit(this.task.data, 'linkMsgs')
-          }
-           if(this.task.data.cardMsgs == ""){
-          this.task.data =  _.omit(this.task.data, 'cardMsgs')
-          }
-          if(this.task.data.textMsgs == ""){
-          this.task.data =  _.omit(this.task.data, 'textMsgs')
-          }
-        this.task.data.interval = Number.parseInt(this.task.data.interval)
-        this.task.ifDefault = this.task.ifDefault ? 1 : 0
-        this.task.data = JSON.stringify(this.task.data)
+
+          this.task.ifDefault = this.task.ifDefault ? 1 : 0
+        console.log(this.task);
         this.axios.post('/weixin/update_task', this.task)
           .then(function(res){
               var data = res.data
@@ -261,6 +290,7 @@ export default {
               console.log(data)    
               if(data.code == 0){
                   data.data.data = JSON.parse(data.data.data)
+                  console.log(data.data.data)
                   self.task = _.assign(self.task, data.data)
                   self.task.ifDefault = self.task.ifDefault==1 ? true : false
                   self.textMsgs = []
@@ -271,6 +301,9 @@ export default {
                    for(var i in data.data.data.cardMsgs){
                     self.cardMsgs.push({value : data.data.data.cardMsgs[i]})
                   }
+                  self.URL = data.data.data.picMsg;
+                  self.isdelpic = self.task.data;
+                  self.getuptoken();
               }   
           })
           .catch(function(err){
@@ -281,7 +314,7 @@ export default {
     created: function () {
       this.id = Number.parseInt(this.$route.query.id)
       this.task.id = Number.parseInt(this.$route.query.id)
-      this.getuptoken()
+      // this.getuptoken()
       this.getupdateset()
     }
 }

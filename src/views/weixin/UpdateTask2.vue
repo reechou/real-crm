@@ -1,8 +1,8 @@
 <template>
   <div class="admin-userlist">
     <div class="contrue-button">
-      <el-button type="primary"  :disabled="!linkorpic">文字+图片</el-button>
-      <el-button type="primary" :disabled="linkorpic" >文字+链接</el-button>
+      <el-button type="primary"  :disabled="!linkorpic" @click="isdel = false">文字+图片</el-button>
+      <el-button type="primary" :disabled="linkorpic" @click="isdel=false">文字+链接</el-button>
     </div>
     <el-form ref="verifysetting" :model="task" label-width="80px" v-show="linkorpic">
       <el-form-item label="是否默认">
@@ -18,8 +18,8 @@
         </el-radio-group>
       </el-form-item> -->
       <el-form-item label="图片" v-if="task.data.type == 'img'">
+        <el-button @click="delpic1()" style="margin-bottom:10px;">删除</el-button>
         <template v-for="(item, key) in media">
-  
           <div :id="'containerimg'+key">
             <label :for="'img'+key" class="el-button el-button--primary el-button--small">
               <i class="el-icon-upload"></i>
@@ -73,6 +73,7 @@
       <el-form-item label="图片" v-if="task2.data.type == 'link'">
         <!-- <template v-for="(item, key) in picUrl"> -->
           <div id="containerimgs">
+            <el-button size="small" @click="delpic2()">删除</el-button>
             <label  class="el-button el-button--primary el-button--small">
               <i class="el-icon-upload"></i>
               <span>点击上传图片</span>
@@ -125,10 +126,21 @@ export default {
       media: [{ value: '' }],
       media1: [{ value: '' }],
       linkorpic:true,
-      uptoken:''
+      uptoken:'',
+      savedata1: null,
+      savedata2: null,
+      isdel: false
     };
   },
   methods: {
+    delpic1:function(){
+      this.media = [{ value: '' }];
+      this.isdel = true
+    },
+    delpic2: function(){
+      this.task2.data.picUrl = '';
+      this.isdel = true;
+    },
     // islinkorpic:function(val){
     //   if((val == 0 && this.linkorpic) || (val == 1 && !this.linkorpic)){
     //     return false;
