@@ -110,10 +110,12 @@ export default {
         },
         getcompletedata:function(){
             var self = this;
+            var UVtime = [];
             self.startC = this.startN - (this.complete*86400);
             self.endC = this.endN - (this.complete*86400);
             console.log(self.startC);
             console.log(self.endC);
+            
             this.axios.post('/monitor/get_data',{
                 typeId: 3,
                 startTime: self.startC,
@@ -127,8 +129,21 @@ export default {
                     if(data.code == 0){
                         self.clllist = data.data;
                         for (var i in self.clllist){
-                            self.completelist.push(self.clllist[i].data);
-                            self.completeid.push(self.formate(self.clllist[i].timeSeries));
+                            // self.completelist.push(self.clllist[i].data);
+                            UVtime.push(self.formate(self.clllist[i].timeSeries));
+                        }
+                        if(self.friendid.length - UVtime.length == 0){
+                            for(var i in self.clllist){
+                                self.completelist.push(self.clllist[i].data);
+                            }
+                        }
+                        else{
+                            for(var i=0; i<self.friendlist.length - UVtime.length; i++){
+                                self.completelist.push(0);
+                            }
+                            for(var i in self.clllist){
+                                self.completelist.push(self.clllist[i].data);
+                            }
                         }
                         console.log(self.completeid);
                         self.myChart.setOption({

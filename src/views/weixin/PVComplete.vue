@@ -110,6 +110,7 @@ export default {
         },
         getcompletedata:function(){
             var self = this;
+            var PVtime = [];
             self.startC = this.startN - (this.complete*86400);
             self.endC = this.endN - (this.complete*86400);
             console.log(self.startC);
@@ -127,10 +128,25 @@ export default {
                     if(data.code == 0){
                         self.clllist = data.data;
                         for (var i in self.clllist){
-                            self.completelist.push(self.clllist[i].data);
-                            self.completeid.push(self.formate(self.clllist[i].timeSeries));
+                            // self.completelist.push(self.clllist[i].data);
+                            // self.completeid.push(self.formate(self.clllist[i].timeSeries));
+                            PVtime.push(self.formate(self.clllist[i].timeSeries));
                         }
-                        console.log(self.completeid);
+                        if(self.friendid.length - PVtime.length == 0){
+                            for(var i in self.clllist){
+                                self.completelist.push(self.clllist[i].data);
+                            }
+                        }
+                        else{
+                            for(var i=0; i<self.friendlist.length - PVtime.length; i++){
+                                self.completelist.push(0);
+                            }
+                            for(var i in self.clllist){
+                                self.completelist.push(self.clllist[i].data);
+                            }
+                        }
+
+                        console.log(self.completelist);
                         self.myChart.setOption({
                             series:[{
                                 name:'比较线',
