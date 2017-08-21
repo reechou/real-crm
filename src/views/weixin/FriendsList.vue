@@ -8,7 +8,6 @@
                 <el-button type="primary" @click="getfriendslist(1)" style="margin-right: 30px;">显示全部好友</el-button>
                 <label>标签列表: </label>
                 <el-button type="primary" v-for="item in alltagslist" @click="getfbytag(item.id),color2(0)" v-bind:style="{background:tbuttoncolor}">{{ item.groupName }}</el-button>
-                <!-- -->
             </div>
             <div style="width:100%; padding:10px">
                 <label>具体时间段查询:</label>

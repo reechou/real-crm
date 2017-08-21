@@ -1,13 +1,13 @@
 <template>
   <div class="admin-userlist">
     <div style="width: 400px;padding: 10px">
-      <el-button type="primary" size="small" @click="goset()" style="margin-bottom: 10px">设置新微信</el-button>
-  
+      <el-button type="primary" size="small" @click="showaddweixin = true" style="margin-bottom: 10px">设置新微信</el-button>
+
       <el-input placeholder="请输入微信号" icon="search" v-model="searchcontent" :on-icon-click="handleIconClick" @keyup.enter.native="show($event)"></el-input>
     </div>
     <template>
       <el-table :data="weixinlist" style="width: 100%;margin-bottom: 80px" v-loading="loading" element-loading-text="拼命加载中">
-        <el-table-column label="id"> 
+        <el-table-column label="id">
           <template scope="scope">
             {{ scope.row.id }}
           </template>
@@ -16,7 +16,7 @@
         <!-- <el-table-column prop="wxId" label="微信id"></el-table-column>  -->
         <el-table-column prop="wechat" label="微信号"> </el-table-column>
         <!-- <el-table-column label="是否已执行默认任务"> <template scope='scope'>{{ifExecDefaultTask(scope.row.ifExecDefaultTask)}}</template></el-table-column>
-            <el-table-column label="创建日期"> <template scope='scope'>{{formate(scope.row.createAt)}}</template></el-table-column>   -->
+                  <el-table-column label="创建日期"> <template scope='scope'>{{formate(scope.row.createAt)}}</template></el-table-column>   -->
         <el-table-column label="最后心跳时间">
           <template scope='scope'>{{formate(scope.row.lastHeartbeat)}}</template>
         </el-table-column>
@@ -30,7 +30,8 @@
           <template scope="scope">
             <div class="am-form-group an-form-file" :id="scope.$index" v-show="scope.row.edit">
               <label type="button" class="btn btn-default" :for="scope.$index + 'img'">
-                <i class="glyphicon glyphicon-open-file"></i><p >点击选图</p>
+                <i class="glyphicon glyphicon-open-file"></i>
+                <p>点击选图</p>
                 <input type="file" :id="scope.$index + 'img'" style="display:none;" />
               </label>
               <img :src="qrcodeUrl" alt="" width="100">
@@ -43,15 +44,11 @@
             </el-tooltip>
           </template>
         </el-table-column>
-        
+
         <el-table-column label="状态" align="center">
           <template scope="scope">
-            <select v-model="scope.row.status"  @change="StatusSelect(scope.row.status,scope.row.id)" placeholder="请选择" :id="scope.row.id">
-              <option 
-              v-for="item in status"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
+            <select v-model="scope.row.status" @change="StatusSelect(scope.row.status,scope.row.id)" placeholder="请选择" :id="scope.row.id">
+              <option v-for="item in status" :key="item.value" :label="item.label" :value="item.value">
               </option>
             </select>
           </template>
@@ -59,15 +56,11 @@
         <el-table-column label="操作">
           <template scope='scope'>
             <!-- <el-button type="text" size="small" @click="settask(scope.row.id)">创建任务</el-button>
-              <el-button type="text" size="small" @click="gosetting(scope.row.id)">查看设置</el-button>  
-              <el-button type="text" size="small" @click="confirm(scope.row.id)">删除</el-button>
-              <el-button type="text" size="small" @click="gofriendslsit(scope.row.id)">查看好友</el-button>  -->
-            <select :id="scope.row.id" @change="selectevent(scope.row.id, scope.row.operat)" v-model="scope.row.operat" >
-              <option
-              v-for="item in operate"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
+                    <el-button type="text" size="small" @click="gosetting(scope.row.id)">查看设置</el-button>  
+                    <el-button type="text" size="small" @click="confirm(scope.row.id)">删除</el-button>
+                    <el-button type="text" size="small" @click="gofriendslsit(scope.row.id)">查看好友</el-button>  -->
+            <select :id="scope.row.id" @change="selectevent(scope.row.id, scope.row.operat)" v-model="scope.row.operat">
+              <option v-for="item in operate" :key="item.value" :label="item.label" :value="item.value">
               </option>
             </select>
           </template>
@@ -84,6 +77,36 @@
         <el-button type="primary" @click="updatedeschttp()">确 定</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog title="添加新微信" v-model="showaddweixin">
+      <el-form ref="ruleForm" :model="ruleForm" :rules = "rules" label-width="80px" class="demo-ruleForm">
+        <el-form-item label="微信号" prop="newWeixin">
+          <el-input v-model="ruleForm.newWeixin"></el-input>
+        </el-form-item>
+        <el-form-item label="关键字id">
+          <el-select v-model="ruleForm.keywordid" filterable multiple placeholder="请选择或搜索ID/多选">
+            <el-option v-for="item in verifySetting" :key="item.id" :label="item.id" :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="好友验证id">
+          <el-select v-model="ruleForm.verifyid" filterable placeholder="请选择或搜索ID">
+            <el-option v-for="item in keywordSetting" :key="item.id" :label="item.id" :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="任务id">
+          <el-select v-model="ruleForm.tasks" filterable multiple placeholder="请选择或搜索ID/多选">
+            <el-option v-for="item in tasklist" :key="item.id" :label="item.id" :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="submitForm()">提交</el-button>
+          <el-button @click="showUpdate = false">取消</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
@@ -92,6 +115,19 @@ export default {
   name: 'weixinlist',
   data() {
     return {
+      ruleForm: {
+        newWeixin: null,
+        keywordid: [],
+        verifyid: null,
+        tasks: []
+      },
+      rules: {
+        newWeixin: [
+          { required: true, message: '请输入微信号', trigger: 'blur' }
+        ]
+      },
+      showaddweixin: false,
+
       weixinlist: [],
       loading: false,
       searchcontent: '',
@@ -106,80 +142,158 @@ export default {
       token: '',           // 获取七牛token
       shows: true,          // 是否显示图片选择按钮
       qrcodeUrl: '',
-      operate:[{
+      operate: [{
         label: '请选择', value: 0
-      },{
+      }, {
         label: '创建任务', value: 1
-      },{
+      }, {
         label: '查看设置', value: 2
-      },{
+      }, {
         label: '删除', value: 3
-      },{
+      }, {
         label: '查看好友', value: 4
-      },{
+      }, {
         label: '定时任务', value: 5
       }],
-      status:[{
-        label:'正常', value:0
-        },{
-          label:'满好友', value:1
-        },{
-          label: '被封号', value: 2
-        }]
+      status: [{
+        label: '正常', value: 0
+      }, {
+        label: '满好友', value: 1
+      }, {
+        label: '被封号', value: 2
+      }],
+      verifySetting: [],
+      keywordSetting: [],
+      tasklist: []
+
     };
   },
   methods: {
-    StatusSelect: function (val,id) {
+    submitForm() {
       var self = this;
-        console.log(val);
-        console.log(id);
-        this.axios.post("/weixin/update_weixin_status",{
-          id: id,
-          status: val
+      // console.log(self.ruleForm.newWeixin);
+      // console.log(self.ruleForm.verifyid);
+      // console.log(self.ruleForm.keywordid);
+      // console.log(self.ruleForm.tasks);
+      this.axios.post('/weixin/create_weixin', {
+         wechat: self.ruleForm.newWeixin,
+         verifyId: self.ruleForm.verifyid, 
+         keywordIds: self.ruleForm.keywordid, 
+         taskIds: self.ruleForm.tasks 
+         })
+        .then((response) => {
+          var data = response.data
+          if (data.code == 0) {
+            self.$message("设置成功");
+            self.showaddweixin = false;
+            self.ruleForm.newWeixin = null;
+            self.ruleForm.verifyid = null;
+            self.ruleForm.keywordid = [];
+            self.ruleForm.tasks = [];
+          } else {
+            self.$message("设置失败")
+          }
+          console.log(data)
+        }, (response) => {
+          console.log(response);
+          self.$message("设置失败")
+        });
+
+    },
+    gettasklist: function () {
+      var self = this
+      this.axios.post('/weixin/get_all_task')
+        .then(function (res) {
+          var data = res.data
+          console.log(data)
+          if (data.code == 0) {
+            self.tasklist = data.data
+          }
         })
-        .then(function(res){
+        .catch(function (err) {
+          console.log(err);
+          self.loading = false
+        })
+    },
+    getsettinglist: function () {
+      var self = this
+      this.axios.post('/weixin/get_all_verify')
+        .then(function (res) {
+          var data = res.data
+          console.log(data)
+          if (data.code == 0) {
+            self.verifySetting = data.data
+          }
+        })
+        .catch(function (err) {
+          console.log(err);
+        })
+    },
+    getkeywordlist: function () {
+      var self = this
+      this.axios.post('/weixin/get_all_keyword')
+        .then(function (res) {
+          var data = res.data
+          console.log(data)
+          if (data.code == 0) {
+            self.keywordSetting = data.data
+          }
+        })
+        .catch(function (err) {
+          console.log(err);
+        })
+    },
+    StatusSelect: function (val, id) {
+      var self = this;
+      console.log(val);
+      console.log(id);
+      this.axios.post("/weixin/update_weixin_status", {
+        id: id,
+        status: val
+      })
+        .then(function (res) {
           var data = res.data;
-          if(data.code == 0){
+          if (data.code == 0) {
             self.$message("更新成功");
             self.getweixinlist();
           }
-          else{
+          else {
             self.$message("更新失败");
           }
         })
-        .catch(function(err){
+        .catch(function (err) {
           self.$message("上传失败");
           console.log(err);
         })
 
     },
-    updateQR: function(val) {
+    updateQR: function (val) {
       var self = this;
       console.log(val);
       console.log(this.qrcodeUrl);
-      this.axios.post('/weixin/update_weixin_qrcode',{
+      this.axios.post('/weixin/update_weixin_qrcode', {
         id: val,
         qrcodeUrl: this.qrcodeUrl
       })
-      .then(function(res){
-        var data = res.data;
-        if(data.code == 0){
-          self.$message("上传成功");
-          self.getweixinlist();
-          self.$router.go(0);
-        }
-        else{
+        .then(function (res) {
+          var data = res.data;
+          if (data.code == 0) {
+            self.$message("上传成功");
+            self.getweixinlist();
+            self.$router.go(0);
+          }
+          else {
+            self.$message("上传失败");
+          }
+        })
+        .catch(function (err) {
           self.$message("上传失败");
-        }
-      })
-      .catch(function(err){
-        self.$message("上传失败");
-        console.log(err);
-        self.qrcodeUrl = '';
-      })
+          console.log(err);
+          self.qrcodeUrl = '';
+        })
       // 获取上传的图片url 上传
     },
-    selectevent: function (val,sls) {
+    selectevent: function (val, sls) {
       console.log(sls);
       if (sls == 1) {
         this.settask(val);
@@ -193,16 +307,16 @@ export default {
       else if (sls == 4) {
         this.gofriendslsit(val);
       }
-      else if (sls == 5){
+      else if (sls == 5) {
         this.gotiminglist(val)
       }
-      else{
+      else {
         return false;
       }
     },
-    goset: function (val) {
-      this.$router.push("/setweixin?id=" + val)
-    },
+    // goset: function (val) {
+    //   this.$router.push("/setweixin?id=" + val)
+    // },
     confirm(val) {
       var self = this
       this.$confirm('是否删除?', '提示', {
@@ -430,6 +544,9 @@ export default {
   },
   created: function () {
     this.getweixinlist();
+    this.getsettinglist();
+    this.getkeywordlist();
+    this.gettasklist();
   }
 }
 </script>

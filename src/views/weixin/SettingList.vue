@@ -6,6 +6,11 @@
     <template>
       <el-table
         :data="settinglist" style="width: 100%;margin-bottom: 80px" v-loading="loading" element-loading-text="拼命加载中">
+        <el-table-column label="id">
+          <template scope="scope">
+            <span>{{ scope.row.id }}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="interval" label="时间间隔"> </el-table-column>
         <el-table-column label="是否自动通过好友添加"> <template scope='scope'>{{ifAutoVerified(scope.row.ifAutoVerified)}}</template></el-table-column>
         <el-table-column label="回复内容"> <template scope='scope'><el-button type="text" size="small" @click="getreply(scope.row.reply)">查看</el-button></template></el-table-column>      

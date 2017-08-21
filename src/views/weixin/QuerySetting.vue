@@ -1,6 +1,9 @@
 <template>
   <div class="admin-userlist">
-    <h1>好友通过验证设置</h1>
+    <el-row :gutter="20" style="margin-bottom: 10px;">
+      <el-col :span="4"><h1>好友通过验证设置</h1></el-col>
+      <el-col :span="6"><el-button type="primary" size="small" @click="showeverifylist = true">新增好友通过验证</el-button></el-col>
+    </el-row>
     <template>
      <el-table
         :data="verifySetting" style="width: 100%;margin-bottom: 80px" v-loading="loading" element-loading-text="拼命加载中">
@@ -23,7 +26,6 @@
       </el-table>
     </template>
 
-    
     
     <el-row :gutter="20" style="margin-bottom:10px;">
       <el-col :span="3"><h1>关键字设置</h1></el-col>
@@ -94,9 +96,6 @@
     <el-dialog title="关键字设置列表" v-model="showerrlist">
       选择设置{{keywords}}
       <div style="margin-bottom:20px;">
-        
-        
-        
         <el-row type="flex" class="row-bg">
           <el-col :span="20">
             <el-select v-model="chatTypeNum" placeholder="请选择" @change="keytype">
@@ -117,7 +116,7 @@
       <template>
         <el-checkbox-group v-model="keywords">
           <input type="checkbox" @click="checkAll()"> 全选 &nbsp;&nbsp;
-          (已选人数:{{ keywords.length }})
+          (已选个数:{{ keywords.length }})
           <el-table :data="keywordlist" style="width: 100%;margin-bottom: 80px" >
             <el-table-column label="id">
               <template scope="scope">
@@ -155,6 +154,54 @@
       </template>
     </el-dialog>
 
+    <el-dialog title="好友验证设置列表" v-model="showeverifylist">
+      选择设置{{ verify }}
+      <div style="margin-bottom:20px;">
+        <el-row type="flex" class="row-bg">
+          <el-col :span="20">
+            <el-button type="primary" @click="onSubmitVerify()">提 交</el-button>
+            <el-button @click="showeverifylist = false">取 消</el-button>
+          </el-col>
+        </el-row>
+      </div>
+      <template>
+        <el-radio-group v-model="verify">
+          <el-table :data="verifylist" style="width: 100%;margin-bottom: 80px" >
+            <el-table-column label="id">
+              <template scope="scope">
+                <el-radio :label="scope.row.id"></el-radio>
+              </template>
+            </el-table-column>
+
+            <el-table-column label="时间间隔">
+              <template scope="scope">
+                {{ scope.row.interval }}
+              </template>
+            </el-table-column>
+
+            <el-table-column label="自动通过好友验证">
+              <template scope="scope">
+                {{ ifAutoVerified(scope.row.ifAutoVerified) }}
+              </template>
+            </el-table-column>
+
+            <el-table-column label="内容" width="500px">
+              <template scope="scope">
+                <el-table :data="scope.row.replly">
+                  <el-table-column property="content" label="内容详情">
+                  <template scope="scope">
+                  <div v-if="scope.row.msgType == 3"><img v-bind:src="scope.row.content" width="100"></div>
+                  <div v-else>{{scope.row.content}}</div>      
+                  </template>
+                  </el-table-column>
+                </el-table>
+              </template>
+            </el-table-column>
+
+          </el-table>
+        </el-radio-group>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -180,12 +227,15 @@ export default {
         id: '',
         checkall: false,
         keywords: [],
+        verify: null,
         chatType:[{
           label:'people', value: 0
         },{
-          label:'group', value:1
+          label:'group', value: 1
         }],
-        chatTypeNum: 0
+        chatTypeNum: 0,
+        showeverifylist: false,
+        verifylist: []
       };
     },
     methods: {
@@ -305,7 +355,13 @@ export default {
               self.contentlist = [];
               self.keycontent = [];   
               if(data.code == 0){
-                self.verifySetting = [data.data.verifySetting]
+                if(data.data.verifySetting.bindId == 0){
+                  self.verifySetting = [];
+                }
+                else{
+                  self.verifySetting = [data.data.verifySetting];
+                }
+                console.log(self.verifySetting)
                 self.contentlist = data.data.verifySetting.reply;
                 self.keywordSetting = data.data.keywordSetting;             
               }    
@@ -344,6 +400,23 @@ export default {
               console.log(err);
           })
       },
+      getsettinglist: function () {
+        var self = this
+        this.axios.post('/weixin/get_all_verify')
+          .then(function (res) {
+            var data = res.data
+            console.log(data)
+            if (data.code == 0) {
+              self.verifylist = data.data
+              for(var i=0; i<self.verifylist.length; i++){
+                self.$set(self.verifylist[i], 'replly', JSON.parse(self.verifylist[i].reply))
+              }
+            }
+          })
+          .catch(function (err) {
+            console.log(err);
+          })
+      },
       onsubmit:function(){
         var self = this;
         var weixinid = Number.parseInt(this.$route.query.id)
@@ -374,12 +447,42 @@ export default {
           }
           self.keywords = [];
         }
+      },
+      onSubmitVerify:function(){
+        var self = this;
+        var weixinid = Number.parseInt(this.$route.query.id)
+        if(this.verify == null){
+          self.$message("请选择好友验证设置");
+        }
+        else{
+            this.axios.post('/weixin/create_verify',{
+              weixinId: weixinid,
+              weixinVerifySettingId: Number.parseInt(this.verify)
+            })
+              .then(function(res){
+                var data = res.data;
+                if(data.code == 0){
+                  self.$message("创建成功");
+                  self.showeverifylist = false;
+                  self.getweixinlist();
+                }
+                else{
+                  self.$message("创建失败");
+                }
+              })
+              .catch(function(err){
+                console.log(err);
+                self.$message("创建失败");
+              })
+          self.verify = null;
+        }
       }
     },
     created: function () {
       this.id = Number.parseInt(this.$route.query.id)
       this.getweixinlist();
       this.getkeywordlist();
+      this.getsettinglist();
     }
 }
 </script>

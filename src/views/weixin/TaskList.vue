@@ -6,7 +6,7 @@
     </div>
     <template>
     <el-checkbox-group v-model="ids">
-    <input type="checkbox" @click="checkAll()">全选
+    <input type="checkbox" @click="checkAll()">全选&nbsp;&nbsp;&nbsp;&nbsp;选择任务数 : <span style="color:red">{{ids.length}}</span>
     <el-table
       :data="tasklist" style="width: 100%;margin-bottom: 80px" v-loading="loading" element-loading-text="拼命加载中">
       <el-table-column prop="id" label="选择"><template scope="scope">
