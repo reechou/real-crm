@@ -35,7 +35,10 @@
                 <input type="file" :id="scope.$index + 'img'" style="display:none;" />
               </label>
               <img :src="qrcodeUrl" alt="" width="100">
-              <el-button type="primary" @click="updateQR(scope.row.id),scope.row.edit=false" size="small" v-show="qrcodeUrl != ''">確定</el-button>
+              <el-row :gutter="20">
+              <el-col :span="12"><el-button type="primary" @click="updateQR(scope.row.id),scope.row.edit=false" size="small" v-show="qrcodeUrl != ''">確定</el-button></el-col>
+              <el-col :span="12"><el-button type="primary" @click="scope.row.edit=false,qrcodeUrl = ''" size="small" v-show="qrcodeUrl != ''">取消</el-button></el-col>
+              </el-row>
             </div>
             <el-button type="text" size="small" @click="scope.row.edit=true" v-if="!scope.row.edit">更新</el-button>
             <el-tooltip placement="bottom" v-if="!scope.row.edit">
@@ -103,6 +106,7 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submitForm()">提交</el-button>
+
         </el-form-item>
       </el-form>
     </el-dialog>
