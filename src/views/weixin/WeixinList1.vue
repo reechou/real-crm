@@ -3,7 +3,7 @@
     <div style="width: 100%; padding: 10px">
       <el-row>
         <el-col :span="21">
-          <el-button type="primary" @click="showWeixinlist=true" style="margin-top: 10px;">获取好友</el-button>
+          <el-button type="primary" @click="showWeixinlist=true" style="margin-top: 10px;">获取微信</el-button>
           <el-button type="primary" @click="reset()" style="margin-right: 30px;">重置</el-button>
         </el-col>
         <el-col :span="3">
@@ -268,6 +268,7 @@ export default {
     // 通过标签筛选得到的好友列表
     getfbytag: function (val) {
       var self = this;
+      this.friendpack = [];
       this.tagid = val;
       this.istag = true;           // 有标签筛选
       this.isTimelist = false;    // 与时间筛选无关
@@ -355,6 +356,7 @@ export default {
     getfriendslist: function (val) {
       console.log(this.isTimelist);
       var self = this;
+      this.friendpack = [];
       this.tagid = null;
       this.istag = false;        // 确定不是通过标签筛选
       var offval = (val - 1) * self.pagesize;
@@ -397,6 +399,7 @@ export default {
     // 通过时间筛选得到的好友
     getfribytat: function (st, ed) {
       console.log(this.issearch);
+      this.friendpack = [];
       var self = this;
       var datae = new Date();
       let request = new XMLHttpRequest();
@@ -528,6 +531,7 @@ export default {
     // 通过时间选择器选择时间获取好友列表
     searchbyTime: function () {
       var self = this;
+      this.friendpack = [];
       let request = new XMLHttpRequest();
       this.isTimelist = true;
       if (this.startTime == null || this.endTime == null) {
@@ -601,9 +605,6 @@ export default {
             })
           }
           console.log(packnum);
-          //   console.log(this.taskids);
-          //   console.log(wxid[i]);
-          //   console.log(friendid);
           this.axios.post('/weixin/batch_create_selected_friends_task', packnum)
             .then(function (res) {
               var data = res.data;
