@@ -40,7 +40,7 @@
       </div>
       <div style="padding: 10px;">
         <el-button type="primary" @click="getweixinlist()">显示全部微信</el-button>
-        <el-button type="primary" @click="showWeixinlist = false, getfriendslist(1)">确定</el-button>
+        <el-button type="primary" @click="showWeixinlist = false">确定</el-button>
         <el-button type="primary" @click="showWeixinlist=false, weixinids=[]">取消</el-button>
       </div>
       <template>
@@ -76,9 +76,15 @@
         <el-table-column type="expand">
           <template scope="scope">
             <el-table :data="friendpack[scope.$index]" style="width: 100%">
-              <el-table-column label="id">
+              <el-table-column label="id" width="120">
                 <template scope="scope">
                   <span>{{ scope.row.id }}</span>
+                </template>
+              </el-table-column>
+
+              <el-table-column label="WXId">
+                <template scope="scope">
+                  <span>{{ scope.row.userName }}</span>
                 </template>
               </el-table-column>
 
@@ -236,7 +242,6 @@ export default {
           var data = res.data;
           if (data.code == 0) {
             self.alltagslist = data.data;
-            console.log(self.alltagslist);
           }
         })
     },
@@ -278,10 +283,7 @@ export default {
       self.endT = Math.floor(new Date(this.endTime).getTime() / 1000);
 
       if (this.twoclick.startTime == 0 && this.twoclick.endTime == 0) {    // 判断是第一次点击时间快捷按钮
-        console.log(111);
         for (var i = 0; i < self.weixinids.length; i++) {
-          // console.log(self.startT);
-          // console.log(self.endT);
           // this.axios.post('/weixin/get_weixin_friends_from_tag', {
           //   weixinId: self.weixinids[i].id,
           //   tagId: val,
@@ -303,7 +305,7 @@ export default {
             startTime: self.startT,
             endTime: self.endT
           }))
-          console.log(request);
+          // console.log(request);
           if (request.status == 200) {
             var contactlist = [];
             var guodu = JSON.parse(request.responseText).data;
@@ -313,7 +315,7 @@ export default {
             self.friendpack[i] = contactlist;
           }
         }
-        console.log(this.friendpack);
+        // console.log(this.friendpack);
       }
       else {                                                        // 点击了连个时间快捷按钮
         this.istag = true;
@@ -340,7 +342,7 @@ export default {
             startTime: this.twoclick.startTime,
             endTime: this.twoclick.endTime
           }))
-          console.log(request);
+          // console.log(request);
           if (request.status == 200) {
             var contactlist = [];
             var guodu = JSON.parse(request.responseText).data;
@@ -350,17 +352,17 @@ export default {
             self.friendpack[i] = contactlist;
           }
         }
-        console.log(this.friendpack);
+        // console.log(this.friendpack);
       }
     },
     getfriendslist: function (val) {
-      console.log(this.isTimelist);
+      // console.log(this.isTimelist);
       var self = this;
       this.friendpack = [];
       this.tagid = null;
       this.istag = false;        // 确定不是通过标签筛选
       var offval = (val - 1) * self.pagesize;
-      console.log(offval);
+      // console.log(offval);
       self.loading = true;
       let request = new XMLHttpRequest();
       for (var i = 0; i < self.weixinids.length; i++) {
@@ -373,13 +375,13 @@ export default {
           offset: offval,
           num: self.pagesize
         }))
-        console.log(request);
+        // console.log(request);
         if (request.status == 200) {
-          console.log(JSON.parse(request.responseText).data.list);
+          // console.log(JSON.parse(request.responseText).data.list);
           self.friendpack[i] = JSON.parse(request.responseText).data.list;
         }
       }
-      console.log(self.friendpack);
+      // console.log(self.friendpack);
       // 点击显示全部好友后， 时间快捷按钮全部初始化
       this.backcolor0 = '#20a0ff';
       this.backcolor1 = '#20a0ff';
@@ -398,7 +400,7 @@ export default {
 
     // 通过时间筛选得到的好友
     getfribytat: function (st, ed) {
-      console.log(this.issearch);
+      // console.log(this.issearch);
       this.friendpack = [];
       var self = this;
       var datae = new Date();
@@ -417,9 +419,9 @@ export default {
       if (this.Clicktime == 1) {                            // 判断点击了时间快捷按钮几次
         this.firstclick.startTime = self.startT;
         this.firstclick.endTime = self.endT;
-        console.log(self.endT);
-        console.log(self.startT);
-        console.log(this.firstclick);
+        // console.log(self.endT);
+        // console.log(self.startT);
+        // console.log(this.firstclick);
       }
       else {
         if (self.startT > this.firstclick.startTime) {
@@ -429,9 +431,9 @@ export default {
           self.endT = this.firstclick.endTime;
         }
         this.Clicktime = 0;
-        console.log(self.endT);
-        console.log(self.startT);
-        console.log(this.Clicktime);
+        // console.log(self.endT);
+        // console.log(self.startT);
+        // console.log(this.Clicktime);
       }
       this.twoclick.startTime = self.startT;        // 第二次点击后处理后的初始时间
       this.twoclick.endTime = self.endT;               // 第二次点击后处理后的结束时间
@@ -451,7 +453,7 @@ export default {
           //     console.log(self.friendpack)
           //   })
           //   .catch(function (err) {
-          //     console.log(err);
+              // console.log(err);
           //     self.friendpack[i] = [];
           //   })
           request.open('POST', 'http://weixinx.djtaoke.com/weixin/get_weixin_friends_from_time', false);
@@ -462,16 +464,16 @@ export default {
             startTime: self.startT,
             endTime: self.endT
           }))
-          console.log(request);
+          // console.log(request);
           if (request.status == 200) {
-            console.log(JSON.parse(request.responseText).data);
+            // console.log(JSON.parse(request.responseText).data);
             self.friendpack[i] = JSON.parse(request.responseText).data;
           }
         }
       }
       else {
-        console.log(2222222);
-        console.log(this.tagid);
+        // console.log(2222222);
+        // console.log(this.tagid);
         this.istag = true;
         for (var i = 0; i < self.weixinids.length; i++) {
           // this.axios.post('/weixin/get_weixin_friends_from_tag', {
@@ -495,7 +497,7 @@ export default {
             startTime: self.startT,
             endTime: self.endT
           }))
-          console.log(request);
+          // console.log(request);
           if (request.status == 200) {
             var contactlist = [];
             var guodu = JSON.parse(request.responseText).data;
@@ -566,9 +568,9 @@ export default {
           startTime: self.startT,
           endTime: self.endT
         }))
-        console.log(request);
+        // console.log(request);
         if (request.status == 200) {
-          console.log(JSON.parse(request.responseText).data);
+          // console.log(JSON.parse(request.responseText).data);
           self.friendpack[i] = JSON.parse(request.responseText).data;
         }
       }
@@ -727,7 +729,7 @@ export default {
         .then(function (res) {
           var data = res.data
           self.loading = false
-          console.log(data)
+          // console.log(data)
           if (data.code == 0) {
             self.allweixinlist = data.data
             self.totalpage = self.allweixinlist.length
