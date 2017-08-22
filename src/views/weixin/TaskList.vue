@@ -1,8 +1,10 @@
 <template>
   <div class="admin-userlist">
+    {{ ids }}
     <div class="" style="padding: 10px 0">
           <el-button type="primary" @click="go()">新建任务内容</el-button>
-          <el-button type="primary" @click="goweixin()">拉取微信</el-button>
+          <el-button type="primary" @click="goweixin()" v-if="ISbash">拉取微信</el-button>
+          <el-button type="primary" @click="gofriendlist()" v-if="!ISbash">拉取微信</el-button>
     </div>
     <template>
     <el-checkbox-group v-model="ids">
@@ -10,7 +12,9 @@
     <el-table
       :data="tasklist" style="width: 100%;margin-bottom: 80px" v-loading="loading" element-loading-text="拼命加载中">
       <el-table-column prop="id" label="选择"><template scope="scope">
-            <el-checkbox :label="scope.row.id"></el-checkbox>
+            <!-- <el-checkbox :label="scope.row.id" :disabled=""></el-checkbox> -->
+        <input type="checkbox" :id="scope.row.id" :value="scope.row.id" v-model="ids" @click="isbash(scope.row.id,scope.row.taskType)"></input>
+
           </template></el-table-column>         
       <!-- <el-table-column prop="id" label="id"></el-table-column>       -->
       <el-table-column label="是否默认"><template scope="scope">{{scope.row.ifDefault?"是":"否"}} </template></el-table-column>
@@ -147,9 +151,25 @@ export default {
         weixinId: '',
         weixinTaskId: '',
         checkall: false,
+        ISbash: false
       };
     },
     methods: {
+      isbash: function(val,Tasktype){
+        if(this.ids.length > 0){
+          if(Tasktype == 1){
+            this.ISbash = true;
+          }
+          if(this.ISbash && Tasktype != 1){
+            this.$message("只能选择好友群发任务！");
+             this.ids.splice(this.ids.length-1,  1)
+            return false;
+          }
+        }
+        else{
+          this.ISbash = false;
+        }
+      },
       checkAll: function () {//全选
 	     if (!this.checkall) {
   			this.ids = []         
@@ -169,6 +189,13 @@ export default {
           return false
         }
         this.$router.push("/weixinlist1?ids="+ this.ids)
+      },
+      gofriendlist: function () {
+        if(this.ids.length == 0){
+          this.$message("请选择任务")
+          return false
+        }
+        this.$router.push("/weixinlist2?ids="+ this.ids)
       },
       goupdate: function (val, type) {
         this.$router.push("/updatetask"+type+"?id="+val)

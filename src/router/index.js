@@ -22,6 +22,10 @@ export default new Router({
           component: require('views/weixin/WeixinList1')
         },
         {
+          path: '/weixinlist2',
+          component: require('views/weixin/WeixinList2')
+        },
+        {
           path: '/settinglist',
           component: require('views/weixin/SettingList')
         },
