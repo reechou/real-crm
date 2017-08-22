@@ -547,9 +547,6 @@ export default {
         this.Timer(media);
       }
     }
-    // goaddmember:function(){
-    //   this.$router.push('/addgroupmember');
-    // }
   },
   created(){
     this.getweixingroup();

@@ -199,6 +199,7 @@ export default {
       }
     },
     getreply: function() {
+        this.gettacklist();
         this.dialogTableVisible = true;
     },
     checktask:function(val) {
@@ -377,7 +378,6 @@ export default {
   created(){
     this.gettimetasklist();
     this.gettaglist();
-    this.gettacklist();
     this.WeiXinID = Number.parseInt(this.$route.query.id)
     console.log(this.WeiXinID)
   }
