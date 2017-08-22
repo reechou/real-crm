@@ -85,13 +85,13 @@
         </el-form-item>
         <el-form-item label="关键字id">
           <el-select v-model="ruleForm.keywordid" filterable multiple placeholder="请选择或搜索ID/多选">
-            <el-option v-for="item in verifySetting" :key="item.id" :label="item.id" :value="item.id">
+            <el-option v-for="item in keywordSetting" :key="item.id" :label="item.id" :value="item.id">
             </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="好友验证id">
           <el-select v-model="ruleForm.verifyid" filterable placeholder="请选择或搜索ID">
-            <el-option v-for="item in keywordSetting" :key="item.id" :label="item.id" :value="item.id">
+            <el-option v-for="item in verifySetting" :key="item.id" :label="item.id" :value="item.id">
             </el-option>
           </el-select>
         </el-form-item>
@@ -103,7 +103,6 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submitForm()">提交</el-button>
-          <el-button @click="showUpdate = false">取消</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
