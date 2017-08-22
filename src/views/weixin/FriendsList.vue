@@ -630,6 +630,7 @@ export default {
                 this.$message("请选择好友");
                 return false;
             }
+            this.gettasklist();
             this.istaskpage = false;
         },
 
@@ -780,8 +781,7 @@ export default {
 created() {
     this.getfriendslist(1);
     this.gettaglist();
-    this.weixinId = Number.parseInt(this.$route.query.id)
-    this.gettasklist()
+    this.weixinId = Number.parseInt(this.$route.query.id);
 }
     
 }

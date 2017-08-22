@@ -1,6 +1,5 @@
 <template>
   <div class="admin-userlist">
-    {{ ids }}
     <div class="" style="padding: 10px 0">
           <el-button type="primary" @click="go()">新建任务内容</el-button>
           <el-button type="primary" @click="goweixin()" v-if="ISbash">拉取微信</el-button>
@@ -8,7 +7,7 @@
     </div>
     <template>
     <el-checkbox-group v-model="ids">
-    <input type="checkbox" @click="checkAll()">全选&nbsp;&nbsp;&nbsp;&nbsp;选择任务数 : <span style="color:red">{{ids.length}}</span>
+    &nbsp;选择任务数 : <span style="color:red">{{ids.length}}</span>
     <el-table
       :data="tasklist" style="width: 100%;margin-bottom: 80px" v-loading="loading" element-loading-text="拼命加载中">
       <el-table-column prop="id" label="选择"><template scope="scope">
@@ -156,19 +155,24 @@ export default {
     },
     methods: {
       isbash: function(val,Tasktype){
-        if(this.ids.length > 0){
-          if(Tasktype == 1){
-            this.ISbash = true;
+          if(this.ids.length > 0){
+            if(Tasktype == 1 && this.ids.length == 1){
+              this.ISbash = true;
+            }
+            if(this.ISbash && Tasktype != 1){
+              this.$message("只能选择好友群发任务！");
+              this.ids.splice(this.ids.length-1,  1);
+              return false;
+            }
+            else if (!this.ISbash &&　Tasktype == 1){
+              this.$message("无法选择好友群发任务！");
+              this.ids.splice(this.ids.length-1, 1);
+              return false;
+            }
           }
-          if(this.ISbash && Tasktype != 1){
-            this.$message("只能选择好友群发任务！");
-             this.ids.splice(this.ids.length-1,  1)
-            return false;
+          else{
+            this.ISbash = false;
           }
-        }
-        else{
-          this.ISbash = false;
-        }
       },
       checkAll: function () {//全选
 	     if (!this.checkall) {
