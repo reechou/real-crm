@@ -3,7 +3,7 @@
     <div style="width: 100%; padding: 10px">
       <el-row>
         <el-col :span="21">
-          <el-button type="primary" @click="showWeixinlist=true" style="margin-top: 10px;">获取微信</el-button>
+          <el-button type="primary" @click="showWeixinlist=true,getweixinlist()" style="margin-top: 10px;">获取微信</el-button>
           <el-button type="primary" @click="reset()" style="margin-right: 30px;">重置</el-button>
         </el-col>
         <el-col :span="3">
