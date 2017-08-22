@@ -2,7 +2,7 @@
   <div class="admin-userlist">
     <el-row :gutter="20" style="margin-bottom: 10px;">
       <el-col :span="4"><h1>好友通过验证设置</h1></el-col>
-      <el-col :span="6"><el-button type="primary" size="small" @click="showeverifylist = true">新增好友通过验证</el-button></el-col>
+      <el-col :span="6"><el-button type="primary" size="small" @click="showeverifylist = true,getsettinglist()">新增好友通过验证</el-button></el-col>
     </el-row>
     <template>
      <el-table
@@ -29,7 +29,7 @@
     
     <el-row :gutter="20" style="margin-bottom:10px;">
       <el-col :span="3"><h1>关键字设置</h1></el-col>
-      <el-col :span="6"><el-button type="primary" size="small" @click="showerrlist = true">新增关键字</el-button></el-col>
+      <el-col :span="6"><el-button type="primary" size="small" @click="showerrlist = true,getkeywordlist()">新增关键字</el-button></el-col>
     </el-row>
     <template>
       <el-table
@@ -481,8 +481,6 @@ export default {
     created: function () {
       this.id = Number.parseInt(this.$route.query.id)
       this.getweixinlist();
-      this.getkeywordlist();
-      this.getsettinglist();
     }
 }
 </script>
