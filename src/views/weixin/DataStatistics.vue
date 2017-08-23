@@ -386,7 +386,7 @@ export default {
                         }
                         for( var i in self.PVlist){
                             if(self.friendlist[i] == 0){
-                                self.proportion.push("0%");
+                                self.proportion.push("0");
                             }
                             else{
                                 self.proportion.push(Math.floor((self.sharelist[i] / self.friendlist[i] * 100) * 100) / 100);
