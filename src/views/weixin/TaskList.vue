@@ -12,7 +12,7 @@
       :data="tasklist" style="width: 100%;margin-bottom: 80px" v-loading="loading" element-loading-text="拼命加载中">
       <el-table-column prop="id" label="选择"><template scope="scope">
             <!-- <el-checkbox :label="scope.row.id" :disabled=""></el-checkbox> -->
-        <input type="checkbox" :id="scope.row.id" :value="scope.row.id" v-model="ids" @click="isbash(scope.row.id,scope.row.taskType)"></input>
+        <input type="checkbox" :id="scope.row.id" :value="scope.row.id" v-model="ids" @click="isbash(scope.row.id,scope.row.taskType)">&nbsp;&nbsp;&nbsp;{{ scope.row.id}}</input>
 
           </template></el-table-column>         
       <!-- <el-table-column prop="id" label="id"></el-table-column>       -->
