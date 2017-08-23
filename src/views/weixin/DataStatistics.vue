@@ -75,6 +75,7 @@ export default {
             endN: null,
             friendlist: [],
             friendtime: [],
+            sharetime: [],
             sharelist: [],
             alllist: [],
             myChart: null,
@@ -94,7 +95,9 @@ export default {
             PVmul:0,
             UVlist:[],
             UVmul:0,
-            numPack:[]
+            numPack:[],
+            PVtimes: [],
+            UVtimes:[]
         }
     },
     components: {
@@ -112,7 +115,7 @@ export default {
         }
     },
     methods: {
-        otherchart:function(){
+        otherchart:function(){     // 当新好友和截图数为空时显示pv线
             var self = this;
             var alllist= null;
             var PVtime = [];
@@ -147,7 +150,7 @@ export default {
                     }
                 })
         },
-        otherUV:function(){
+        otherUV:function(){     // 当新好友和截图数为空时显示uv线
             var self = this;
             var alllist= null;
             var UVtime = [];
@@ -302,15 +305,15 @@ export default {
                                     self.friendtime.push(self.formate(self.alllist[i].timeSeries));
                                     self.friendsmul = self.friendsmul + self.alllist[i].data;
                                 }
-                                self.myChart.setOption({
-                                    xAxis: {
-                                        data: self.friendtime
-                                    },
-                                    series: [{
-                                        name: '每小时新加好友数',
-                                        data: self.friendlist
-                                    }]
-                                })
+                                // self.myChart.setOption({
+                                //     xAxis: {
+                                //         data: self.friendtime
+                                //     },
+                                //     series: [{
+                                //         name: '每小时新加好友数',
+                                //         data: self.friendlist
+                                //     }]
+                                // })
                                 self.getdataPV();
 
                                 // console.log(self.friendlist);
@@ -337,6 +340,7 @@ export default {
                     self.alllist = [];
                     self.sharelist = [];
                     self.proportion = [];
+                    self.sharetime = [];
                     self.sharemul = 0;
                     var data = res.data;
                     if (data.code == 0) {
@@ -344,9 +348,45 @@ export default {
                         for (var i in self.alllist) {
                             self.sharelist.push(self.alllist[i].data);
                             self.sharemul = self.sharemul + self.alllist[i].data;
+                            self.sharetime.push(self.formate(self.alllist[i].timeSeries));
                             // self.proportion.push(Number((self.alllist[i].data/self.friendlist[i]).toString().match(/^\d+(?:\.\d{0,2})?/)));
                             self.proportion.push(Math.floor((self.alllist[i].data / self.friendlist[i] * 100) * 100) / 100);
                         }
+                        if(self.UVtimes.length > self.friendlist.length){
+                            var byfrienddata = [];
+                            byfrienddata = self.friendlist;
+                            self.friendlist = [];
+                            for(let q = 0; q < self.UVtimes.length; q++){
+                                self.friendlist.push(0);
+                            }
+                            for(let j = 0; j < self.UVtimes.length; j++){
+                                for(let k = 0; k < byfrienddata.length; k++){
+                                    if(self.UVtimes[j] == self.friendtime[k]){
+                                        self.friendlist[j] = byfrienddata[k];
+                                        continue;
+                                    }
+                                }
+                            }
+                        }
+                        if(self.UVtimes.length > self.sharelist.length){
+                            var bysharedata = [];
+                            bysharedata = self.sharelist;
+                            self.sharelist = [];
+                            for(let q = 0; q < self.UVtimes.length; q++){
+                                self.sharelist.push(0);
+                            }
+                            for(let j = 0; j < self.UVtimes.length; j++){
+                                for(let k = 0; k < bysharedata.length; k++){
+                                    if(self.UVtimes[j] == self.sharetime[k]){
+                                        self.sharelist[j] = bysharedata[k];
+                                        continue;
+                                    }
+                                }
+                            }
+                        }
+                        console.log(self.PVlist);
+                        console.log(self.UVlist);
+                        console.log(self.friendlist);
                         self.myChart.setOption({
                             title: {
                                 subtext: '截图分享总数: ' + self.sharemul + '\n' + '新加好友总数: ' + self.friendsmul + '\n' + 'PV: ' + self.PVmul + '\n' + 'UV: ' + self.UVmul
@@ -355,7 +395,7 @@ export default {
                                 formatter: '时间: {b0}<br />{a0}: {c0}<br />{a1}: {c1}<br />{a3}: {c3}<br />{a4}: {c4}<br />分享占比: {c2}%'
                             },
                             xAxis: {
-                                data: self.friendtime
+                                data: self.PVtimes
                             },
                             series: [{
                                 name: '每小时用户截图分享数',
@@ -363,6 +403,15 @@ export default {
                             }, {
                                 name: '占比',
                                 data: self.proportion
+                            },{
+                                name: '每小时新加好友数',
+                                data: self.friendlist
+                            },{
+                                name: 'UV',
+                                data: self.UVlist
+                            },{
+                                name: 'PV',
+                                data: self.PVlist
                             }]
                         })
                     }
@@ -380,6 +429,7 @@ export default {
             })
                 .then(function (res) {
                     self.PVlist = [];
+                    self.PVtimes= [];
                     self.PVmul = 0;
                     var data = res.data;
                     if (data.code == 0) {
@@ -387,30 +437,40 @@ export default {
                         for (var i in alllist) {
                             // self.PVlist.push(alllist[i].data);
                             PVtime.push(self.formate(alllist[i].timeSeries));
+                            self.PVtimes.push(self.formate(alllist[i].timeSeries));
                             self.PVmul = self.PVmul + alllist[i].data;
                         }
-                        for(var i=0; i< self.friendlist.length; i++){
-                            self.PVlist.push(0);
-                        }
-                        for(var i=0; i< self.friendtime.length; i++){
-                            for(var j=0; j< PVtime.length; j++){
-                                if(self.friendtime[i] == PVtime[j]){
-                                    self.PVlist[i] = alllist[j].data;
-                                    continue; 
+                        if(self.friendlist.length > self.PVtimes.length){
+                            for(var i=0; i< self.friendlist.length; i++){
+                              self.PVlist.push(0);
+                            }
+                            for(var i=0; i< self.friendtime.length; i++){
+                                for(var j=0; j< PVtime.length; j++){
+                                    if(self.friendtime[i] == PVtime[j]){
+                                        self.PVlist[i] = alllist[j].data;
+                                        continue; 
+                                    }
                                 }
                             }
                         }
+                        else{
+                            for(var i in alllist){
+                                self.PVlist.push(alllist[i].data);
+                            }
+                        }
+                        console.log(11111);
+                        console.log(self.PVtimes)
                         // console.log(self.PVlist);
                         // console.log(self.friendlist);
-                            self.myChart.setOption({
-                                xAxis: {
-                                    data: self.friendtime
-                                },
-                                series: [{
-                                    name: 'PV',
-                                    data: self.PVlist
-                                }]
-                            })
+                            // self.myChart.setOption({
+                            //     xAxis: {
+                            //         data: self.friendtime
+                            //     },
+                            //     series: [{
+                            //         name: 'PV',
+                            //         data: self.PVlist
+                            //     }]
+                            // })
                             self.getdataUV();
 
                     }
@@ -428,6 +488,7 @@ export default {
             })
                 .then(function (res) {
                     self.UVlist = [];
+                    self.UVtimes = [];
                     self.UVmul = 0;
                     var data = res.data;
                     if (data.code == 0) {
@@ -435,30 +496,38 @@ export default {
                         for (var i in alllist) {
                             // self.UVlist.push(alllist[i].data);
                             UVtime.push(self.formate(alllist[i].timeSeries));
+                            self.UVtimes.push(self.formate(alllist[i].timeSeries));
                             self.UVmul = self.UVmul + alllist[i].data;
                         }
-                        for(var i=0; i< self.friendlist.length; i++){
-                            self.UVlist.push(0);
-                        }
-                        for(var i=0; i< self.friendtime.length; i++){
-                            for(var j=0; j< UVtime.length; j++){
-                                if(self.friendtime[i] == UVtime[j]){
-                                    self.UVlist[i] = alllist[j].data;
-                                    continue; 
+                        if (self.friendlist.length >self.UVtimes.length){
+                            for(var i=0; i< self.friendlist.length; i++){
+                                self.UVlist.push(0);
+                            }
+                            for(var i=0; i< self.friendtime.length; i++){
+                                for(var j=0; j< UVtime.length; j++){
+                                    if(self.friendtime[i] == UVtime[j]){
+                                        self.UVlist[i] = alllist[j].data;
+                                        continue; 
+                                    }
                                 }
+                            }
+                        }
+                        else{
+                            for(var i in alllist){
+                                self.UVlist.push(alllist[i].data);
                             }
                         }
                         // console.log(self.UVlist);
                         // console.log(self.friendlist);
-                            self.myChart.setOption({
-                                xAxis: {
-                                    data: self.friendtime
-                                },
-                                series: [{
-                                    name: 'UV',
-                                    data: self.UVlist
-                                }]
-                            })
+                            // self.myChart.setOption({
+                            //     xAxis: {
+                            //         data: self.friendtime
+                            //     },
+                            //     series: [{
+                            //         name: 'UV',
+                            //         data: self.UVlist
+                            //     }]
+                            // })
                             self.getdatapic();
                     }
                 })

@@ -2,7 +2,7 @@
   <div class="admin-userlist">
     <div><label for="">所选id：</label><span v-for="item in weixinids">{{item}}, </span></div>
     <div style="width: 400px;padding: 10px">
-        <el-input placeholder="请输入微信号" icon="search" v-model="searchcontent" :on-icon-click="handleIconClick"></el-input>
+        <el-input placeholder="请输入微信号" icon="search" v-model="searchcontent" :on-icon-click="handleIconClick"  @keyup.enter.native="show($event)"></el-input>
     
         <el-button type="primary" @click="settask()">确定</el-button>
     </div>
@@ -110,6 +110,17 @@ export default {
           this.weixinlist = [_.find(self.allweixinlist, function(chr) {return chr.id == self.searchcontent;})]
         }
       },
+    show: function (ev) {
+      if (ev.keyCode == 13) {
+        if (this.searchcontent == '') {
+          this.weixinlist = this.allweixinlist;
+        }
+        else {
+          var self = this;
+          this.weixinlist = [_.find(self.allweixinlist, function (chr) { return chr.id == self.searchcontent; })]
+        }
+      }
+    },
       ifExecDefaultTask: function (val) {
           return val ? '是' : '否'
       },
