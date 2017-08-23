@@ -350,7 +350,7 @@ export default {
                             self.sharemul = self.sharemul + self.alllist[i].data;
                             self.sharetime.push(self.formate(self.alllist[i].timeSeries));
                             // self.proportion.push(Number((self.alllist[i].data/self.friendlist[i]).toString().match(/^\d+(?:\.\d{0,2})?/)));
-                            self.proportion.push(Math.floor((self.alllist[i].data / self.friendlist[i] * 100) * 100) / 100);
+                            
                         }
                         if(self.UVtimes.length > self.friendlist.length){
                             var byfrienddata = [];
@@ -384,6 +384,14 @@ export default {
                                 }
                             }
                         }
+                        for( var i in self.PVlist){
+                            if(self.friendlist[i] == 0){
+                                self.proportion.push("0%");
+                            }
+                            else{
+                                self.proportion.push(Math.floor((self.sharelist[i] / self.friendlist[i] * 100) * 100) / 100);
+                            }
+                        }
                         console.log(self.PVlist);
                         console.log(self.UVlist);
                         console.log(self.friendlist);
@@ -395,23 +403,23 @@ export default {
                                 formatter: '时间: {b0}<br />{a0}: {c0}<br />{a1}: {c1}<br />{a3}: {c3}<br />{a4}: {c4}<br />分享占比: {c2}%'
                             },
                             xAxis: {
-                                data: self.PVtimes
+                                data: self.UVtimes
                             },
                             series: [{
+                                name: '每小时新加好友数',
+                                data: self.friendlist
+                            },{
                                 name: '每小时用户截图分享数',
                                 data: self.sharelist
                             }, {
                                 name: '占比',
                                 data: self.proportion
                             },{
-                                name: '每小时新加好友数',
-                                data: self.friendlist
+                                name: 'PV',
+                                data: self.PVlist
                             },{
                                 name: 'UV',
                                 data: self.UVlist
-                            },{
-                                name: 'PV',
-                                data: self.PVlist
                             }]
                         })
                     }
@@ -515,6 +523,38 @@ export default {
                         else{
                             for(var i in alllist){
                                 self.UVlist.push(alllist[i].data);
+                            }
+                        }
+                        if( self.PVlist.length < self.UVlist.length){
+                            var pvdata = [];
+                            pvdata = self.PVlist;
+                            self.PVlist = [];
+                            for(var i=0; i< self.UVlist.length; i++){
+                                self.PVlist.push(0);
+                            }
+                            for(var i=0; i< self.UVlist.length; i++){
+                                for(var j=0; j< self.PVtimes.length; j++){
+                                    if(self.UVtimes[i] == self.PVtimes[j]){
+                                        self.PVlist[i] = pvdata[j];
+                                        continue; 
+                                    }
+                                }
+                            }
+                        }
+                        else{
+                            var uvdata = [];
+                            uvdata = self.UVlist;
+                            self.UVlist = [];
+                            for(var i=0; i< self.PVlist.length; i++){
+                                self.UVlist.push(0);
+                            }
+                            for(var i=0; i< self.PVlist.length; i++){
+                                for(var j=0; j< self.UVtimes.length; j++){
+                                    if(self.PVtimes[i] == self.UVtimes[j]){
+                                        self.UVlist[i] = uvdata[j];
+                                        continue; 
+                                    }
+                                }
                             }
                         }
                         // console.log(self.UVlist);
