@@ -110,6 +110,7 @@ export default {
         },
         getcompletedata:function(){
             var self = this;
+            var sharetime = [];
             self.startC = this.startN - (this.complete*86400);
             self.endC = this.endN - (this.complete*86400);
             this.axios.post('/monitor/get_data',{
@@ -125,8 +126,22 @@ export default {
                     if(data.code == 0){
                         self.clllist = data.data;
                         for (var i in self.clllist){
-                            self.completelist.push(self.clllist[i].data);
-                            self.completeid.push(self.formate(self.clllist[i].timeSeries));
+                            // self.completelist.push(self.clllist[i].data);
+                            // self.completeid.push(self.formate(self.clllist[i].timeSeries));
+                            sharetime.push(self.formate(self.clllist[i].timeSeries));
+                        }
+                        if(self.friendid.length - sharetime.length == 0){
+                            for(var i in self.clllist){
+                                self.completelist.push(self.clllist[i].data);
+                            }
+                        }
+                        else{
+                            for(var i=0; i<self.friendlist.length - sharetime.length; i++){
+                                self.completelist.push(0);
+                            }
+                            for(var i in self.clllist){
+                                self.completelist.push(self.clllist[i].data);
+                            }
                         }
                         console.log(self.completeid);
                         self.myChart.setOption({
