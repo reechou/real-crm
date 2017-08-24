@@ -194,7 +194,8 @@ export default {
       weixinId: 0,                     //  当前操作者的微信id
       weixinTaskId: '',
       btcheckall: false,              // 控制全选checkbox的选择框是否选中
-      friendpack: []
+      friendpack: [],
+      idd: 0
     };
   },
   methods: {
@@ -702,7 +703,10 @@ export default {
         else {
           var self = this
           this.weixinlist = [_.find(self.allweixinlist, function (chr) { return chr.id == self.searchcontent; })];
-          this.weixinids.push(this.weixinlist[0]);
+          if( this.weixinids[this.idd] != this.weixinlist[0]){
+              this.weixinids.push(this.weixinlist[0]);
+              this.idd = this.weixinids.length - 1;
+          }
           // alert("有值的")
         }
       }

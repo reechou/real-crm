@@ -261,7 +261,8 @@ export default {
       errcurrentPage:1,
       errtotalpage:1,
      
-      guanlishuju:[]
+      guanlishuju:[],
+      idd: 0
     }
   },
   methods:{
@@ -527,7 +528,10 @@ export default {
           this.weixinlist = [_.find(self.diallist, function(chr){
             return chr.id == self.searchcontent;
           })];
-          this.members.push(this.weixinlist[0].id);
+          if( this.members[this.idd] != this.weixinlist[0].id){
+             this.members.push(this.weixinlist[0].id);
+             this.idd = this.members.length - 1;
+          }
         }
       }
     },

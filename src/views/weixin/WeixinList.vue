@@ -188,11 +188,11 @@ export default {
           var data = response.data
           if (data.code == 0) {
             self.$message("设置成功");
-            self.showaddweixin = false;
-            self.ruleForm.newWeixin = null;
-            self.ruleForm.verifyid = null;
-            self.ruleForm.keywordid = [];
-            self.ruleForm.tasks = [];
+            // self.showaddweixin = false;
+            // self.ruleForm.newWeixin = null;
+            // self.ruleForm.verifyid = null;
+            // self.ruleForm.keywordid = [];
+            // self.ruleForm.tasks = [];
           } else {
             self.$message("设置失败")
           }
