@@ -205,6 +205,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() =>{
+        self.friendpack.splice(val, 1);
         self.weixinids.splice(val, 1);
       }).catch(() =>{
 
@@ -700,7 +701,8 @@ export default {
         }
         else {
           var self = this
-          this.weixinlist = [_.find(self.allweixinlist, function (chr) { return chr.id == self.searchcontent; })]
+          this.weixinlist = [_.find(self.allweixinlist, function (chr) { return chr.id == self.searchcontent; })];
+          this.weixinids.push(this.weixinlist[0]);
           // alert("有值的")
         }
       }
