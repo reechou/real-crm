@@ -526,7 +526,8 @@ export default {
           var self = this;
           this.weixinlist = [_.find(self.diallist, function(chr){
             return chr.id == self.searchcontent;
-          })]
+          })];
+          this.members.push(this.weixinlist[0].id);
         }
       }
     },

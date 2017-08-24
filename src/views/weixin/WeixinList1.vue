@@ -41,7 +41,7 @@
       <div style="padding: 10px;">
         <el-button type="primary" @click="getweixinlist()">显示全部微信</el-button>
         <el-button type="primary" @click="showWeixinlist = false">确定</el-button>
-        <el-button type="primary" @click="showWeixinlist=false, weixinids=[]">取消</el-button>
+        <el-button type="primary" @click="showWeixinlist=false, weixinids=[],searchcontent = ''">取消</el-button>
       </div>
       <template>
         <el-checkbox-group v-model="weixinids">
