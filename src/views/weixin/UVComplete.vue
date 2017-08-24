@@ -113,8 +113,6 @@ export default {
             var UVtime = [];
             self.startC = this.startN - (this.complete*86400);
             self.endC = this.endN - (this.complete*86400);
-            console.log(self.startC);
-            console.log(self.endC);
             
             this.axios.post('/monitor/get_data',{
                 typeId: 3,
@@ -145,7 +143,6 @@ export default {
                                 self.completelist.push(self.clllist[i].data);
                             }
                         }
-                        console.log(self.completeid);
                         self.myChart.setOption({
                             series:[{
                                 name:'比较线',

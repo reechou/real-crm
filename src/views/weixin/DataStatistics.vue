@@ -15,11 +15,7 @@
         </el-row>
         <div class="quickbtn" style="margin-bottom:20px;">
             <el-select v-model="lbTypenum" placeholder="请选择" @change="getdata()">
-                <el-option 
-                v-for="item in lbType" 
-                :key="item.liebianType" 
-                :label="item.desc" 
-                :value="item.liebianType">
+                <el-option v-for="item in lbType" :key="item.liebianType" :label="item.desc" :value="item.liebianType">
                 </el-option>
             </el-select>
             <el-button type="primary" @click="isinit(1)">距当前一天</el-button>
@@ -40,30 +36,23 @@
                 <Sharepic :startN="startN" :endN="endN" :tiee="tie" :complete="completeNum" :typenum="lbTypenum"></Sharepic>
             </el-col>
         </el-row>
-         <el-row>
+        <el-row>
             <el-col :span="12">
                 <PVss :startN="startN" :endN="endN" :tiee="tie" :complete="completeNum" :typenum="lbTypenum"></PVss>
             </el-col>
             <el-col :span="12">
                 <UVss :startN="startN" :endN="endN" :tiee="tie" :complete="completeNum" :typenum="lbTypenum"></UVss>
             </el-col>
-        </el-row> 
-        <!-- <CNewadd :startN="startN" :endN="endN" :tiee="tie" :complete="completeNum"></CNewadd>
-          <Sharepic :startN="startN" :endN="endN" :tiee="tie" :complete="completeNum"></Sharepic> -->
+        </el-row>
     </div>
 </template>
 
 <script>
-// let echarts = require('echarts/lib/echarts');      // 引入基本模块
-// require('echarts/lib/chart/line');                 // 引入折线图组件
-// require('echarts/lib/component/tooltip');          // 提示框
-// require('echarts/lib/component/toolbox');
-// require('echarts/lib/component/title');            // title组件
-import echarts from 'echarts'
-import CNewadd from './NewaddComplete'
-import Sharepic from './SharePicComplete'
-import PVss from './PVComplete'
-import UVss from './UVComplete'
+import echarts from 'echarts';
+import CNewadd from './NewaddComplete';
+import Sharepic from './SharePicComplete';
+import PVss from './PVComplete';
+import UVss from './UVComplete';
 
 export default {
     name: 'data_statistics',
@@ -75,7 +64,6 @@ export default {
             endN: null,
             friendlist: [],
             friendtime: [],
-            sharetime: [],
             sharelist: [],
             alllist: [],
             myChart: null,
@@ -91,13 +79,16 @@ export default {
             backcolor7: null,
             lbTypenum: 0,
             lbType: [],
-            PVlist:[],
-            PVmul:0,
-            UVlist:[],
-            UVmul:0,
-            numPack:[],
+            PVlist: [],
+            PVmul: 0,
+            UVlist: [],
+            UVmul: 0,
+            numPack: [],
+
             PVtimes: [],
-            UVtimes:[]
+            UVtimes: [],
+            sharetime: []
+
         }
     },
     components: {
@@ -107,87 +98,15 @@ export default {
         UVss
     },
     mounted() {
-        this.drawLine();
+        this.drawLine();  // 初始化构造折线图
     },
-    watch:{
-        lbTypenum(value,oldval){
-            this.drawLine();
+    watch: {
+        lbTypenum(value, oldval) {
+            this.drawLine();       // 当选中的裂变线路变化时， 重新初始化构造折线图并填充数据
         }
     },
     methods: {
-        otherchart:function(){     // 当新好友和截图数为空时显示pv线
-            var self = this;
-            var alllist= null;
-            var PVtime = [];
-            this.axios.post('/monitor/get_data', {
-                typeId: 2,
-                startTime: self.startN,
-                endTime: self.endN,
-                liebianType: self.lbTypenum
-            })
-                .then(function (res) {
-                    self.PVlist = [];
-                    self.PVmul = 0;
-                    var data = res.data;
-                    if (data.code == 0) {
-                        alllist = data.data;
-                        for (var i in alllist) {
-                            self.PVlist.push(alllist[i].data);
-                            PVtime.push(self.formate(alllist[i].timeSeries));
-                            self.PVmul = self.PVmul + alllist[i].data;
-                        }
-                            self.myChart.setOption({
-                                xAxis: {
-                                    data: PVtime
-                                },
-                                series: [{
-                                    name: 'PV',
-                                    data: self.PVlist
-                                }]
-                            })
-                            self.otherUV();
-
-                    }
-                })
-        },
-        otherUV:function(){     // 当新好友和截图数为空时显示uv线
-            var self = this;
-            var alllist= null;
-            var UVtime = [];
-            this.axios.post('/monitor/get_data', {
-                typeId: 3,
-                startTime: self.startN,
-                endTime: self.endN,
-                liebianType: self.lbTypenum
-            })
-                .then(function (res) {
-                    self.UVlist = [];
-                    self.UVmul = 0;
-                    var data = res.data;
-                    if (data.code == 0) {
-                        alllist = data.data;
-                        for (var i in alllist) {
-                            self.UVlist.push(alllist[i].data);
-                            UVtime.push(self.formate(alllist[i].timeSeries));
-                            self.UVmul = self.UVmul + alllist[i].data;
-                        }
-                            self.myChart.setOption({
-                                title: {
-                                    subtext: '截图分享总数: ' + self.sharemul + '\n' + '新加好友总数: ' + self.friendsmul + '\n' + 'PV: ' + self.PVmul + '\n' + 'UV: ' + self.UVmul
-                                },
-                                xAxis: {
-                                    data: UVtime
-                                },
-                                series: [{
-                                    name: 'UV',
-                                    data: self.UVlist
-                                }]
-                            })
-
-                    }
-                })  
-        },
-        getcomplete: function (val) {      // 判断是比较一天数据还是一周数据的函数
+        getcomplete: function(val) {      // 判断是比较一天数据还是一周数据的函数
             if (val == 1) {
                 this.completeNum = val;
                 this.backcolor1 = '#005494';
@@ -199,7 +118,7 @@ export default {
                 this.backcolor7 = '#005494';
             }
         },
-        realtime: function () {         // 实时按钮
+        realtime: function() {         // 实时按钮
             this._init = 1;
             var time = Date.now() / 1000;
             var today = new Date(this.fortime(time)).getTime() / 1000;
@@ -209,7 +128,7 @@ export default {
             this.endN = Number.parseInt(time);
             this.getdata();
         },
-        isinit: function (val) {    // 当按具体时间段查询时
+        isinit: function(val) {    // 当按具体时间段查询时
             this._init = 0;
             var time = Date.now() / 1000;
             if (val == 0) {
@@ -237,17 +156,14 @@ export default {
                 this.getdata();
             }
         },
-        limitbt: function () {
+        limitbt: function() {      // 限制查询按钮， 防止用户连续点击 点击后三秒才可以重新点击
             var self = this;
-            // console.log(this.stopbt);
             this.stopbt = true;
-            // console.log(this.stopbt);
-            setTimeout(function () {
+            setTimeout(function() {
                 self.stopbt = false;
             }, 3000);
-            // this.getdata();
         },
-        formate: function (t) {
+        formate: function(t) {                   // 时间戳格式化
             var d = new Date(t * 1000);
             var year = d.getFullYear();
             var day = d.getDate();
@@ -257,19 +173,16 @@ export default {
             var f = year + "-" + this.init(month) + "-" + this.init(day) + " " + this.init(hour) + ":" + this.init(minute);
             return f;
         },
-        init: function (d) {
+        init: function(d) {
             return d > 9 ? d : "0" + d;
         },
-        getdata: function () {
+        getdata: function() {    // 获取每小时新加好友数
 
             var self = this;
             if (this._init == 0) {
                 this.start = this.fortime(new Date(this.start).getTime() / 1000);
-                console.log(this.start);
                 self.startN = Math.floor(new Date(this.start).getTime() / 1000);
                 self.endN = Math.floor(new Date(this.end).getTime() / 1000);
-                console.log(self.startN);
-                console.log(self.endN);
             }
 
             if (self.endN - self.startN > 2678400) {
@@ -287,56 +200,85 @@ export default {
                     endTime: self.endN,
                     liebianType: self.lbTypenum
                 })
-                    .then(function (res) {
+                    .then(function(res) {
                         var data = res.data;
                         self.friendlist = [];
                         self.friendtime = [];
                         self.friendsmul = 0;
-                        self.sharemul = 0;
-                        if(data.data == null){
-                            self.otherchart();
-                            return false;
+                        if (data.code == 0) {
+                            self.alllist = data.data;
+                            for (var i in self.alllist) {
+                                self.friendlist.push(self.alllist[i].data);
+                                self.friendtime.push(self.formate(self.alllist[i].timeSeries));
+                                self.friendsmul = self.friendsmul + self.alllist[i].data;      // 总和
+                            }
+                            self.getdataPV();
                         }
-                        else{
-                            if (data.code == 0) {
-                                self.alllist = data.data;
-                                for (var i in self.alllist) {
-                                    self.friendlist.push(self.alllist[i].data);
-                                    self.friendtime.push(self.formate(self.alllist[i].timeSeries));
-                                    self.friendsmul = self.friendsmul + self.alllist[i].data;
-                                }
-                                // self.myChart.setOption({
-                                //     xAxis: {
-                                //         data: self.friendtime
-                                //     },
-                                //     series: [{
-                                //         name: '每小时新加好友数',
-                                //         data: self.friendlist
-                                //     }]
-                                // })
-                                self.getdataPV();
-
-                                // console.log(self.friendlist);
-                            }
-                            else {
-                                self.$message("获取失败");
-                            }
+                        else {
+                            self.$message("获取失败");
                         }
                     })
             }
         },
-        getdatapic: function () {
+        getdataPV: function() {                 // 获取页面浏览量的数据
             var self = this;
-            // self.startN = Math.floor(new Date(this.start).getTime() / 1000);
-            // self.endN = Math.floor(new Date(this.end).getTime() / 1000);
-
+            var alllist = null;
+            this.axios.post('/monitor/get_data', {
+                typeId: 2,
+                startTime: self.startN,
+                endTime: self.endN,
+                liebianType: self.lbTypenum
+            })
+                .then(function(res) {
+                    self.PVlist = [];
+                    self.PVmul = 0;
+                    self.PVtimes = [];
+                    var data = res.data;
+                    if (data.code == 0) {
+                        alllist = data.data;
+                        for (var i in alllist) {
+                            self.PVlist.push(alllist[i].data);
+                            self.PVtimes.push(self.formate(alllist[i].timeSeries));    // 时间线
+                            self.PVmul = self.PVmul + alllist[i].data;              // 总数
+                        }
+                        self.getdataUV();
+                    }
+                })
+        },
+        getdataUV: function() {           // 获取独立访客数
+            var self = this;
+            var alllist = null;
+            this.axios.post('/monitor/get_data', {
+                typeId: 3,
+                startTime: self.startN,
+                endTime: self.endN,
+                liebianType: self.lbTypenum
+            })
+                .then(function(res) {
+                    self.UVlist = [];
+                    self.UVtimes = [];
+                    self.UVmul = 0;
+                    var data = res.data;
+                    if (data.code == 0) {
+                        alllist = data.data;
+                        for (var i in alllist) {
+                            self.UVlist.push(alllist[i].data);
+                            self.UVtimes.push(self.formate(alllist[i].timeSeries));     //时间线
+                            self.UVmul = self.UVmul + alllist[i].data;                // 总数
+                        }
+                        self.getdatapic();
+                    }
+                })
+        },
+        getdatapic: function() {                   // 每小时分享图片数
+            var self = this;
             this.axios.post('/monitor/get_data', {
                 typeId: 1,
                 startTime: self.startN,
                 endTime: self.endN,
                 liebianType: self.lbTypenum
             })
-                .then(function (res) {
+                .then(function(res) {
                     self.alllist = [];
                     self.sharelist = [];
                     self.proportion = [];
@@ -347,232 +289,148 @@ export default {
                         self.alllist = data.data;
                         for (var i in self.alllist) {
                             self.sharelist.push(self.alllist[i].data);
-                            self.sharemul = self.sharemul + self.alllist[i].data;
-                            self.sharetime.push(self.formate(self.alllist[i].timeSeries));
-                            // self.proportion.push(Number((self.alllist[i].data/self.friendlist[i]).toString().match(/^\d+(?:\.\d{0,2})?/)));
-                            
+                            self.sharemul = self.sharemul + self.alllist[i].data;     // 总数
+                            self.sharetime.push(self.formate(self.alllist[i].timeSeries));    // 时间线
                         }
-                        if(self.UVtimes.length > self.friendlist.length){
-                            var byfrienddata = [];
-                            byfrienddata = self.friendlist;
-                            self.friendlist = [];
-                            for(let q = 0; q < self.UVtimes.length; q++){
-                                self.friendlist.push(0);
-                            }
-                            for(let j = 0; j < self.UVtimes.length; j++){
-                                for(let k = 0; k < byfrienddata.length; k++){
-                                    if(self.UVtimes[j] == self.friendtime[k]){
-                                        self.friendlist[j] = byfrienddata[k];
-                                        continue;
-                                    }
-                                }
-                            }
-                        }
-                        if(self.UVtimes.length > self.sharelist.length){
-                            var bysharedata = [];
-                            bysharedata = self.sharelist;
-                            self.sharelist = [];
-                            for(let q = 0; q < self.UVtimes.length; q++){
-                                self.sharelist.push(0);
-                            }
-                            for(let j = 0; j < self.UVtimes.length; j++){
-                                for(let k = 0; k < bysharedata.length; k++){
-                                    if(self.UVtimes[j] == self.sharetime[k]){
-                                        self.sharelist[j] = bysharedata[k];
-                                        continue;
-                                    }
-                                }
-                            }
-                        }
-                        for( var i in self.PVlist){
-                            if(self.friendlist[i] == 0){
-                                self.proportion.push("0");
-                            }
-                            else{
-                                self.proportion.push(Math.floor((self.sharelist[i] / self.friendlist[i] * 100) * 100) / 100);
-                            }
-                        }
-                        console.log(self.PVlist);
-                        console.log(self.UVlist);
-                        console.log(self.friendlist);
-                        self.myChart.setOption({
-                            title: {
-                                subtext: '截图分享总数: ' + self.sharemul + '\n' + '新加好友总数: ' + self.friendsmul + '\n' + 'PV: ' + self.PVmul + '\n' + 'UV: ' + self.UVmul
-                            },
-                            tooltip: {
-                                formatter: '时间: {b0}<br />{a0}: {c0}<br />{a1}: {c1}<br />{a3}: {c3}<br />{a4}: {c4}<br />分享占比: {c2}%'
-                            },
-                            xAxis: {
-                                data: self.UVtimes
-                            },
-                            series: [{
-                                name: '每小时新加好友数',
-                                data: self.friendlist
-                            },{
-                                name: '每小时用户截图分享数',
-                                data: self.sharelist
-                            }, {
-                                name: '占比',
-                                data: self.proportion
-                            },{
-                                name: 'PV',
-                                data: self.PVlist
-                            },{
-                                name: 'UV',
-                                data: self.UVlist
-                            }]
-                        })
+                        self.dataToline(); 
                     }
                 })
         },
-        getdataPV: function () {
+        dataToline: function() {      // 将数据填充到折线图
             var self = this;
-            var alllist= null;
-            var PVtime = [];
-            this.axios.post('/monitor/get_data', {
-                typeId: 2,
-                startTime: self.startN,
-                endTime: self.endN,
-                liebianType: self.lbTypenum
+            var max = null;     // 数据最多的那个线的数据的数组长
+            var time = [];          // 数据最多的时间数组
+            self.proportion = [];      // 分享图片占每小时新增好友的占比
+            if (self.friendtime.length >= self.sharetime.length) {
+                if (self.PVtimes.length >= self.UVtimes.length) {
+                    if (self.friendtime.length >= self.PVtimes.length) {
+                        max = self.friendtime.length;
+                        time = self.friendtime;
+                    } else {
+                        max = self.PVtimes.length;
+                        time = self.PVtimes;
+                    }
+                } else {
+                    if (self.friendtime.length >= self.UVtimes.length) {
+                        max = self.friendtime.length;
+                        time = self.friendtime;
+                    } else {
+                        max = self.UVtimes.length;
+                        time = self.UVtimes;
+                    }
+                }
+            } else {
+                if (self.PVtimes.length >= self.UVtimes.length) {
+                    if (self.sharetime.length >= self.PVtimes.length) {
+                        max = self.sharetime.length;
+                        time = self.sharetime;
+                    } else {
+                        max = self.PVtimes.length;
+                        time = self.PVtimes;
+                    }
+                } else {
+                    if (self.sharetime.length >= self.UVtimes.length) {
+                        max = self.sharetime.length;
+                        time = self.sharetime;
+                    } else {
+                        max = self.UVtimes.length;
+                        time = self.UVtimes;
+                    }
+                }
+            }
+            var friend = [];
+            friend = self.friendlist;
+            self.friendlist = [];
+            for (var i = 0; i < max; i++) {
+                self.friendlist.push(0);
+            }
+            for (var i = 0; i < max; i++) {
+                for (var j = 0; j < self.friendtime.length; j++) {
+                    if (time[i] == self.friendtime[j]) {
+                        self.friendlist[i] = friend[j];
+                        continue;
+                    }
+                }
+            }
+            var sharepic = [];
+            sharepic = self.sharelist;
+            self.sharelist = [];
+            for (var i = 0; i < max; i++) {
+                self.sharelist.push(0);
+            }
+            for (var i = 0; i < max; i++) {
+                for (var j = 0; j < self.sharetime.length; j++) {
+                    if (time[i] == self.sharetime[j]) {
+                        self.sharelist[i] = sharepic[j];
+                        continue;
+                    }
+                }
+            }
+            var pv = [];
+            pv = self.PVlist;
+            self.PVlist = [];
+            for (var i = 0; i < max; i++) {
+                self.PVlist.push(0);
+            }
+            for (var i = 0; i < max; i++) {
+                for (var j = 0; j < self.PVtimes.length; j++) {
+                    if (time[i] == self.PVtimes[j]) {
+                        self.PVlist[i] = pv[j];
+                        continue;
+                    }
+                }
+            }
+            var uv = [];
+            uv = self.UVlist;
+            self.UVlist = [];
+            for (var i = 0; i < max; i++) {
+                self.UVlist.push(0);
+            }
+            for (var i = 0; i < max; i++) {
+                for (var j = 0; j < self.UVtimes.length; j++) {
+                    if (time[i] == self.UVtimes[j]) {
+                        self.UVlist[i] = uv[j];
+                        continue;
+                    }
+                }
+            }
+            for (var k = 0; k < max; k++) {
+                if (self.friendlist[k] == 0) {
+                    self.proportion.push(0);
+                } else {
+                    self.proportion.push(Math.floor((self.sharelist[k] / self.friendlist[k] * 100) * 100) / 100);
+                }
+            }
+            self.myChart.setOption({
+                title: {
+                    subtext: '截图分享总数: ' + self.sharemul + '\n' + '新加好友总数: ' + self.friendsmul + '\n' + 'PV: ' + self.PVmul + '\n' + 'UV: ' + self.UVmul
+                },
+                tooltip: {
+                    formatter: '时间: {b0}<br />{a0}: {c0}<br />{a1}: {c1}<br />{a3}: {c3}<br />{a4}: {c4}<br />分享占比: {c2}%'
+                },
+                xAxis: {
+                    data: time
+                },
+                series: [{
+                    name: '每小时新加好友数',
+                    data: self.friendlist
+                }, {
+                    name: '每小时用户截图分享数',
+                    data: self.sharelist
+                }, {
+                    name: '占比',
+                    data: self.proportion
+                }, {
+                    name: 'PV',
+                    data: self.PVlist
+                }, {
+                    name: 'UV',
+                    data: self.UVlist
+                }]
             })
-                .then(function (res) {
-                    self.PVlist = [];
-                    self.PVtimes= [];
-                    self.PVmul = 0;
-                    var data = res.data;
-                    if (data.code == 0) {
-                        alllist = data.data;
-                        for (var i in alllist) {
-                            // self.PVlist.push(alllist[i].data);
-                            PVtime.push(self.formate(alllist[i].timeSeries));
-                            self.PVtimes.push(self.formate(alllist[i].timeSeries));
-                            self.PVmul = self.PVmul + alllist[i].data;
-                        }
-                        if(self.friendlist.length > self.PVtimes.length){
-                            for(var i=0; i< self.friendlist.length; i++){
-                              self.PVlist.push(0);
-                            }
-                            for(var i=0; i< self.friendtime.length; i++){
-                                for(var j=0; j< PVtime.length; j++){
-                                    if(self.friendtime[i] == PVtime[j]){
-                                        self.PVlist[i] = alllist[j].data;
-                                        continue; 
-                                    }
-                                }
-                            }
-                        }
-                        else{
-                            for(var i in alllist){
-                                self.PVlist.push(alllist[i].data);
-                            }
-                        }
-                        console.log(11111);
-                        console.log(self.PVtimes)
-                        // console.log(self.PVlist);
-                        // console.log(self.friendlist);
-                            // self.myChart.setOption({
-                            //     xAxis: {
-                            //         data: self.friendtime
-                            //     },
-                            //     series: [{
-                            //         name: 'PV',
-                            //         data: self.PVlist
-                            //     }]
-                            // })
-                            self.getdataUV();
 
-                    }
-                })
         },
-        getdataUV: function () {
-            var self = this;
-            var alllist= null;
-            var UVtime = [];
-            this.axios.post('/monitor/get_data', {
-                typeId: 3,
-                startTime: self.startN,
-                endTime: self.endN,
-                liebianType: self.lbTypenum
-            })
-                .then(function (res) {
-                    self.UVlist = [];
-                    self.UVtimes = [];
-                    self.UVmul = 0;
-                    var data = res.data;
-                    if (data.code == 0) {
-                        alllist = data.data;
-                        for (var i in alllist) {
-                            // self.UVlist.push(alllist[i].data);
-                            UVtime.push(self.formate(alllist[i].timeSeries));
-                            self.UVtimes.push(self.formate(alllist[i].timeSeries));
-                            self.UVmul = self.UVmul + alllist[i].data;
-                        }
-                        if (self.friendlist.length >self.UVtimes.length){
-                            for(var i=0; i< self.friendlist.length; i++){
-                                self.UVlist.push(0);
-                            }
-                            for(var i=0; i< self.friendtime.length; i++){
-                                for(var j=0; j< UVtime.length; j++){
-                                    if(self.friendtime[i] == UVtime[j]){
-                                        self.UVlist[i] = alllist[j].data;
-                                        continue; 
-                                    }
-                                }
-                            }
-                        }
-                        else{
-                            for(var i in alllist){
-                                self.UVlist.push(alllist[i].data);
-                            }
-                        }
-                        if( self.PVlist.length < self.UVlist.length){
-                            var pvdata = [];
-                            pvdata = self.PVlist;
-                            self.PVlist = [];
-                            for(var i=0; i< self.UVlist.length; i++){
-                                self.PVlist.push(0);
-                            }
-                            for(var i=0; i< self.UVlist.length; i++){
-                                for(var j=0; j< self.PVtimes.length; j++){
-                                    if(self.UVtimes[i] == self.PVtimes[j]){
-                                        self.PVlist[i] = pvdata[j];
-                                        continue; 
-                                    }
-                                }
-                            }
-                        }
-                        else{
-                            var uvdata = [];
-                            uvdata = self.UVlist;
-                            self.UVlist = [];
-                            for(var i=0; i< self.PVlist.length; i++){
-                                self.UVlist.push(0);
-                            }
-                            for(var i=0; i< self.PVlist.length; i++){
-                                for(var j=0; j< self.UVtimes.length; j++){
-                                    if(self.PVtimes[i] == self.UVtimes[j]){
-                                        self.UVlist[i] = uvdata[j];
-                                        continue; 
-                                    }
-                                }
-                            }
-                        }
-                        // console.log(self.UVlist);
-                        // console.log(self.friendlist);
-                            // self.myChart.setOption({
-                            //     xAxis: {
-                            //         data: self.friendtime
-                            //     },
-                            //     series: [{
-                            //         name: 'UV',
-                            //         data: self.UVlist
-                            //     }]
-                            // })
-                            self.getdatapic();
-                    }
-                })
-        },
-        drawLine: function () {
+        drawLine: function() {    
             var self = this;
             this.myChart = echarts.init(document.getElementById('myChart'));
             this.myChart.setOption({
@@ -591,7 +449,7 @@ export default {
                     trigger: 'axis'
                 },
                 legend: {
-                    data: ['每小时新加好友数', '每小时用户截图分享数','PV','UV']
+                    data: ['每小时新加好友数', '每小时用户截图分享数', 'PV', 'UV']
                 },
                 toolbox: {
                     show: false,
@@ -718,12 +576,12 @@ export default {
                 ]
             })
         },
-        getlianbianlist: function () {
+        getlianbianlist: function() {      // 获取裂变渠道的数据
             var self = this;
             var alllist = null;
-            this.lbType = [{liebianType: 0, desc: '全部渠道'}]
+            this.lbType = [{ liebianType: 0, desc: '全部渠道' }]
             this.axios.post('/weixin/get_liebian_type_list')
-                .then(function (res) {
+                .then(function(res) {
                     var data = res.data;
                     if (data.code == 0) {
                         alllist = data.data;
@@ -731,20 +589,19 @@ export default {
                             self.lbTypenum = null;
                         }
                         else {
-                            for(var i =0; i< alllist.length; i++){
+                            for (var i = 0; i < alllist.length; i++) {
                                 self.lbType.push(alllist[i])
                             }
-                            // console.log(self.lbType);
                             self.lbTypenum = 0;
                         }
                     }
                 })
-                .catch(function (err) {
+                .catch(function(err) {
                     console.log(err);
                 })
             // this.getliebianpool(self.lbTypenum);
         },
-        fortime: function (t) {
+        fortime: function(t) {
             var d = new Date(t * 1000);
             var year = d.getFullYear();
             var day = d.getDate();
@@ -754,23 +611,21 @@ export default {
             var f = year + "-" + this.initime(month) + "-" + this.initime(day);
             return f;
         },
-        initime: function (num) {
+        initime: function(num) {
             return num > 0 ? (num + "") : ("0" + num);
         },
-        Tmedia: function () {
+        Tmedia: function() {
             var smedia = null;
             var emedia = null;
             if (smedia != this.startN || emedia != this.endN) {
                 clearInterval(this.timer);
                 smedia = this.startN;
                 emedia = this.endN;
-                // console.log(smedia);
-                // console.log(emedia);
                 this.Timer(smedia, emedia);
             }
 
         },
-        Timer: function () {
+        Timer: function() {       // 定时刷新， 60s
             // sstart, eend
             this.timer = setInterval(() => {
                 if (this.tie == 0) {
@@ -779,7 +634,6 @@ export default {
                     if (self._init == 1) {
                         self.endN = Number.parseInt(Date.now() / 1000);
                         self.end = this.formate(Number.parseInt(self.endN));
-                        // console.log(self.end);
                     }
                     this.axios.post('/monitor/get_data', {
                         typeId: 0,
@@ -787,15 +641,11 @@ export default {
                         endTime: self.endN,
                         liebianType: self.lbTypenum
                     })
-                        .then(function (res) {
+                        .then(function(res) {
                             var data = res.data;
                             self.friendlist = [];
                             self.friendtime = [];
                             self.friendsmul = 0;
-                            if(data.data == null){
-                                self.otherchart();
-                            }
-                            else{
                                 if (data.code == 0) {
                                     self.alllist = data.data;
                                     for (var i in self.alllist) {
@@ -803,22 +653,11 @@ export default {
                                         self.friendtime.push(self.formate(self.alllist[i].timeSeries));
                                         self.friendsmul = self.friendsmul + self.alllist[i].data;
                                     }
-                                    self.myChart.setOption({
-                                        xAxis: {
-                                            data: self.friendtime
-                                        },
-                                        series: [{
-                                            name: '每小时新加好友数',
-                                            data: self.friendlist
-                                        }]
-                                    })
                                     self.getdataPV();
-                                    // console.log(self.friendlist);
                                 }
                                 else {
                                     self.$message("获取失败");
                                 }
-                            }
                         })
                 }
                 else {
@@ -830,9 +669,7 @@ export default {
     created() {
         this.getlianbianlist();
         var time = Date.now() / 1000;
-        console.log(this.fortime(time));
         var today = new Date(this.fortime(time)).getTime() / 1000;
-        console.log(today);
         this.start = this.formate(today);
         this.end = this.formate(Number.parseInt(time));
         this.startN = today;
@@ -844,7 +681,7 @@ export default {
         // this.creatshare(today,Number.parseInt(time));
 
     },
-    beforeDestroy() {
+    beforeDestroy() {      // 当跳转到其他页面时，关闭定时
         console.log("销毁前");
         clearInterval(this.timer);
         clearInterval(this.timer);

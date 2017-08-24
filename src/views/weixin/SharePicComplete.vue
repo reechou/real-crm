@@ -143,7 +143,6 @@ export default {
                                 self.completelist.push(self.clllist[i].data);
                             }
                         }
-                        console.log(self.completeid);
                         self.myChart.setOption({
                             series:[{
                                 name:'比较线',
