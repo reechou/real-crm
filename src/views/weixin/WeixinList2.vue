@@ -46,7 +46,8 @@ export default {
         currentPage: 1,
         weixinids: [],
         taskids: [],
-        checkall: false
+        checkall: false,
+        idd: 0   // 记录选择的微信的序号
       };
     },
     methods: {
@@ -118,6 +119,10 @@ export default {
         else {
           var self = this;
           this.weixinlist = [_.find(self.allweixinlist, function (chr) { return chr.id == self.searchcontent; })]
+          if(this.weixinids[this.idd] != this.weixinlist[0].id){
+            this.weixinids.push(this.weixinlist[0].id);
+            this.idd = this.weixinids.length - 1;
+          }
         }
       }
     },

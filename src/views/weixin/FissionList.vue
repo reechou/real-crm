@@ -262,7 +262,7 @@ export default {
       errtotalpage:1,
      
       guanlishuju:[],
-      idd: 0
+      idd: 0    // 记录选择的微信的序号
     }
   },
   methods:{
