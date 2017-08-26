@@ -2,59 +2,64 @@
   <div class="fission">
     <div class="selectype" style="padding:10px">
       <el-row :gutter="20" style="margin-bottom:20px;">
-        <el-col :span="4" :offset="20"><span size="small" style="color:red" >{{ tie }} </span>后自动刷新列表</el-col>
+        <el-col :span="4" :offset="20">
+          <span size="small" style="color:red">{{ tie }} </span>后自动刷新列表</el-col>
       </el-row>
       <!-- <el-row :gutter="20">
-        <el-col :span="4"> -->
-          <el-select v-model="lbTypenum" placeholder="请选择" @change="getliebianpool(lbTypenum)">
-            <el-option
-            v-for="item in lbType"
-            :key="item.liebianType"
-            :label="item.desc"
-            :value="item.liebianType">
-              <i class="el-icon-delete" @click="clickicon(item.id)"></i>&nbsp;&nbsp;<span style="width:80%">{{item.liebianType}}-{{ item.desc }}</span>
-            </el-option>
-            <el-option value=""><i class="el-icon-plus" style="width:100%;" @click="showaddliebian = true">&nbsp;&nbsp;<span>创建分组</span></i></el-option>
-          </el-select>
-        <!-- </el-col> -->
-         <!-- <el-col :span="2">
-          <el-button type="primary" @click="showaddliebian = true">创建分组</el-button>
-        </el-col>  -->
-        <!-- <el-col :span="2"> -->
-          <el-button type="primary" @click="getweixinlist" sytle="width:100%">添加成员</el-button>
-        <!-- </el-col>
-        <el-col :span="16"> -->
-          <el-button type="primary" @click="confirm">批量删除</el-button>
-          <el-button type="primary" @click="geterrorlist">错误信息列表</el-button>
-        <!-- </el-col>
-      </el-row> -->
+            <el-col :span="4"> -->
+      <el-select v-model="lbTypenum" placeholder="请选择" @change="getliebianpool(lbTypenum)">
+        <el-option v-for="item in lbType" :key="item.liebianType" :label="item.desc" :value="item.liebianType">
+          <i class="el-icon-delete" @click="clickicon(item.id)"></i>&nbsp;&nbsp;
+          <span style="width:80%">{{item.liebianType}}-{{ item.desc }}</span>
+        </el-option>
+        <el-option value="">
+          <i class="el-icon-plus" style="width:100%;" @click="showaddliebian = true">&nbsp;&nbsp;
+            <span>创建分组</span>
+          </i>
+        </el-option>
+      </el-select>
+      <!-- </el-col> -->
+      <!-- <el-col :span="2">
+              <el-button type="primary" @click="showaddliebian = true">创建分组</el-button>
+            </el-col>  -->
+      <!-- <el-col :span="2"> -->
+      <el-button type="primary" @click="getweixinlist" sytle="width:100%">添加成员</el-button>
+      <!-- </el-col>
+            <el-col :span="16"> -->
+      <el-button type="primary" @click="confirm">批量删除</el-button>
+      <el-button type="primary" @click="geterrorlist">错误信息列表</el-button>
+      <el-button type="primary" v-if="!SortById" @click="sortbyid">通过id排序</el-button>
+      <el-button type="primary" v-if="SortById" @click="sortbyid">通过添加人数排序</el-button>
+      <!-- </el-col>
+          </el-row> -->
     </div>
-    
+
     <el-dialog title="新增裂变类别" v-model="showaddliebian">
-        <el-row :gutter="20" style="margin-bottom:20px;">
-          <el-col :span="4">
-            <label>裂变类型:</label>
-          </el-col>
-          <el-col :span="20">
-            <el-input type="number" v-model="newType"></el-input>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20" style="margin-bottom:20px;">
-          <el-col :span="4">
-            <label>描述:</label>
-          </el-col>
-          <el-col :span="20">
-            <el-input type="text" v-model="newDesc"  ></el-input>
-          </el-col>
-        </el-row>
-        <el-row type="flex"  justify="center" >
-          <el-col :span="6"><el-button type="primary" @click="addtype">确定</el-button></el-col>
-          <el-col :span="6"><el-button type="primary" @click="showaddliebian = false">取消</el-button></el-col>
-        </el-row>
+      <el-row :gutter="20" style="margin-bottom:20px;">
+        <el-col :span="4">
+          <label>裂变类型:</label>
+        </el-col>
+        <el-col :span="20">
+          <el-input type="number" v-model="newType"></el-input>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20" style="margin-bottom:20px;">
+        <el-col :span="4">
+          <label>描述:</label>
+        </el-col>
+        <el-col :span="20">
+          <el-input type="text" v-model="newDesc"></el-input>
+        </el-col>2="addtype">确定</el-button>
+        </el-col>
+        <el-col :span="6">
+          <el-button type="primary" @click="showaddliebian = false">取消</el-button>
+        </el-col>
+      </el-row>
     </el-dialog>
 
     <el-dialog title="新增裂变成员" v-model="showaddmember">
-        选择id:<span>{{ members }}</span>
+      选择id:
+      <span>{{ members }}</span>
       <el-row :gutter="20" style="margin-bottom:20px;">
         <el-col :span="3" :offset="21">
           <el-button type="primary" @click="addmember">添加</el-button>
@@ -62,51 +67,50 @@
       </el-row>
       <el-row :gutter="20" style="margin-bottom:20px;">
         <el-col :span="4">
-          <el-button type="primary" @click="getweixinlist" >显示全部微信</el-button>
+          <el-button type="primary" @click="getweixinlist">显示全部微信</el-button>
         </el-col>
-        <el-col :span = "20">
+        <el-col :span="20">
           <el-input placeholder="请输入微信号" icon="search" v-model="searchcontent" :on-icon-click="handleIconClick" @keyup.enter.native="show($event)"></el-input>
         </el-col>
       </el-row>
       <template>
         <el-checkbox-group v-model="members">
-          <input type="checkbox" @click="checkAllformember()" v-model="diabtcheckall">全选&nbsp;&nbsp;
-          (已选人数:{{ members.length }})
+          <input type="checkbox" @click="checkAllformember()" v-model="diabtcheckall">全选&nbsp;&nbsp; (已选人数:{{ members.length }})
 
           <el-table :data="weixinlist" style="width: 100%;margin-bottom: 80px" v-loading="loading" element-loading-text="拼命加载中" :row-class-name="tableRowClassName">
-              <el-table-column label="id">
-                  <template scope="scope">
-                    <div v-if="scope.row.tipword == ''">
-                      <el-checkbox :label="scope.row.id"></el-checkbox>                      
-                    </div>
-                    <div v-if="scope.row.tipword != ''">
-                      <span>{{scope.row.id}}</span>
-                    </div>
-                  </template>
-              </el-table-column>
-              <el-table-column prop="nickName" label="微信昵称"> </el-table-column>
-              <!-- <el-table-column prop="wxId" label="微信id"></el-table-column>  -->
-              <el-table-column prop="wechat" label="微信号"> </el-table-column>
+            <el-table-column label="id">
+              <template scope="scope">
+                <div v-if="scope.row.tipword == ''">
+                  <el-checkbox :label="scope.row.id"></el-checkbox>
+                </div>
+                <div v-if="scope.row.tipword != ''">
+                  <span>{{scope.row.id}}</span>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="nickName" label="微信昵称"> </el-table-column>
+            <!-- <el-table-column prop="wxId" label="微信id"></el-table-column>  -->
+            <el-table-column prop="wechat" label="微信号"> </el-table-column>
 
-              <el-table-column label="最后心跳时间">
+            <el-table-column label="最后心跳时间">
               <template scope='scope'>{{formate(scope.row.lastHeartbeat)}}</template>
-              </el-table-column>
-              <el-table-column align="center" label="今日添加人数" prop="todayAddContactNum"> </el-table-column>
-              <el-table-column label="描述">
+            </el-table-column>
+            <el-table-column align="center" label="今日添加人数" prop="todayAddContactNum"> </el-table-column>
+            <el-table-column label="描述">
               <template scope="scope">
                 {{scope.row.desc}}
               </template>
-              </el-table-column>
-              <el-table-column label="标记提示">
-                <template scope='scope'>
-                    <div v-if="scope.row.tipword == ''">
-                      正常                      
-                    </div>
-                    <div v-if="scope.row.tipword != ''">
-                      <span>{{ scope.row.tipword }}</span>
-                    </div>
-                </template>
-              </el-table-column>
+            </el-table-column>
+            <el-table-column label="标记提示">
+              <template scope='scope'>
+                <div v-if="scope.row.tipword == ''">
+                  正常
+                </div>
+                <div v-if="scope.row.tipword != ''">
+                  <span>{{ scope.row.tipword }}</span>
+                </div>
+              </template>
+            </el-table-column>
           </el-table>
         </el-checkbox-group>
       </template>
@@ -117,21 +121,21 @@
 
     <el-dialog title="裂变错误信息列表" v-model="showerrlist">
       <template>
-          <el-table :data="errlist" style="width: 100%;margin-bottom: 80px" v-loading="loading" element-loading-text="拼命加载中">
+        <el-table :data="errlist" style="width: 100%;margin-bottom: 80px" v-loading="loading" element-loading-text="拼命加载中">
 
-            <el-table-column label="错误信息">
-              <template scope="scope">
-                {{ scope.row.msg }}
-              </template>
-            </el-table-column>
+          <el-table-column label="错误信息">
+            <template scope="scope">
+              {{ scope.row.msg }}
+            </template>
+          </el-table-column>
 
-            <el-table-column label="发生时间" width="160px">
-              <template scope="scope">
-                {{ formate(scope.row.createAt) }}
-              </template>
-            </el-table-column>
+          <el-table-column label="发生时间" width="160px">
+            <template scope="scope">
+              {{ formate(scope.row.createAt) }}
+            </template>
+          </el-table-column>
 
-          </el-table>
+        </el-table>
       </template>
       <div style="margin-bottom: 40px">
         <el-pagination @size-change="errhandleSizeChange" @current-change="errhandleCurrentChange" :current-page="diacurrentPage" :page-size='errpagesize' ayout="total, prev, pager, next" :total='errtotalpage'></el-pagination>
@@ -141,13 +145,13 @@
     <template>
       <el-checkbox-group v-model="wxIds">
         {{wxIds}}
-        <input type="checkbox" @click="checkAll()" v-model="btcheckall">全选
-        &nbsp;&nbsp;(已选人数:{{ wxIds.length }})&nbsp;&nbsp;&nbsp;&nbsp;当前成员总数: <span style="color:red">{{ lieBianPool.length}}</span>
+        <input type="checkbox" @click="checkAll()" v-model="btcheckall">全选 &nbsp;&nbsp;(已选人数:{{ wxIds.length }})&nbsp;&nbsp;&nbsp;&nbsp;当前成员总数:
+        <span style="color:red">{{ lieBianPool.length}}</span>
         <el-table :data="lieBianPool" style="width:200%;margin-bottom:80px" v-loading="loading" element-loading-text="拼命加载中">
           <el-table-column label="选择" width="80px">
             <template scope="scope">
-                <input type="checkbox" :id="scope.row.id" :value="scope.row.liebianid" v-model="wxIds"></input> 
-               <!-- <el-checkbox :label="scope.$index"></el-checkbox> -->
+              <input type="checkbox" :id="scope.row.id" :value="scope.row.liebianid" v-model="wxIds"></input>
+              <!-- <el-checkbox :label="scope.$index"></el-checkbox> -->
             </template>
           </el-table-column>
 
@@ -164,12 +168,12 @@
           </el-table-column>
 
           <!-- <el-table-column label="微信id">
-            <template scope="scope">
-              {{ scope.row.wxId }}
-            </template>
-          </el-table-column>  -->
+                <template scope="scope">
+                  {{ scope.row.wxId }}
+                </template>
+              </el-table-column>  -->
 
-           <el-table-column label="备注">
+          <el-table-column label="备注">
             <template scope="scope">
               {{ scope.row.desc }}
             </template>
@@ -194,22 +198,16 @@
           </el-table-column>
 
           <!-- <el-table-column label="标记提示">
-            <template scope="scope">
-              <span v-if="scope.row.tipword != ''">{{ scope.row.tipword }}</span>
-              <span v-if="scope.row.tipword == ''">正常</span>
-            </template>
-          </el-table-column> -->
+                <template scope="scope">
+                  <span v-if="scope.row.tipword != ''">{{ scope.row.tipword }}</span>
+                  <span v-if="scope.row.tipword == ''">正常</span>
+                </template>
+              </el-table-column> -->
         </el-table>
       </el-checkbox-group>
     </template>
     <div style="margin-bottom: 40px">
-      <el-pagination 
-      @size-change="handleSizeChange" 
-      @current-change="handleCurrentChange" 
-      :current-page="currentPage" 
-      :page-size='pagesize' 
-      ayout="total, prev, pager, next" 
-      :total='totalpage'>
+      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-size='pagesize' ayout="total, prev, pager, next" :total='totalpage'>
       </el-pagination>
     </div>
   </div>
@@ -221,58 +219,72 @@ export default {
   data() {
     return {
       lbTypenum: null,
-      lbType:[],
-      wxIds:[],
-      btcheckall:false,
-      lieBianPool:[],
-      tie:60,
+      lbType: [],
+      wxIds: [],
+      btcheckall: false,
+      lieBianPool: [],
+      tie: 60,
 
-      members:[],      
+      members: [],
       weixinlist: [],
       checkallformember: false,
-      diallist:[],
-      diapagesize:100,
-      diacurrentPage:1,
-      diatotalpage:1,
+      diallist: [],
+      diapagesize: 100,
+      diacurrentPage: 1,
+      diatotalpage: 1,
       diabtcheckall: false,
       searchcontent: '',
-      numpack:[],
+      numpack: [],
 
-      alllist:[], 
-      pagesize:100,
-      currentPage:1,
-      totalpage:1,
+      alllist: [],
+      pagesize: 100,
+      currentPage: 1,
+      totalpage: 1,
       loading: false,
-      showaddliebian:false,
-      checkall:false,
-      typeormember:1,
+      showaddliebian: false,
+      checkall: false,
+      typeormember: 1,
       newType: null,
-      newDesc:'',
-      liebianid:[],
-      showaddtype:false,
+      newDesc: '',
+      liebianid: [],
+      showaddtype: false,
       showaddmember: false,
-      showweixinlist:false,
+      showweixinlist: false,
       timer: null,
 
-      errlist:[],
-      showerrlist:false,
-      errall:[],
-      errpagesize:100,
-      errcurrentPage:1,
-      errtotalpage:1,
-     
-      guanlishuju:[],
-      idd: 0    // 记录选择的微信的序号
+      errlist: [],
+      showerrlist: false,
+      errall: [],
+      errpagesize: 100,
+      errcurrentPage: 1,
+      errtotalpage: 1,
+
+      guanlishuju: [],
+      idd: 0,    // 记录选择的微信的序号
+      SortById: false   // 显示通过什么排序的按钮
     }
   },
-  methods:{
-    tableRowClassName: function(row,index){
-      var nowtime = Date.now()/1000;
-      if(row.qrcodeUrl == '' || row.status != 0 ||　nowtime - row.lastHeartbeat > 300){
+  methods: {
+    sortbyid: function() {
+      this.SortById = !this.SortById;
+      if (!this.SortById) {
+        this.lieBianPool.sort(function(a, b) {
+          return b.todayAddContactNum - a.todayAddContactNum;
+        })
+      }
+      else {
+        this.lieBianPool.sort(function(a, b) {
+          return a.id - b.id;
+        })
+      }
+    },
+    tableRowClassName: function(row, index) {
+      var nowtime = Date.now() / 1000;
+      if (row.qrcodeUrl == '' || row.status != 0 || nowtime - row.lastHeartbeat > 300) {
         return 'info-row';
       }
     },
-    formate: function (t) {
+    formate: function(t) {
       var d = new Date(t * 1000);
       var year = d.getFullYear();
       var day = d.getDate();
@@ -282,17 +294,17 @@ export default {
       var f = year + "-" + this.init(month) + "-" + this.init(day) + " " + this.init(hour) + ":" + this.init(minute);
       return f;
     },
-    init: function (d) {
+    init: function(d) {
       return d > 9 ? d : "0" + d;
     },
-    batchdelete:function(){
+    batchdelete: function() {
       var self = this;
       console.log(this.wxIds);
-      if(this.wxIds == null){
+      if (this.wxIds == null) {
         this.$message("请选择要删除的号");
         return false;
       }
-      else{
+      else {
         //   var selectme = [];
         //   for(var i in this.wxIds){
         //     selectme.push(this.alllist[this.wxIds[i]].liebianPool);
@@ -303,203 +315,203 @@ export default {
         // }
         // console.log(this.liebianid);
         console.log(this.wxIds);
-        this.axios.post('/weixin/delete_lianbian_pool',this.wxIds)
-        .then(function(res){
-          var data = res.data;
-          if(data.code == 0){
-            self.$message("删除成功");
-            self.getliebianpool(self.lbTypenum);
-            self.wxIds = []; 
+        this.axios.post('/weixin/delete_lianbian_pool', this.wxIds)
+          .then(function(res) {
+            var data = res.data;
+            if (data.code == 0) {
+              self.$message("删除成功");
+              self.getliebianpool(self.lbTypenum);
+              self.wxIds = [];
 
-            // this.$router.push('/fissionlist');
-          }
-          else{
+              // this.$router.push('/fissionlist');
+            }
+            else {
+              self.$message("删除失败");
+            }
+          })
+          .catch(function(err) {
+            console.log(err);
             self.$message("删除失败");
-          }
-        })
-        .catch(function(err){
-          console.log(err);
-          self.$message("删除失败");
-        })
-      this.btcheckall = false;
-      this.checkall = false;
+          })
+        this.btcheckall = false;
+        this.checkall = false;
       }
     },
-    checkAll:function(){
+    checkAll: function() {
       console.log(this.wxIds);
-      if(this.wxIds == ''){
-        if(!this.checkall){
+      if (this.wxIds == '') {
+        if (!this.checkall) {
           this.wxIds = [];
-          for(var i = 0; i < this.lieBianPool.length; i++){
+          for (var i = 0; i < this.lieBianPool.length; i++) {
             this.wxIds.push(i);
             console.log(this.wxIds);
           }
           this.checkall = true;
         }
-        else{
+        else {
           this.wxIds = [];
           this.checkall = false;
         }
       }
-       else{
-           if(!this.checkall){
-            for(var i = 0; i < this.lieBianPool.length; i++){
-              this.wxIds.push(i);
-            }
-               this.checkall = true;
-           }
-           else{
-               this.wxIds = [];
-               this.checkall = false;
-           }
-       }
-       console.log(this.wxIds);
+      else {
+        if (!this.checkall) {
+          for (var i = 0; i < this.lieBianPool.length; i++) {
+            this.wxIds.push(i);
+          }
+          this.checkall = true;
+        }
+        else {
+          this.wxIds = [];
+          this.checkall = false;
+        }
+      }
+      console.log(this.wxIds);
     },
-    checkAllformember: function(){
+    checkAllformember: function() {
       console.log(this.members);
-      if(this.members.length == 0){
-        if(!this.checkallformember){
+      if (this.members.length == 0) {
+        if (!this.checkallformember) {
           this.members = [];
           // this.weixinlist.forEach((item) => {
-            console.log(1111111);
-            for(var i = 0; i < this.weixinlist.length; i++){
-              if(this.weixinlist[i].tipword == ''){
-                this.members.push(this.weixinlist[i].id);
-              }
+          console.log(1111111);
+          for (var i = 0; i < this.weixinlist.length; i++) {
+            if (this.weixinlist[i].tipword == '') {
+              this.members.push(this.weixinlist[i].id);
+            }
 
-              }
+          }
           // });
           this.checkallformember = true;
         }
-        else{
+        else {
           this.members = [];
           this.checkallformember = false;
         }
       }
-      else{
-        if(!this.checkallformember){
-            for(var i = 0; i < this.weixinlist.length; i++){
-              if(this.weixinlist[i].tipword == ''){
-                this.members.push(this.weixinlist[i].id);
-              }
+      else {
+        if (!this.checkallformember) {
+          for (var i = 0; i < this.weixinlist.length; i++) {
+            if (this.weixinlist[i].tipword == '') {
+              this.members.push(this.weixinlist[i].id);
             }
+          }
           this.checkallformember = true;
         }
-        else{
+        else {
           this.members = [];
           this.checkallformember = false;
         }
       }
       console.log(this.members);
     },
-    addtype:function(){
+    addtype: function() {
       var self = this;
-      if(this.newType == null || this.newDesc ==  ''){
+      if (this.newType == null || this.newDesc == '') {
         this.$message("请输入新增信息");
       }
-      else{
-        this.axios.post('/weixin/create_liebian_type',{
+      else {
+        this.axios.post('/weixin/create_liebian_type', {
           liebianType: Number.parseInt(this.newType),
           desc: this.newDesc
         })
-        .then(function(res){
-          var data = res.data;
-          if(data.code == 0){
-            self.$message("创建成功");
-            self.getlianbianlist();
-            self.showaddliebian = false;
-            self.newDesc = '';
-            self.newType = null;
-          }
-          else{
+          .then(function(res) {
+            var data = res.data;
+            if (data.code == 0) {
+              self.$message("创建成功");
+              self.getlianbianlist();
+              self.showaddliebian = false;
+              self.newDesc = '';
+              self.newType = null;
+            }
+            else {
+              self.$message("创建失败");
+              self.newDesc = '';
+              self.newType = null;
+            }
+          })
+          .catch(function(err) {
             self.$message("创建失败");
             self.newDesc = '';
             self.newType = null;
-          }
-        })
-        .catch(function(err){
-          self.$message("创建失败");
-            self.newDesc = '';
-            self.newType = null;
-          console.log(err);
-        })
+            console.log(err);
+          })
       }
     },
-    clickicon:function(val){
+    clickicon: function(val) {
       this.typeormember = 0;
       this.confirm(val);
     },
-    getlianbianlist: function(){
+    getlianbianlist: function() {
       var self = this;
       this.axios.post('/weixin/get_liebian_type_list')
-          .then(function (res) {
-            var data = res.data;
-            if(data.code == 0){
-              self.lbType = data.data;
-              if(self.lbType == null){
-                self.lbTypenum = null;
-              }
-              else{
-                console.log(self.lbType[0].liebianType);
-                self.lbTypenum = self.lbType[0].liebianType;
-              }
+        .then(function(res) {
+          var data = res.data;
+          if (data.code == 0) {
+            self.lbType = data.data;
+            if (self.lbType == null) {
+              self.lbTypenum = null;
             }
-          })
-          .catch(function(err){
-            console.log(err);
-          })
-          this.getliebianpool(self.lbTypenum);
+            else {
+              console.log(self.lbType[0].liebianType);
+              self.lbTypenum = self.lbType[0].liebianType;
+            }
+          }
+        })
+        .catch(function(err) {
+          console.log(err);
+        })
+      this.getliebianpool(self.lbTypenum);
     },
-    getliebianpool: function(type){
+    getliebianpool: function(type) {
       console.log(type);
       var self = this;
-      this.axios.post('/weixin/get_lianbian_pool',{
+      this.axios.post('/weixin/get_lianbian_pool', {
         liebianType: Number.parseInt(type)
       })
-      .then(function(res){
-        var data = res.data;
-        if(data.code == 0){
-          self.alllist = data.data;
-          if(self.alllist == null){
-            self.lieBianPool = [];
-          }
-          else{
-            self.totalpage = self.alllist.length;
-            self.lieBianPool = [];
-            var currentSize = self.currentPage * self.pagesize;
-            if(currentSize > self.alllist.length){
-              currentSize = self.alllist.length;
+        .then(function(res) {
+          var data = res.data;
+          if (data.code == 0) {
+            self.alllist = data.data;
+            if (self.alllist == null) {
+              self.lieBianPool = [];
             }
-            for(var i=(self.currentPage -1) * self.pagesize; i< currentSize; i++){
-              self.lieBianPool.push(self.alllist[i].weixin);
-              self.$set(self.lieBianPool[i], 'liebianid', self.alllist[i].liebianPool.id);
+            else {
+              self.totalpage = self.alllist.length;
+              self.lieBianPool = [];
+              var currentSize = self.currentPage * self.pagesize;
+              if (currentSize > self.alllist.length) {
+                currentSize = self.alllist.length;
+              }
+              for (var i = (self.currentPage - 1) * self.pagesize; i < currentSize; i++) {
+                self.lieBianPool.push(self.alllist[i].weixin);
+                self.$set(self.lieBianPool[i], 'liebianid', self.alllist[i].liebianPool.id);
+              }
+              // for(var i in self.alllist){
+              //   self.$set(self.lieBianPool[i], 'liebianid', self.alllist[i].liebianPool.id);
+              // }
+                self.lieBianPool.sort(function(a, b) {
+                  return b.todayAddContactNum - a.todayAddContactNum;
+                })
+              console.log(self.lieBianPool);
             }
-            // for(var i in self.alllist){
-            //   self.$set(self.lieBianPool[i], 'liebianid', self.alllist[i].liebianPool.id);
-            // }
-            self.lieBianPool.sort(function(a,b){
-              return b.todayAddContactNum - a.todayAddContactNum;
-            })
-            console.log(self.lieBianPool);
           }
-        }
-      })
-      .catch(function(err){
-        console.log(err);
-      })
-          this.Tmedia();
+        })
+        .catch(function(err) {
+          console.log(err);
+        })
+      this.Tmedia();
     },
-    memhandleSizeChange: function(){
+    memhandleSizeChange: function() {
       var self = this;
       self.weixinlist = [];
       var j = self.diacurrentPage == Math.ceil(self.diallist.length / self.diapagesize) ? self.diallist.length : self.diacurrentPage * self.diapagesize;
-      for(var i = (self.diacurrentPage - 1) * self.diapagesize; i < j; i++) {
+      for (var i = (self.diacurrentPage - 1) * self.diapagesize; i < j; i++) {
         self.weixinlist.push(self.diallist[i]);
       }
     },
-    memhandleCurrentChange: function (val) {
+    memhandleCurrentChange: function(val) {
       var self = this;
-      this.diabtcheckall  = false;
+      this.diabtcheckall = false;
       this.checkallformember = false;
       self.weixinlist = [];
       self.diacurrentPage = val;
@@ -510,32 +522,32 @@ export default {
       console.log(self.weixinlist);
     },
     handleIconClick: function() {
-      if(this.searchcontent == '') {
+      if (this.searchcontent == '') {
         this.weixinlist = this.diallist;
       }
       else {
         var self = this;
-        this.weixinlist = [_.find(self.diallist, function(chr){return chr.id == self.searchcontent; })];
+        this.weixinlist = [_.find(self.diallist, function(chr) { return chr.id == self.searchcontent; })];
       }
     },
-    show: function(ev){
-      if(ev.keyCode == 13) {
-        if(this.searchcontent == '') {
+    show: function(ev) {
+      if (ev.keyCode == 13) {
+        if (this.searchcontent == '') {
           this.weixinlist = this.diallist;
         }
         else {
           var self = this;
-          this.weixinlist = [_.find(self.diallist, function(chr){
+          this.weixinlist = [_.find(self.diallist, function(chr) {
             return chr.id == self.searchcontent;
           })];
-          if( this.members[this.idd] != this.weixinlist[0].id){
-             this.members.push(this.weixinlist[0].id);
-             this.idd = this.members.length - 1;
+          if (this.members[this.idd] != this.weixinlist[0].id) {
+            this.members.push(this.weixinlist[0].id);
+            this.idd = this.members.length - 1;
           }
         }
       }
     },
-    handleSizeChange: function () {
+    handleSizeChange: function() {
       var self = this
       self.lieBianPool = []
       var j = self.currentPage == Math.ceil(self.alllist.length / self.pagesize) ? self.alllist.length : self.currentPage * self.pagesize
@@ -543,8 +555,18 @@ export default {
         self.lieBianPool.push(self.alllist[i].weixin);
         self.$set(self.lieBianPool[i], 'liebianid', self.alllist[i].liebianPool.id);
       }
+      if (!self.SortById) {
+        self.lieBianPool.sort(function(a, b) {
+          return b.todayAddContactNum - a.todayAddContactNum;
+        })
+      }
+      else {
+        self.lieBianPool.sort(function(a, b) {
+          return a.id - b.id;
+        })
+      }
     },
-    handleCurrentChange: function (val) {
+    handleCurrentChange: function(val) {
       var self = this
       this.btcheckall = false;
       this.checkall = false;
@@ -555,134 +577,142 @@ export default {
         self.lieBianPool.push(self.alllist[i].weixin);
         self.$set(self.lieBianPool[i], 'liebianid', self.alllist[i].liebianPool.id);
       }
+      if (!self.SortById) {
+        self.lieBianPool.sort(function(a, b) {
+          return b.todayAddContactNum - a.todayAddContactNum;
+        })
+      }
+      else {
+        self.lieBianPool.sort(function(a, b) {
+          return a.id - b.id;
+        })
+      }
       console.log(self.lieBianPool);
     },
-    confirm: function(val){
+    confirm: function(val) {
       var self = this;
-      this.$confirm("是否删除?",'提示',{
-        bonfirmButtonText:'确定',
-        cancelButtonText:'取消',
-        type:'warning'
-      }).then(() =>{
-        if(this.typeormember == 0){
+      this.$confirm("是否删除?", '提示', {
+        bonfirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        if (this.typeormember == 0) {
           this.typedelet(val);
           console.log(this.typeormember);
         }
-        else{
+        else {
           self.batchdelete();
         }
-      }).catch(() =>{
+      }).catch(() => {
 
       });
     },
-    typedelet:function(val){
+    typedelet: function(val) {
       var self = this;
-      this.axios.post('/weixin/delete_liebian_type',{
-        id:val
+      this.axios.post('/weixin/delete_liebian_type', {
+        id: val
       })
-      .then(function(res){
-        var data = res.data;
-        if(data.code == 0){
-          self.$message("删除成功");
-          self.getlianbianlist();
-        }
-        else{
-          self.$message("删除失败");
-        }
-      })
+        .then(function(res) {
+          var data = res.data;
+          if (data.code == 0) {
+            self.$message("删除成功");
+            self.getlianbianlist();
+          }
+          else {
+            self.$message("删除失败");
+          }
+        })
       this.typeormember = 1;
     },
     getweixinlist: function() {
       var self = this;
       var tipword = '';
-      var nowtime = Date.now()/1000;
+      var nowtime = Date.now() / 1000;
       self.loading = true;
       this.axios.post('/weixin/get_all_weixin')
-          .then(function (res) {
-            var data = res.data;
-            self.loading = false;
-            if(data.code == 0){
-              self.diallist = data.data.map(v => {
-                v.edit = false;
-                return v;
-              });
-              if(self.diallist == null){
-                self.weixinlist = [];
-              }
-              else
-              {
-                self.diatotalpage = self.diallist.length;
-                self.weixinlist = [];
-                var diacurrentSize = self.diacurrentPage * self.diapagesize;
-                if(diacurrentSize > self.diallist.length) {
-                  diacurrentSize = self.diallist.length;
-                }
-                for(var i=0; i<self.diallist.length; i++){
-                  tipword = '';
-                  if(self.diallist[i].qrcodeUrl == ''){
-                    tipword = tipword + '⑴未添加二维码;';
-                  }
-                  if(self.diallist[i].status != 0){
-                    tipword = tipword + '⑴状态不正常;';
-                  }
-                  if(nowtime - self.diallist[i].lastHeartbeat > 300){
-                    tipword = tipword + '⑴最后心跳时间超过5分钟;'
-                  }
-                  self.$set(self.diallist[i], 'tipword', tipword);
-                }
-                for(var i = (self.diacurrentPage - 1) * self.diapagesize; i < diacurrentSize; i++) {
-                  self.weixinlist.push(self.diallist[i]);
-                }
-
-                console.log(self.weixinlist);
-              }
+        .then(function(res) {
+          var data = res.data;
+          self.loading = false;
+          if (data.code == 0) {
+            self.diallist = data.data.map(v => {
+              v.edit = false;
+              return v;
+            });
+            if (self.diallist == null) {
+              self.weixinlist = [];
             }
-          })
-          .catch(function (err) {
-            console.log(err);
-            self.loading = false;
-          })
-          if(this.lbTypenum == null)
-          {
-            this.$message("请选择裂变类别")
-            return false;
+            else {
+              self.diatotalpage = self.diallist.length;
+              self.weixinlist = [];
+              var diacurrentSize = self.diacurrentPage * self.diapagesize;
+              if (diacurrentSize > self.diallist.length) {
+                diacurrentSize = self.diallist.length;
+              }
+              for (var i = 0; i < self.diallist.length; i++) {
+                tipword = '';
+                if (self.diallist[i].qrcodeUrl == '') {
+                  tipword = tipword + '⑴未添加二维码;';
+                }
+                if (self.diallist[i].status != 0) {
+                  tipword = tipword + '⑴状态不正常;';
+                }
+                if (nowtime - self.diallist[i].lastHeartbeat > 300) {
+                  tipword = tipword + '⑴最后心跳时间超过5分钟;'
+                }
+                self.$set(self.diallist[i], 'tipword', tipword);
+              }
+              for (var i = (self.diacurrentPage - 1) * self.diapagesize; i < diacurrentSize; i++) {
+                self.weixinlist.push(self.diallist[i]);
+              }
+
+              console.log(self.weixinlist);
+            }
           }
-          else{
-            this.showaddmember = true;
-          }
+        })
+        .catch(function(err) {
+          console.log(err);
+          self.loading = false;
+        })
+      if (this.lbTypenum == null) {
+        this.$message("请选择裂变类别")
+        return false;
+      }
+      else {
+        this.showaddmember = true;
+      }
     },
     addmember: function() {
       var self = this;
-      if(this.members == ''){
+      if (this.members == '') {
         this.$message("请选择好友");
         return false;
       }
-      else{
-        for(var i in this.members){
+      else {
+        for (var i in this.members) {
           this.numpack.push({
             liebianType: Number.parseInt(this.lbTypenum),
             weixinId: Number.parseInt(this.members[i])
           });
         }
         console.log(this.numpack);
-        this.axios.post('/weixin/create_lianbian_pool',this.numpack)
-            .then(function(res){
-              var data = res.data;
-              if(data.code == 0){
-                self.$message("创建成功");
-                self.showaddmember= false;
-                self.members=[];
-                self.numpack = [];
-                self.getliebianpool(self.lbTypenum);
-              }
-              else{
-                self.$message("创建失败");
-              }
-            })
-            .catch(function(err){
-              console.log(err);
+        this.axios.post('/weixin/create_lianbian_pool', this.numpack)
+          .then(function(res) {
+            var data = res.data;
+            if (data.code == 0) {
+              self.$message("创建成功");
+              self.showaddmember = false;
+              self.members = [];
+              self.numpack = [];
+              self.getliebianpool(self.lbTypenum);
+            }
+            else {
               self.$message("创建失败");
-            })
+            }
+          })
+          .catch(function(err) {
+            console.log(err);
+            self.$message("创建失败");
+          })
         this.diabtcheckall = false;
         this.checkallformember = false;
       }
@@ -690,87 +720,96 @@ export default {
 
     Timer: function(val) {
       this.timer = setInterval(() => {
-        if(this.tie == 0 ){  
-         this.tie = 60;
+        if (this.tie == 0) {
+          this.tie = 60;
 
-      console.log(val);
-      var self = this;
-      var tipword = '';
-      var nowtime = Date.now()/1000;
-      this.axios.post('/weixin/get_lianbian_pool',{
-        liebianType: Number.parseInt(val)
-      })
-      .then(function(res){
-        var data = res.data;
-        if(data.code == 0){
-          self.alllist = data.data;
-          self.totalpage = self.alllist.length;
-          self.lieBianPool = [];
-          var currentSize = self.currentPage * self.pagesize;
-          if(currentSize > self.alllist.length){
-            currentSize = self.alllist.length;
-          }
-          for(var i=(self.currentPage -1) * self.pagesize; i< currentSize; i++){
-            self.lieBianPool.push(self.alllist[i].weixin);
-          }
-          self.lieBianPool.sort(function(a,b){
-            return b.todayAddContactNum - a.todayAddContactNum;
+          console.log(val);
+          var self = this;
+          var tipword = '';
+          var nowtime = Date.now() / 1000;
+          this.axios.post('/weixin/get_lianbian_pool', {
+            liebianType: Number.parseInt(val)
           })
+            .then(function(res) {
+              var data = res.data;
+              if (data.code == 0) {
+                self.alllist = data.data;
+                self.totalpage = self.alllist.length;
+                self.lieBianPool = [];
+                var currentSize = self.currentPage * self.pagesize;
+                if (currentSize > self.alllist.length) {
+                  currentSize = self.alllist.length;
+                }
+                for (var i = (self.currentPage - 1) * self.pagesize; i < currentSize; i++) {
+                  self.lieBianPool.push(self.alllist[i].weixin);
+                }
+                if (!self.SortById) {
+                  console.log(1111111111111);
+                  self.lieBianPool.sort(function(a, b) {
+                    return b.todayAddContactNum - a.todayAddContactNum;
+                  })
+                }
+                else {
+                  console.log(1111111111);
+                  self.lieBianPool.sort(function(a, b) {
+                    return a.id - b.id;
+                  })
+                }
+              }
+            })
+            .catch(function(err) {
+              console.log(err);
+            })
         }
-      })
-      .catch(function(err){
-        console.log(err);
-      })
-        }
-        else{
-        this.tie--;
-        // console.log(this.lbTypenum);
+        else {
+          this.tie--;
+          // console.log(this.lbTypenum);
         }
       }, 1000)
     },
-    Tmedia: function(){
+    Tmedia: function() {
       var media = null;
-        if( media != this.lbTypenum){
-          clearInterval(this.timer);           // .clearInterval();
-          media = this.lbTypenum;
+      if (media != this.lbTypenum) {
+        clearInterval(this.timer);           // .clearInterval();
+        media = this.lbTypenum;
 
-          this.Timer(media);
-        }
+        this.Timer(media);
+      }
     },
-    geterrorlist: function(){
+    geterrorlist: function() {
       var self = this;
-      this.axios.post('/weixin/get_liebian_error_msg',{
+      this.axios.post('/weixin/get_liebian_error_msg', {
         liebianType: Number.parseInt(this.lbTypenum)
       })
-        .then(function(res){
+        .then(function(res) {
           var data = res.data;
-          if(data.code == 0){
+          if (data.code == 0) {
             self.errall = data.data;
             self.errtotalpage = self.errall.length;
             self.errlist = [];
             var errcurrentSize = self.errcurrentPage * self.errpagesize;
-            if(errcurrentSize > self.errall.length) {
+            if (errcurrentSize > self.errall.length) {
               errcurrentSize = self.errall.length;
             }
-              for(var i = (self.errcurrentPage - 1) * self.errpagesize; i < errcurrentSize; i++) {
-                self.errlist.push(self.errall[i]);
-              }
+            for (var i = (self.errcurrentPage - 1) * self.errpagesize; i < errcurrentSize; i++) {
+              self.errlist.push(self.errall[i]);
+            }
           }
         })
-        .catch(function (err) {
+        .catch(function(err) {
           console.log(err);
         })
-        this.showerrlist = true;
+      this.showerrlist = true;
     },
-    errhandleSizeChange: function(){
+    errhandleSizeChange: function() {
       var self = this;
       self.errlist = [];
       var j = self.errcurrentPage == Math.ceil(self.errllist.length / self.errpagesize) ? self.errall.length : self.errcurrentPage * self.errpagesize;
-      for(var i = (self.errcurrentPage - 1) * self.errpagesize; i < j; i++) {
+      for (var i = (self.errcurrentPage - 1) * self.errpagesize; i < j; i++) {
         self.errlist.push(self.errall[i]);
       }
     },
-    errhandleCurrentChange: function (val) {
+    errhandleCurrentChange: function(val) {
       var self = this;
       self.errlist = [];
       self.errcurrentPage = val;
@@ -780,17 +819,17 @@ export default {
       }
     },
   },
-  created(){
+  created() {
     this.getlianbianlist();
   },
-  beforeDestroy() {            
+  beforeDestroy() {
     console.log("销毁前");
-    clearInterval(this.timer);  
     clearInterval(this.timer);
     clearInterval(this.timer);
     clearInterval(this.timer);
-    console.log(this.timer);                   
-  }  
+    clearInterval(this.timer);
+    console.log(this.timer);
+  }
 }
 </script>
 
@@ -798,25 +837,33 @@ export default {
 .el-table .info-row {
   background: #FFAEB9;
 }
-.fission{
+
+.fission {
   width: 100%;
-  padding:20px
-}
-select{
-  width:100%;
-}
-.el-icon-delete:hover{
-  background-color:#20a0ff;
+  padding: 20px
 }
 
-  /*设置本地动画*/
- .bounce-enter-active {
+select {
+  width: 100%;
+}
+
+.el-icon-delete:hover {
+  background-color: #20a0ff;
+}
+
+
+
+/*设置本地动画*/
+
+.bounce-enter-active {
   animation: bounce-in 2s;
 }
+
 .bounce-leave-active {
   animation: bounce-out 2s;
 }
-@keyframes bounce-in{
+
+@keyframes bounce-in {
   0% {
     transform: scale(0);
   }
@@ -827,7 +874,8 @@ select{
     transform: scale(1);
   }
 }
-@keyframes bounce-out{
+
+@keyframes bounce-out {
   0% {
     transform: scale(1);
   }
@@ -837,5 +885,5 @@ select{
   100% {
     transform: scale(0);
   }
-} 
+}
 </style>
