@@ -6,7 +6,7 @@
           <span size="small" style="color:red">{{ tie }} </span>后自动刷新列表</el-col>
       </el-row>
       <!-- <el-row :gutter="20">
-            <el-col :span="4"> -->
+                  <el-col :span="4"> -->
       <el-select v-model="lbTypenum" placeholder="请选择" @change="getliebianpool(lbTypenum)">
         <el-option v-for="item in lbType" :key="item.liebianType" :label="item.desc" :value="item.liebianType">
           <i class="el-icon-delete" @click="clickicon(item.id)"></i>&nbsp;&nbsp;
@@ -20,18 +20,18 @@
       </el-select>
       <!-- </el-col> -->
       <!-- <el-col :span="2">
-              <el-button type="primary" @click="showaddliebian = true">创建分组</el-button>
-            </el-col>  -->
+                    <el-button type="primary" @click="showaddliebian = true">创建分组</el-button>
+                  </el-col>  -->
       <!-- <el-col :span="2"> -->
       <el-button type="primary" @click="getweixinlist" sytle="width:100%">添加成员</el-button>
       <!-- </el-col>
-            <el-col :span="16"> -->
+                  <el-col :span="16"> -->
       <el-button type="primary" @click="confirm">批量删除</el-button>
       <el-button type="primary" @click="geterrorlist">错误信息列表</el-button>
       <el-button type="primary" v-if="!SortById" @click="sortbyid">通过id排序</el-button>
       <el-button type="primary" v-if="SortById" @click="sortbyid">通过添加人数排序</el-button>
       <!-- </el-col>
-          </el-row> -->
+                </el-row> -->
     </div>
 
     <el-dialog title="新增裂变类别" v-model="showaddliebian">
@@ -146,7 +146,7 @@
       <el-checkbox-group v-model="wxIds">
         {{wxIds}}
         <input type="checkbox" @click="checkAll()" v-model="btcheckall">全选 &nbsp;&nbsp;(已选人数:{{ wxIds.length }})&nbsp;&nbsp;&nbsp;&nbsp;当前成员总数:
-        <span style="color:red">{{ lieBianPool.length}}</span>
+        <span style="color:red">{{ alllist.length}}</span>
         <el-table :data="lieBianPool" style="width:200%;margin-bottom:80px" v-loading="loading" element-loading-text="拼命加载中">
           <el-table-column label="选择" width="80px">
             <template scope="scope">
@@ -168,10 +168,10 @@
           </el-table-column>
 
           <!-- <el-table-column label="微信id">
-                <template scope="scope">
-                  {{ scope.row.wxId }}
-                </template>
-              </el-table-column>  -->
+                      <template scope="scope">
+                        {{ scope.row.wxId }}
+                      </template>
+                    </el-table-column>  -->
 
           <el-table-column label="备注">
             <template scope="scope">
@@ -198,11 +198,11 @@
           </el-table-column>
 
           <!-- <el-table-column label="标记提示">
-                <template scope="scope">
-                  <span v-if="scope.row.tipword != ''">{{ scope.row.tipword }}</span>
-                  <span v-if="scope.row.tipword == ''">正常</span>
-                </template>
-              </el-table-column> -->
+                      <template scope="scope">
+                        <span v-if="scope.row.tipword != ''">{{ scope.row.tipword }}</span>
+                        <span v-if="scope.row.tipword == ''">正常</span>
+                      </template>
+                    </el-table-column> -->
         </el-table>
       </el-checkbox-group>
     </template>
@@ -266,16 +266,37 @@ export default {
   },
   methods: {
     sortbyid: function() {
+      var self = this;
       this.SortById = !this.SortById;
       if (!this.SortById) {
-        this.lieBianPool.sort(function(a, b) {
-          return b.todayAddContactNum - a.todayAddContactNum;
+        self.alllist.sort(function(a, b) {
+          return b.weixin.todayAddContactNum - a.weixin.todayAddContactNum;
         })
+        self.totalpage = self.alllist.length;
+        self.lieBianPool = [];
+        var currentSize = self.currentPage * self.pagesize;
+        if (currentSize > self.alllist.length) {
+          currentSize = self.alllist.length;
+        }
+        for (var i = (self.currentPage - 1) * self.pagesize; i < currentSize; i++) {
+          self.lieBianPool.push(self.alllist[i].weixin);
+          // self.$set(self.lieBianPool[i], 'liebianid', self.alllist[i].liebianPool.id);
+        }
       }
       else {
-        this.lieBianPool.sort(function(a, b) {
-          return a.id - b.id;
+        self.alllist.sort(function(a, b) {
+          return a.weixin.id - b.weixin.id;
         })
+        self.totalpage = self.alllist.length;
+        self.lieBianPool = [];
+        var currentSize = self.currentPage * self.pagesize;
+        if (currentSize > self.alllist.length) {
+          currentSize = self.alllist.length;
+        }
+        for (var i = (self.currentPage - 1) * self.pagesize; i < currentSize; i++) {
+          self.lieBianPool.push(self.alllist[i].weixin);
+          // self.$set(self.lieBianPool[i], 'liebianid', self.alllist[i].liebianPool.id);
+        }
       }
     },
     tableRowClassName: function(row, index) {
@@ -476,6 +497,15 @@ export default {
               self.lieBianPool = [];
             }
             else {
+              for (var k = 0; k < self.alllist.length; k++) {
+                self.$set(self.alllist[k].weixin, 'liebianid', self.alllist[k].liebianPool.id);
+              }
+              self.alllist.sort(function(a, b) {
+                return b.weixin.todayAddContactNum - a.weixin.todayAddContactNum;
+              })
+              console.log(self.alllist);
+
+
               self.totalpage = self.alllist.length;
               self.lieBianPool = [];
               var currentSize = self.currentPage * self.pagesize;
@@ -484,15 +514,15 @@ export default {
               }
               for (var i = (self.currentPage - 1) * self.pagesize; i < currentSize; i++) {
                 self.lieBianPool.push(self.alllist[i].weixin);
-                self.$set(self.lieBianPool[i], 'liebianid', self.alllist[i].liebianPool.id);
+                // self.$set(self.lieBianPool[i], 'liebianid', self.alllist[i].liebianPool.id);
               }
               // for(var i in self.alllist){
               //   self.$set(self.lieBianPool[i], 'liebianid', self.alllist[i].liebianPool.id);
               // }
-                self.lieBianPool.sort(function(a, b) {
-                  return b.todayAddContactNum - a.todayAddContactNum;
-                })
-              console.log(self.lieBianPool);
+              // self.lieBianPool.sort(function(a, b) {
+              //   return b.todayAddContactNum - a.todayAddContactNum;
+              // })
+              // console.log(self.lieBianPool);
             }
           }
         })
@@ -553,17 +583,7 @@ export default {
       var j = self.currentPage == Math.ceil(self.alllist.length / self.pagesize) ? self.alllist.length : self.currentPage * self.pagesize
       for (var i = (self.currentPage - 1) * self.pagesize; i < j; i++) {
         self.lieBianPool.push(self.alllist[i].weixin);
-        self.$set(self.lieBianPool[i], 'liebianid', self.alllist[i].liebianPool.id);
-      }
-      if (!self.SortById) {
-        self.lieBianPool.sort(function(a, b) {
-          return b.todayAddContactNum - a.todayAddContactNum;
-        })
-      }
-      else {
-        self.lieBianPool.sort(function(a, b) {
-          return a.id - b.id;
-        })
+        // self.$set(self.lieBianPool[i], 'liebianid', self.alllist[i].liebianPool.id);
       }
     },
     handleCurrentChange: function(val) {
@@ -575,17 +595,7 @@ export default {
       var j = val == Math.ceil(self.alllist.length / self.pagesize) ? self.alllist.length : val * self.pagesize
       for (var i = (val - 1) * self.pagesize; i < j; i++) {
         self.lieBianPool.push(self.alllist[i].weixin);
-        self.$set(self.lieBianPool[i], 'liebianid', self.alllist[i].liebianPool.id);
-      }
-      if (!self.SortById) {
-        self.lieBianPool.sort(function(a, b) {
-          return b.todayAddContactNum - a.todayAddContactNum;
-        })
-      }
-      else {
-        self.lieBianPool.sort(function(a, b) {
-          return a.id - b.id;
-        })
+        // self.$set(self.lieBianPool[i], 'liebianid', self.alllist[i].liebianPool.id);
       }
       console.log(self.lieBianPool);
     },
@@ -734,27 +744,47 @@ export default {
               var data = res.data;
               if (data.code == 0) {
                 self.alllist = data.data;
-                self.totalpage = self.alllist.length;
-                self.lieBianPool = [];
-                var currentSize = self.currentPage * self.pagesize;
-                if (currentSize > self.alllist.length) {
-                  currentSize = self.alllist.length;
-                }
-                for (var i = (self.currentPage - 1) * self.pagesize; i < currentSize; i++) {
-                  self.lieBianPool.push(self.alllist[i].weixin);
-                }
-                if (!self.SortById) {
-                  console.log(1111111111111);
-                  self.lieBianPool.sort(function(a, b) {
-                    return b.todayAddContactNum - a.todayAddContactNum;
-                  })
+                if (self.alllist == null) {
+                  self.lieBianPool = [];
                 }
                 else {
-                  console.log(1111111111);
-                  self.lieBianPool.sort(function(a, b) {
-                    return a.id - b.id;
-                  })
+                  for (var k = 0; k < self.alllist.length; k++) {
+                    self.$set(self.alllist[k].weixin, 'liebianid', self.alllist[k].liebianPool.id);
+                  }
+                  if (!self.SortById) {
+                    self.alllist.sort(function(a, b) {
+                      return b.weixin.todayAddContactNum - a.weixin.todayAddContactNum;
+                    })
+                  } else {
+                    self.alllist.sort(function(a, b) {
+                      return a.weixin.id - b.weixin.id;
+                    })
+                  }
+                  console.log(self.alllist);
+
+
+                  self.totalpage = self.alllist.length;
+                  self.lieBianPool = [];
+                  var currentSize = self.currentPage * self.pagesize;
+                  if (currentSize > self.alllist.length) {
+                    currentSize = self.alllist.length;
+                  }
+                  for (var i = (self.currentPage - 1) * self.pagesize; i < currentSize; i++) {
+                    self.lieBianPool.push(self.alllist[i].weixin);
+                  }
                 }
+                // if (!self.SortById) {
+                //   console.log(1111111111111);
+                //   self.lieBianPool.sort(function(a, b) {
+                //     return b.todayAddContactNum - a.todayAddContactNum;
+                //   })
+                // }
+                // else {
+                //   console.log(1111111111);
+                //   self.lieBianPool.sort(function(a, b) {
+                //     return a.id - b.id;
+                //   })
+                // }
               }
             })
             .catch(function(err) {
@@ -850,6 +880,9 @@ select {
 .el-icon-delete:hover {
   background-color: #20a0ff;
 }
+
+
+
 
 
 
