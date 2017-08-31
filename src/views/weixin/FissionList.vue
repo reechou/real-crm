@@ -359,13 +359,11 @@ export default {
       }
     },
     checkAll: function() {
-      console.log(this.wxIds);
       if (this.wxIds == '') {
         if (!this.checkall) {
           this.wxIds = [];
           for (var i = 0; i < this.lieBianPool.length; i++) {
-            this.wxIds.push(i);
-            console.log(this.wxIds);
+            this.wxIds.push(this.lieBianPool[i].liebianid);
           }
           this.checkall = true;
         }
@@ -377,7 +375,7 @@ export default {
       else {
         if (!this.checkall) {
           for (var i = 0; i < this.lieBianPool.length; i++) {
-            this.wxIds.push(i);
+            this.wxIds.push(this.lieBianPool[i].liebianid);
           }
           this.checkall = true;
         }
@@ -386,7 +384,6 @@ export default {
           this.checkall = false;
         }
       }
-      console.log(this.wxIds);
     },
     checkAllformember: function() {
       console.log(this.members);
@@ -394,7 +391,7 @@ export default {
         if (!this.checkallformember) {
           this.members = [];
           // this.weixinlist.forEach((item) => {
-          console.log(1111111);
+          // console.log(1111111);
           for (var i = 0; i < this.weixinlist.length; i++) {
             if (this.weixinlist[i].tipword == '') {
               this.members.push(this.weixinlist[i].id);
