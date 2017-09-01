@@ -188,13 +188,13 @@ export default {
 
                     if(data.code == 0){
                         self.alllist = data.data;
-                        console.log(self.alllist);
+                        // console.log(self.alllist);
                         if(self.alllist == null){
                             self.resourcelist = [];
                         }
                         else{
                             self.totalpage = self.alllist.length;
-                            console.log(self.totalpage);
+                            // console.log(self.totalpage);
                             self.resourcelist = [];
                             var currentSize = self.currentPage * self.pagesize;
                             if(currentSize > self.alllist.length){
@@ -202,9 +202,9 @@ export default {
                             }
                             for(var i =(self.currentPage - 1) * self.pagesize; i < currentSize; i++){
                                 self.resourcelist.push(self.alllist[i]);
-                                console.log(self.alllist[i]);
+                                // console.log(self.alllist[i]);
                             }
-                            console.log(self.resourcelist);
+                            // console.log(self.resourcelist);
                         }
                     }
                 })

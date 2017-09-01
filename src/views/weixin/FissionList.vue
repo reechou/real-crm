@@ -66,10 +66,20 @@
         </el-col>
       </el-row>
       <el-row :gutter="20" style="margin-bottom:20px;">
+        <el-col :span="6">
+          <el-select v-model="typeNum" placeholder="请选择类型" @change="getresourse">
+              <el-option
+              v-for="item in resType"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+              </el-option>
+          </el-select>
+        </el-col>
         <el-col :span="4">
           <el-button type="primary" @click="getweixinlist">显示全部微信</el-button>
         </el-col>
-        <el-col :span="20">
+        <el-col :span="14">
           <el-input placeholder="请输入微信号" icon="search" v-model="searchcontent" :on-icon-click="handleIconClick" @keyup.enter.native="show($event)"></el-input>
         </el-col>
       </el-row>
@@ -80,20 +90,31 @@
           <el-table :data="weixinlist" style="width: 100%;margin-bottom: 80px" v-loading="loading" element-loading-text="拼命加载中" :row-class-name="tableRowClassName">
             <el-table-column label="id">
               <template scope="scope">
-                <div v-if="scope.row.tipword == ''">
+                <div v-if="scope.row.tipword == '' || scope.row.wxType == 1 || scope.row.wxType == 2">
                   <el-checkbox :label="scope.row.id"></el-checkbox>
                 </div>
-                <div v-if="scope.row.tipword != ''">
+                <div v-if="scope.row.tipword != '' && typeNum == null">
                   <span>{{scope.row.id}}</span>
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="nickName" label="微信昵称"> </el-table-column>
-            <!-- <el-table-column prop="wxId" label="微信id"></el-table-column>  -->
+            <el-table-column :label="Nameoftype">
+              <template scope="scope">
+                {{ scope.row.nickName }}
+              </template> 
+            </el-table-column>
+            <!-- <el-table-column  label="资源名称" v-if="typeNum != null">
+              <template scope="scope">
+                {{ scope.row.nickName }}
+              </template>   
+            </el-table-column>   -->
             <el-table-column prop="wechat" label="微信号"> </el-table-column>
 
             <el-table-column label="最后心跳时间">
-              <template scope='scope'>{{formate(scope.row.lastHeartbeat)}}</template>
+              <template scope='scope'>
+                <span v-if="scope.row.lastHeartbeat != 0">{{formate(scope.row.lastHeartbeat)}}</span>
+                <span v-else>{{ 0 }}</span>
+                </template>
             </el-table-column>
             <el-table-column align="center" label="今日添加人数" prop="todayAddContactNum"> </el-table-column>
             <el-table-column label="描述">
@@ -101,7 +122,7 @@
                 {{scope.row.desc}}
               </template>
             </el-table-column>
-            <el-table-column label="标记提示">
+            <el-table-column label="标记提示" v-if="typeNum == null">
               <template scope='scope'>
                 <div v-if="scope.row.tipword == ''">
                   正常
@@ -261,11 +282,68 @@ export default {
 
       guanlishuju: [],
       idd: 0,    // 记录选择的微信的序号
-      SortById: false   // 显示通过什么排序的按钮
+      SortById: false,   // 显示通过什么排序的按钮
+      typeNum:null,           // 公众号类型或者群类型id
+      resType:[{
+        label: '公众号', value: 1
+      },{
+        label: '群', value:　2
+      }],
+      allresource: [],
+      Nameoftype: '微信昵称'
     }
   },
   methods: {
-    sortbyid: function() {
+    getresourse: function() {
+      var self = this;
+      var tipword = '';
+      var nowtime = Date.now() / 1000;
+      this.Nameoftype ='资源名称';
+      this.axios.post('/weixin/get_resource_pool',{
+        wxType: this.typeNum
+      })
+        .then(function(res){
+          var data = res.data;
+          self.diallist = [];
+          self.weixinlist = [];
+          if(data.code == 0){
+            self.diallist = data.data.map(v => {
+              v.edit = false;
+              return v;
+            });
+            if(self.diallist == null) {
+              self.weixinlist = [];
+            } else {
+              self.diatotalpage = self.diallist.length;
+              var diacurrentSize = self.diacurrentPage * self.diapagesize;
+              if (diacurrentSize > self.diallist.length) {
+                diacurrentSize = self.diallist.length;
+              }
+              for (var i = 0; i < self.diallist.length; i++) {
+                tipword = '';
+                if (self.diallist[i].qrcodeUrl == '') {
+                  tipword = tipword + '⑴未添加二维码;';
+                }
+                if (self.diallist[i].status != 0) {
+                  tipword = tipword + '⑴状态不正常;';
+                }
+                if (nowtime - self.diallist[i].lastHeartbeat > 300) {
+                  tipword = tipword + '⑴最后心跳时间超过5分钟;'
+                }
+                self.$set(self.diallist[i], 'tipword', tipword);
+              }
+              for (var i = (self.diacurrentPage - 1) * self.diapagesize; i < diacurrentSize; i++) {
+                self.weixinlist.push(self.diallist[i]);
+              }
+              console.log(self.weixinlist)
+            }
+          }
+        })
+        .catch(function(err){
+          console.log(err);
+        })
+    },
+    sortbyid: function() {            // 通过id或者todayaddcontactNum 排序的方法
       var self = this;
       this.SortById = !this.SortById;
       if (!this.SortById) {
@@ -634,6 +712,8 @@ export default {
     getweixinlist: function() {
       var self = this;
       var tipword = '';
+      this.typeNum = null;
+      this.Nameoftype ='微信昵称';
       var nowtime = Date.now() / 1000;
       self.loading = true;
       this.axios.post('/weixin/get_all_weixin')
