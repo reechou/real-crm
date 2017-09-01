@@ -6,7 +6,7 @@
           <span size="small" style="color:red">{{ tie }} </span>后自动刷新列表</el-col>
       </el-row>
       <!-- <el-row :gutter="20">
-                  <el-col :span="4"> -->
+                    <el-col :span="4"> -->
       <el-select v-model="lbTypenum" placeholder="请选择" @change="getliebianpool(lbTypenum)">
         <el-option v-for="item in lbType" :key="item.liebianType" :label="item.desc" :value="item.liebianType">
           <i class="el-icon-delete" @click="clickicon(item.id)"></i>&nbsp;&nbsp;
@@ -20,18 +20,18 @@
       </el-select>
       <!-- </el-col> -->
       <!-- <el-col :span="2">
-                    <el-button type="primary" @click="showaddliebian = true">创建分组</el-button>
-                  </el-col>  -->
+                      <el-button type="primary" @click="showaddliebian = true">创建分组</el-button>
+                    </el-col>  -->
       <!-- <el-col :span="2"> -->
       <el-button type="primary" @click="getweixinlist" sytle="width:100%">添加成员</el-button>
       <!-- </el-col>
-                  <el-col :span="16"> -->
+                    <el-col :span="16"> -->
       <el-button type="primary" @click="confirm">批量删除</el-button>
       <el-button type="primary" @click="geterrorlist">错误信息列表</el-button>
       <el-button type="primary" v-if="!SortById" @click="sortbyid">通过id排序</el-button>
       <el-button type="primary" v-if="SortById" @click="sortbyid">通过添加人数排序</el-button>
       <!-- </el-col>
-                </el-row> -->
+                  </el-row> -->
     </div>
 
     <el-dialog title="新增裂变类别" v-model="showaddliebian">
@@ -67,13 +67,9 @@
       </el-row>
       <el-row :gutter="20" style="margin-bottom:20px;">
         <el-col :span="6">
-          <el-select v-model="typeNum" placeholder="请选择类型" @change="getresourse">
-              <el-option
-              v-for="item in resType"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-              </el-option>
+          <el-select v-model="typeNum" placeholder="请选择类型" @change="eventfortype">
+            <el-option v-for="item in resType" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
           </el-select>
         </el-col>
         <el-col :span="4">
@@ -93,7 +89,7 @@
                 <div v-if="scope.row.tipword == '' || scope.row.wxType == 1 || scope.row.wxType == 2">
                   <el-checkbox :label="scope.row.id"></el-checkbox>
                 </div>
-                <div v-if="scope.row.tipword != '' && typeNum == null">
+                <div v-if="scope.row.tipword != '' && typeNum == 0">
                   <span>{{scope.row.id}}</span>
                 </div>
               </template>
@@ -101,20 +97,20 @@
             <el-table-column :label="Nameoftype">
               <template scope="scope">
                 {{ scope.row.nickName }}
-              </template> 
+              </template>
             </el-table-column>
             <!-- <el-table-column  label="资源名称" v-if="typeNum != null">
-              <template scope="scope">
-                {{ scope.row.nickName }}
-              </template>   
-            </el-table-column>   -->
+                <template scope="scope">
+                  {{ scope.row.nickName }}
+                </template>   
+              </el-table-column>   -->
             <el-table-column prop="wechat" label="微信号"> </el-table-column>
 
             <el-table-column label="最后心跳时间">
               <template scope='scope'>
                 <span v-if="scope.row.lastHeartbeat != 0">{{formate(scope.row.lastHeartbeat)}}</span>
-                <span v-else>{{ 0 }}</span>
-                </template>
+                <span v-else>无时间</span>
+              </template>
             </el-table-column>
             <el-table-column align="center" label="今日添加人数" prop="todayAddContactNum"> </el-table-column>
             <el-table-column label="描述">
@@ -122,7 +118,7 @@
                 {{scope.row.desc}}
               </template>
             </el-table-column>
-            <el-table-column label="标记提示" v-if="typeNum == null">
+            <el-table-column label="标记提示" v-if="typeNum == 0">
               <template scope='scope'>
                 <div v-if="scope.row.tipword == ''">
                   正常
@@ -189,10 +185,10 @@
           </el-table-column>
 
           <!-- <el-table-column label="微信id">
-                      <template scope="scope">
-                        {{ scope.row.wxId }}
-                      </template>
-                    </el-table-column>  -->
+                        <template scope="scope">
+                          {{ scope.row.wxId }}
+                        </template>
+                      </el-table-column>  -->
 
           <el-table-column label="备注">
             <template scope="scope">
@@ -208,7 +204,8 @@
 
           <el-table-column label="最后心跳时间">
             <template scope="scope">
-              {{ formate(scope.row.lastHeartbeat) }}
+                <span v-if="scope.row.lastHeartbeat != 0">{{formate(scope.row.lastHeartbeat)}}</span>
+                <span v-else>无时间</span>
             </template>
           </el-table-column>
 
@@ -219,11 +216,11 @@
           </el-table-column>
 
           <!-- <el-table-column label="标记提示">
-                      <template scope="scope">
-                        <span v-if="scope.row.tipword != ''">{{ scope.row.tipword }}</span>
-                        <span v-if="scope.row.tipword == ''">正常</span>
-                      </template>
-                    </el-table-column> -->
+                        <template scope="scope">
+                          <span v-if="scope.row.tipword != ''">{{ scope.row.tipword }}</span>
+                          <span v-if="scope.row.tipword == ''">正常</span>
+                        </template>
+                      </el-table-column> -->
         </el-table>
       </el-checkbox-group>
     </template>
@@ -283,65 +280,76 @@ export default {
       guanlishuju: [],
       idd: 0,    // 记录选择的微信的序号
       SortById: false,   // 显示通过什么排序的按钮
-      typeNum:null,           // 公众号类型或者群类型id
-      resType:[{
+      typeNum: 0,           // 公众号类型或者群类型id
+      resType: [{
+        label: '微信号', value: 0
+      }, {
         label: '公众号', value: 1
-      },{
-        label: '群', value:　2
+      }, {
+        label: '群', value: 　2
       }],
       allresource: [],
       Nameoftype: '微信昵称'
     }
   },
   methods: {
-    getresourse: function() {
+    eventfortype: function () {     // 添加成员中，通过选择微信，公众号， 群 来显示不同的信息
+      if(this.typeNum == 0) {
+        this.getweixinlist();
+      } else {
+        this.getresourse();
+      }
+    },
+    getresourse: function() {     // 获取资源池中的相关数据
       var self = this;
       var tipword = '';
       var nowtime = Date.now() / 1000;
-      this.Nameoftype ='资源名称';
-      this.axios.post('/weixin/get_resource_pool',{
-        wxType: this.typeNum
-      })
-        .then(function(res){
-          var data = res.data;
-          self.diallist = [];
-          self.weixinlist = [];
-          if(data.code == 0){
-            self.diallist = data.data.map(v => {
-              v.edit = false;
-              return v;
-            });
-            if(self.diallist == null) {
-              self.weixinlist = [];
-            } else {
-              self.diatotalpage = self.diallist.length;
-              var diacurrentSize = self.diacurrentPage * self.diapagesize;
-              if (diacurrentSize > self.diallist.length) {
-                diacurrentSize = self.diallist.length;
-              }
-              for (var i = 0; i < self.diallist.length; i++) {
-                tipword = '';
-                if (self.diallist[i].qrcodeUrl == '') {
-                  tipword = tipword + '⑴未添加二维码;';
+      this.Nameoftype = '资源名称';
+      if (this.typeNum != 0) {
+        this.axios.post('/weixin/get_resource_pool', {
+          wxType: this.typeNum
+        })
+          .then(function(res) {
+            var data = res.data;
+            self.diallist = [];
+            self.weixinlist = [];
+            if (data.code == 0) {
+              self.diallist = data.data.map(v => {
+                v.edit = false;
+                return v;
+              });
+              if (self.diallist == null) {
+                self.weixinlist = [];
+              } else {
+                self.diatotalpage = self.diallist.length;
+                var diacurrentSize = self.diacurrentPage * self.diapagesize;
+                if (diacurrentSize > self.diallist.length) {
+                  diacurrentSize = self.diallist.length;
                 }
-                if (self.diallist[i].status != 0) {
-                  tipword = tipword + '⑴状态不正常;';
+                for (var i = 0; i < self.diallist.length; i++) {
+                  tipword = '';
+                  if (self.diallist[i].qrcodeUrl == '') {
+                    tipword = tipword + '⑴未添加二维码;';
+                  }
+                  if (self.diallist[i].status != 0) {
+                    tipword = tipword + '⑴状态不正常;';
+                  }
+                  if (nowtime - self.diallist[i].lastHeartbeat > 300) {
+                    tipword = tipword + '⑴最后心跳时间超过5分钟;'
+                  }
+                  self.$set(self.diallist[i], 'tipword', tipword);
                 }
-                if (nowtime - self.diallist[i].lastHeartbeat > 300) {
-                  tipword = tipword + '⑴最后心跳时间超过5分钟;'
+                for (var i = (self.diacurrentPage - 1) * self.diapagesize; i < diacurrentSize; i++) {
+                  self.weixinlist.push(self.diallist[i]);
                 }
-                self.$set(self.diallist[i], 'tipword', tipword);
+                console.log(self.weixinlist)
               }
-              for (var i = (self.diacurrentPage - 1) * self.diapagesize; i < diacurrentSize; i++) {
-                self.weixinlist.push(self.diallist[i]);
-              }
-              console.log(self.weixinlist)
             }
-          }
-        })
-        .catch(function(err){
-          console.log(err);
-        })
+          })
+          .catch(function(err) {
+            console.log(err);
+          })
+      }
     },
     sortbyid: function() {            // 通过id或者todayaddcontactNum 排序的方法
       var self = this;
@@ -380,7 +388,12 @@ export default {
     tableRowClassName: function(row, index) {
       var nowtime = Date.now() / 1000;
       if (row.qrcodeUrl == '' || row.status != 0 || nowtime - row.lastHeartbeat > 300) {
-        return 'info-row';
+        if(this.typeNum == 0){
+          return 'info-row';
+        } else {
+          return 'info-row-otherType';
+        }
+
       }
     },
     formate: function(t) {
@@ -712,8 +725,8 @@ export default {
     getweixinlist: function() {
       var self = this;
       var tipword = '';
-      this.typeNum = null;
-      this.Nameoftype ='微信昵称';
+      this.typeNum = 0;
+      this.Nameoftype = '微信昵称';
       var nowtime = Date.now() / 1000;
       self.loading = true;
       this.axios.post('/weixin/get_all_weixin')
@@ -944,6 +957,9 @@ export default {
 .el-table .info-row {
   background: #FFAEB9;
 }
+.el-table .info-row-otherType{
+  background: #ffffff
+}
 
 .fission {
   width: 100%;
@@ -957,6 +973,7 @@ select {
 .el-icon-delete:hover {
   background-color: #20a0ff;
 }
+
 
 
 
