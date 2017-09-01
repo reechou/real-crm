@@ -188,6 +188,7 @@ export default {
           var data = response.data
           if (data.code == 0) {
             self.$message("设置成功");
+            self.getweixinlist();
             // self.showaddweixin = false;
             // self.ruleForm.newWeixin = null;
             // self.ruleForm.verifyid = null;
