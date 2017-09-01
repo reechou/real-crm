@@ -13,7 +13,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="nickName" label="微信昵称"> </el-table-column>
-         <el-table-column prop="wxId" label="微信id"></el-table-column>  
+        <!-- <el-table-column prop="wxId" label="微信id"></el-table-column>  -->
         <el-table-column prop="wechat" label="微信号"> </el-table-column>
         <!-- <el-table-column label="是否已执行默认任务"> <template scope='scope'>{{ifExecDefaultTask(scope.row.ifExecDefaultTask)}}</template></el-table-column>
                   <el-table-column label="创建日期"> <template scope='scope'>{{formate(scope.row.createAt)}}</template></el-table-column>   -->
