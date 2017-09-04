@@ -30,6 +30,7 @@
       <el-button type="primary" @click="geterrorlist">错误信息列表</el-button>
       <el-button type="primary" v-if="!SortById" @click="sortbyid">通过id排序</el-button>
       <el-button type="primary" v-if="SortById" @click="sortbyid">通过添加人数排序</el-button>
+      <el-button type="primary" @click="getOprmsg">操作消息列表</el-button>
       <!-- </el-col>
                   </el-row> -->
     </div>
@@ -157,6 +158,25 @@
       <div style="margin-bottom: 40px">
         <el-pagination @size-change="errhandleSizeChange" @current-change="errhandleCurrentChange" :current-page="diacurrentPage" :page-size='errpagesize' ayout="total, prev, pager, next" :total='errtotalpage'></el-pagination>
       </div>
+    </el-dialog>
+
+    <el-dialog title="操作消息列表（显示最近30条信息）" v-model="showoprmsglist">
+      <template>
+        <el-table :data="oprMsglist" style="width: 100%;margin-bottom: 80px">
+          <el-table-column label="操作消息">
+            <template scope="scope">
+              {{ scope.row.msg }}
+            </template>
+          </el-table-column>
+
+          <el-table-column label="发生时间" width="160px">
+            <template scope="scope">
+              {{ formate(scope.row.createAt) }}
+            </template>
+          </el-table-column>
+
+        </el-table>
+      </template>
     </el-dialog>
 
     <template>
@@ -289,7 +309,9 @@ export default {
         label: '群', value: 　2
       }],
       allresource: [],
-      Nameoftype: '微信昵称'
+      Nameoftype: '微信昵称',
+      oprMsglist: [],     // 操作消息列表
+      showoprmsglist: false
     }
   },
   methods: {
@@ -895,6 +917,24 @@ export default {
 
         this.Timer(media);
       }
+    },
+    getOprmsg: function() {
+      var self =this;
+      this.axios.post('/weixin/get_liebian_opr_msg',{
+        liebianType: Number.parseInt(this.lbTypenum)
+      })
+      .then(function(res){
+        var data = res.data;
+        self.oprMsglist = [];
+        if(data.code == 0){
+
+          self.oprMsglist = data.data;
+        }
+      })
+      .catch(function (err){
+        console.log(err);
+      })
+      self.showoprmsglist = true;
     },
     geterrorlist: function() {
       var self = this;
