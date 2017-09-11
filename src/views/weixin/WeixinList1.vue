@@ -703,9 +703,13 @@ export default {
         else {
           var self = this
           this.weixinlist = [_.find(self.allweixinlist, function (chr) { return chr.id == self.searchcontent; })];
-          if( this.weixinids[this.idd] != this.weixinlist[0]){
-              this.weixinids.push(this.weixinlist[0]);
-              this.idd = this.weixinids.length - 1;
+          if(this.weixinlist[0] == undefined){
+            return false;
+          } else {
+            if( this.weixinids[this.idd] != this.weixinlist[0]){
+                this.weixinids.push(this.weixinlist[0]);
+                this.idd = this.weixinids.length - 1;
+            }
           }
           // alert("有值的")
         }

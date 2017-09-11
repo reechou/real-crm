@@ -680,9 +680,15 @@ export default {
           this.weixinlist = [_.find(self.diallist, function(chr) {
             return chr.id == self.searchcontent;
           })];
-          if (this.members[this.idd] != this.weixinlist[0].id) {
-            this.members.push(this.weixinlist[0].id);
-            this.idd = this.members.length - 1;
+          if(this.weixinlist[0] == undefined){
+            return false;
+          } else {
+            if(this.weixinlist[0].tipword == ''){
+              if (this.members[this.idd] != this.weixinlist[0].id) {
+                this.members.push(this.weixinlist[0].id);
+                this.idd = this.members.length - 1;
+              }
+            }
           }
         }
       }
