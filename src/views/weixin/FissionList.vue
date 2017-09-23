@@ -50,10 +50,11 @@
         </el-col>
         <el-col :span="20">
           <el-input type="text" v-model="newDesc"></el-input>
-        </el-col>2="addtype">确定</el-button>
+        </el-col>
         </el-col>
         <el-col :span="6">
           <el-button type="primary" @click="showaddliebian = false">取消</el-button>
+          <el-button type="primary" @click="addtype">确定</el-button>
         </el-col>
       </el-row>
     </el-dialog>
