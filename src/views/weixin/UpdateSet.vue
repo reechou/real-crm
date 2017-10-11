@@ -20,12 +20,17 @@
           </template>
           <template v-if="item.msgType == 3">
             <el-form-item label="图片">
-              <div :id="key">
-                <label :for="key+'img'" class="el-button el-button--primary el-button--small">
-                  <i class="el-icon-upload"></i><span>点击上传图片</span>
-                </label>
-                <div><img :src="item.content" alt="" width="100"></div>
-                <input type="file" :id="key + 'img'" class="hide" />
+              <div class="Picture">
+                <div :id="key">
+                  <label :for="key+'img'" class="el-button el-button--primary el-button--small">
+                    <i class="el-icon-upload"></i><span>点击上传图片</span>
+                  </label>
+                  <div><img :src="item.content" alt="" width="100"></div>
+                  <input type="file" :id="key + 'img'" class="hide" />
+                </div>
+                <div class="Pic_delect">
+                  <label class="el-button el-button--primary el-button--small" @click="DelectPic(key)">删除</label>
+                </div>
               </div>
             </el-form-item> 
           </template>
@@ -73,6 +78,10 @@ export default {
       };
     },
     methods: {
+      DelectPic: function (val) {
+        console.log(this.verifysetting.reply[val].content);
+        this.verifysetting.reply.splice(val,1);
+      },
       addtext: function (){
         this.verifysetting.reply.push({msgType: 1, content: ''})
       },
@@ -258,4 +267,12 @@ export default {
 <style>
   .admin-userlist{width: 100%;padding: 20px}
   .hide{display: none}
+
+  .Picture{
+    display: flex;
+  }
+
+  .Pic_delect{
+    margin-left: 10px;
+  }
 </style>
