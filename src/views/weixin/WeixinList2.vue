@@ -54,7 +54,8 @@ export default {
       checkAll: function () {//全选
 	     if (!this.checkall) {
   			this.weixinids = []         
-	       this.allweixinlist.forEach((item) => {
+	       //this.allweixinlist.forEach((item) => {
+          this.weixinlist.forEach((item) => {
 	         this.weixinids.push(item.id);
 	       });
          this.checkall = true
