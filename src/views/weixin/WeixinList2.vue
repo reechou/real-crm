@@ -8,7 +8,7 @@
     </div>
     <template>
      <el-checkbox-group v-model="weixinids">
-         <input type="checkbox" @click="checkAll()">全选
+         <input type="checkbox" @click="checkAll()" v-model="discheckall">全选
       <el-table
         :data="weixinlist" style="width: 100%;margin-bottom: 80px" v-loading="loading" element-loading-text="拼命加载中">
          <el-table-column prop="id" label="选择"><template scope="scope">
@@ -45,26 +45,53 @@ export default {
         totalpage: 8,
         currentPage: 1,
         weixinids: [],
+        discheckall: false,
         taskids: [],
         checkall: false,
         idd: 0   // 记录选择的微信的序号
       };
     },
     methods: {
-      checkAll: function () {//全选
-	     if (!this.checkall) {
-  			this.weixinids = []         
-	       //this.allweixinlist.forEach((item) => {
-          this.weixinlist.forEach((item) => {
-	         this.weixinids.push(item.id);
-	       });
-         this.checkall = true
-	     }
-       else{
-  			this.weixinids = [] 
-         this.checkall = false                
-       }
-  		},
+      // checkAll: function () {//全选
+	    //  if (!this.checkall) {
+  		// 	this.weixinids = []         
+	    //    //this.allweixinlist.forEach((item) => {
+      //     this.weixinlist.forEach((item) => {
+	    //      this.weixinids.push(item.id);
+	    //    });
+      //    this.checkall = true
+	    //  }
+      //  else{
+  		// 	this.weixinids = [] 
+      //    this.checkall = false                
+      //  }
+  		// },
+
+      checkAll: function () {
+        if (this.weixinids == null) {
+          if (!this.checkall) {
+            this.weixinids = [];
+            this.weixinlist.forEach((item) => {
+              this.weixinids.push(item.id);
+            });
+            this.checkall = true;
+          } else {
+            this.weixinids = [];
+            this.checkall = false;
+          }
+        } else {
+          if (!this.checkall) {
+            this.weixinlist.forEach((item) => {
+              this.weixinids.push(item.id);
+            });
+            this.checkall = true;
+          } else {
+            this.weixinids = [];
+            this.checkall = false;
+          }
+        }
+      },
+
       settask: function () {
         var self = this
         for(var i in this.taskids){
@@ -97,6 +124,8 @@ export default {
       },
       handleCurrentChange: function (val){
           var self = this
+          this.discheckall = false;
+          this.checkall = false;
           self.weixinlist = []
         var j = val == Math.ceil(self.allweixinlist.length/self.pagesize) ? self.allweixinlist.length : val * self.pagesize  
         for(var i = (val-1)*self.pagesize; i < j; i++){
