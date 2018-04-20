@@ -82,6 +82,10 @@ export default new Router({
           component: require('views/weixin/AddTask7')
         },
         {
+          path: '/qrcodeupload',
+          component: require('views/weixin/QRcodeUpload')
+        },
+        {
           path: '/updatetask1',
           component: require('views/weixin/UpdateTask1')
         },
@@ -100,6 +104,10 @@ export default new Router({
         {
           path: '/updatetask7',
           component: require('views/weixin/UpdateTask7')
+        },
+        {
+          path: '/updateTask9',
+          component: require('views/weixin/UpdateTask9')
         },
         {
           path: '/updateset',

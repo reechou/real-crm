@@ -58,17 +58,29 @@
       </el-table-column>       
     </el-table>
   </el-dialog>
+
    <el-dialog title="回复内容" v-model="dialogTableVisible3">
     <el-table :data="replylist3">
       <el-table-column property="interval" label="间隔"></el-table-column>
        <el-table-column property="nickname" label="公众号列表"> 
         <template scope = "scope">
           <div v-for="item in scope.row.cards">{{item}}</div>
-       </template>
-       </el-table-column>
-           
+        </template>
+       </el-table-column>    
     </el-table>
-  </el-dialog>
+   </el-dialog>
+
+   <el-dialog title="回复内容" v-model="dialogTableVisible9">
+    <el-table :data="replylist9">
+      <el-table-column property="interval" label="间隔"></el-table-column>
+      <el-table-column property="nickname" label="二维码"> 
+        <template scope = "scope">
+          <div v-for="item in scope.row.qrcodeUrls"><img :src="item" width="80" height="80"></div>
+        </template>
+      </el-table-column>    
+    </el-table>
+   </el-dialog>
+
    <el-dialog title="回复内容" v-model="dialogTableVisible1">
     <el-table :data="replylist1">
       <el-table-column property="interval" label="时间间隔"></el-table-column>
@@ -141,12 +153,14 @@ export default {
         dialogTableVisible2: false,
         dialogTableVisible3: false,
         dialogTableVisible4: false,
-        dialogTableVisible7: false,        
+        dialogTableVisible7: false,
+        dialogTableVisible9: false,
         replylist1: [],
         replylist2: [],
         replylist3: [],
         replylist4: [],
         replylist7: [],
+        replylist9: [],
         weixinId: '',
         weixinTaskId: '',
         checkall: false,
@@ -283,6 +297,9 @@ export default {
         else if( val == 7){
           return '通讯录群群发'
         }
+        else if (val == 9){
+          return '二维码'
+        }
       },
       getreply: function (val, type) {
         if(type == 1){
@@ -304,6 +321,10 @@ export default {
         else if(type == 7){
           this.replylist7 = [JSON.parse(val)]
           this.dialogTableVisible7 = true;
+        }
+        else if(type == 9){
+          this.replylist9 = [JSON.parse(val)]
+          this.dialogTableVisible9 = true;
         }
       },
       ifAutoVerified: function (val) {
@@ -331,6 +352,7 @@ export default {
               self.loading = false
               console.log(data)    
               if(data.code == 0){
+                console.log(data.data);
                 self.tasklist = data.data
               }    
           })

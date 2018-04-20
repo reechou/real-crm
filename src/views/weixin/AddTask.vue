@@ -16,6 +16,9 @@
       <div class="text item">
         <router-link to="addtask7">通讯录群群发</router-link>
       </div>
+      <div class="text item">
+        <router-link to="qrcodeupload">二维码上传</router-link>
+      </div>
     </el-card>
   </div>
 </template>
