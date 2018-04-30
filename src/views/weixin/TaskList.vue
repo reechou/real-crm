@@ -174,6 +174,7 @@ export default {
             if(Tasktype == 1 && this.ids.length == 1){
               this.ISbash = true;
             }
+            console.log(this.ISbash,Tasktype);
             if(this.ISbash && Tasktype != 1){
               this.$message("只能选择好友群发任务！");
               this.ids.splice(this.ids.length-1,  1);
@@ -188,6 +189,7 @@ export default {
           else{
             this.ISbash = false;
           }
+          console.log("result:",this.ISbash)
       },
       checkAll: function () {//全选
 	     if (!this.checkall) {
