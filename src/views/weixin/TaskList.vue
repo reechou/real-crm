@@ -169,6 +169,7 @@ export default {
     },
     methods: {
       isbash: function(val,Tasktype){
+          console.log('页面选择任务:',Tasktype);
           if(this.ids.length > 0){
             if(Tasktype == 1 && this.ids.length == 1){
               this.ISbash = true;
