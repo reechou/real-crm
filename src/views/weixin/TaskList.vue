@@ -175,6 +175,8 @@ export default {
               this.ISbash = true;
             }
             console.log(this.ISbash,Tasktype);
+            console.log('获取的任务id',val)
+            console.log('列表中的id',this.ids.length)
             if(this.ISbash && Tasktype != 1){
               this.$message("只能选择好友群发任务！");
               this.ids.splice(this.ids.length-1,  1);
