@@ -53,111 +53,6 @@
       </el-table>
     </template>
 
-    <el-row :gutter="20" style="margin-bottom:10px;">
-      <el-col :span="3"><h1>群设置</h1></el-col>
-      <!-- <el-col :span="6"><el-button type="primary" size="small" @click="showerrlist = true,getkeywordlist()">新增关键字</el-button></el-col> -->
-    </el-row>
-    <template>
-      <el-table
-        :data="CRsetting" style="width: 100%;margin-bottom: 80px">     
-        <el-table-column prop="interval" label="时间间隔"> </el-table-column>
-        <el-table-column label="欢迎进群消息">
-          <template scope="scope">
-            <el-button type="text" @click="getmessage(scope.row.welcomeReplyLoopTime,scope.row.welcomeReply)">查看</el-button>
-          </template>
-        </el-table-column>
-
-        <el-table-column label="截图消息">
-          <template scope="scope">
-            <el-button type="text" @click="getmessage(scope.row.screenshotReplyLoopTime,scope.row.screenshotReply)">查看</el-button>
-          </template>
-        </el-table-column>
-
-        <el-table-column label="定时消息">
-          <template scope="scope">
-            <el-button type="text" @click="getmessage(scope.row.sysLoopTime,scope.row.sysLoopReply)">查看</el-button>
-          </template>
-        </el-table-column>  
-
-        <el-table-column label="满群设置">
-          <template scope="scope">
-            <el-button type="text" @click="getfullgrouplist(scope.row.chatroomFullSetting)">查看</el-button>
-          </template>
-        </el-table-column> 
-
-
-
-        <el-table-column label="操作"> <template scope='scope'><el-button type="text" size="small" @click="confirmCRsetting(scope.row.bindId)">删除</el-button></template></el-table-column>                           
-      </el-table>
-    </template>
-
-        <el-dialog title="信息详情" v-model="dialogmessage">
-            <el-table :data="messagelist">
-                <el-table-column label="发送间隔（/s）" align="center">
-                    <template scope="scope">
-                        <span>{{ scope.row.LoopTime}}</span>
-                    </template>
-                </el-table-column>
-
-                <el-table-column label="消息文本" align="center">
-                    <template scope="scope">
-                        <el-table :data="scope.row.Mcontent">
-                            <el-table-column label="内容" align="center">
-                                <template scope="scope">
-                                    {{ scope.row.content }}
-                                </template>
-                            </el-table-column>
-                        </el-table>
-                    </template>
-                </el-table-column>
-            </el-table>
-        </el-dialog>
-
-        <el-dialog title="满群设置" v-model="dialogfullgroup">
-            <el-table :data="FullGrouplist">
-                <el-table-column label="更换群主" align="center">
-                    <template scope="scope">
-                        {{ scope.row.chatroomChangeOwner }}
-                    </template>
-                </el-table-column>
-
-                <el-table-column label="满员人数" align="center">
-                    <template scope="scope">
-                        {{ scope.row.chatroomFullMemberNum }}
-                    </template>
-                </el-table-column>
-
-                <el-table-column label="群公告" align="center">
-                    <template scope="scope">
-                        {{ scope.row.chatroomNotice }}
-                    </template>
-                </el-table-column>
-
-                <el-table-column label="满群后时间" align="center">
-                    <template scope="scope">
-                        {{ scope.row.chatroomSetTimeAfterFull }}
-                    </template>
-                </el-table-column>
-
-                <el-table-column label="开启群主邀请" align="center">
-                    <template scope="scope">
-                        <span v-if="scope.row.ifAutoChangeAccess == 1">是</span>
-                        <span v-else>否</span>
-                    </template>
-                </el-table-column>
-
-                <el-table-column label="同步到通讯录" align="center">
-                    <template scope="scope">
-                        <!-- {{ scope.row.ifAutoShowInContactBook }} -->
-                        <span v-if="scope.row.ifAutoShowInContactBook == 1">是</span>
-                        <span v-else>否</span>
-                    </template>
-                </el-table-column>
-
-            </el-table>
-        </el-dialog>
-
-
     <el-dialog title="好友通过验证回复内容" v-model="showcontentlist">
       <template>
           <el-table :data="contentlist" style="width: 100%;margin-bottom: 80px" >
@@ -340,16 +235,7 @@ export default {
         }],
         chatTypeNum: 0,
         showeverifylist: false,
-        verifylist: [],
-
-        CRsetting: [],
-        messagelist: [{               // 获取的加群欢迎信息， 截图信息 或者 定时信息详情
-          LoopTime: null,
-          Mcontent: []
-        }],
-        dialogmessage: false,           // 显示群设置的详细信息
-        FullGrouplist: [],              // 获取满群设置信息
-        dialogfullgroup: false          // 显示满群设置信息
+        verifylist: []
       };
     },
     methods: {
@@ -590,73 +476,11 @@ export default {
               })
           self.verify = null;
         }
-      },
-      getcrsetting: function () {
-        var self = this;
-        this.axios.post('/weixin/get_chatroom_setting_from_weixin_id',{
-          id: Number.parseInt(this.id)
-        })
-        .then(function (res){
-            var data = res.data;
-            if(data.code == 0) {
-              if (data.data == null) {
-                self.CRsetting = [];
-              } else {
-                self.CRsetting[0] = data.data;
-              }
-            }
-        })
-        .catch(function (err){
-          console.log(err);
-        })
-        console.log(self.CRsetting);
-      },
-      getmessage: function (time, Mcontent) {
-        this.messagelist[0].LoopTime = time;
-        this.messagelist[0].Mcontent = Mcontent;
-        this.dialogmessage= true;
-      },
-      getfullgrouplist: function (val) {
-          this.FullGrouplist = [];
-          this.FullGrouplist[0] = val;
-          this.dialogfullgroup = true;
-      },
-      confirmCRsetting: function (val) {
-        var self = this;
-        this.$confirm('是否删除', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          self.delet(val);
-        }).catch(() => {
-
-        })
-      },
-      delet: function (val) {
-        var self = this;
-        this.axios.post('/weixin/delete_chatroom_setting_detail',{
-          id: val
-        })
-        .then(function (res) {
-          var data = res.data;
-          if(data.code == 0) {
-            self.$message("删除成功");
-            self.getcrsetting();
-          } else {
-            self.$message("删除失败");
-          }
-        })
-        .catch(function (err) {
-          console.log(err);
-          self.$message("删除失败");
-        })
       }
     },
     created: function () {
       this.id = Number.parseInt(this.$route.query.id)
       this.getweixinlist();
-      this.getcrsetting();     // 获取群设置
     }
 }
 </script>

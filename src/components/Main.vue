@@ -28,8 +28,7 @@
             <template slot="title"><i class="el-icon-setting"></i>微信设置</template>
             <el-menu-item-group>
               <el-menu-item index="/settinglist">好友验证设置</el-menu-item>
-              <el-menu-item index="/keywordlist">关键字设置</el-menu-item>
-              <el-menu-item index="/CRSettinglist">群设置</el-menu-item>            
+              <el-menu-item index="/keywordlist">关键字设置</el-menu-item>              
             </el-menu-item-group>
           </el-submenu>
           <el-menu-item index="/tasklist"><i class="el-icon-menu"></i>微信任务</el-menu-item>                                                                                                               
