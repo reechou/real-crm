@@ -79,7 +79,7 @@ export default {
           var self = this;
           var ca = self.getCookie('token');
           // self.$router.push("/");
-          this.axios.get('http://wxmpx.gatao.cn/realtech/logout?token='+ ca)
+          this.axios.get('http://wxmpx.gatao.cn/realtech/logout?token='+ ca) 
           .then((response) => {
             var data = response.data
             if(data.code == 0){
