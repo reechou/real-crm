@@ -156,6 +156,14 @@ export default new Router({
         {
           path: '/addresource',
           component: require('views/weixin/Addresource')
+        },
+        {
+          path: '/addCRSetting',
+          component: require('views/weixin/SettingChatRoom/CreateChatRoom')
+        },
+        {
+          path: '/CRSettinglist',
+          component: require('views/weixin/SettingChatRoom/CRSettingList')
         }
       ]
     }

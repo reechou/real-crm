@@ -22,7 +22,7 @@ export default {
         self =this;
         console.log(this.$route.path);
         var ca = this.getCookie('token');
-        this.axios.get('http://wxmp.gatao.cn/realtech/check_login?token='+ca)
+        this.axios.get('http://wxmpx.gatao.cn/realtech/check_login?token='+ca)
             .then(function(res){
               var data = res.data;
               if(data.code == 0 )

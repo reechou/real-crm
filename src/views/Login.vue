@@ -45,7 +45,7 @@ export default {
         self.RealtechLoginSearch.password = self.ruleForm.pass;
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            self.axios.post('http://wxmp.gatao.cn/realtech/login',{RealtechLoginSearch: self.RealtechLoginSearch, type: 2})   // ,{withCredentials: true} 用于跨域请求  RealtechLoginSearch: {username:self.ruleForm.user, password: self.ruleForm.pass}}
+            self.axios.post('http://wxmpx.gatao.cn/realtech/login',{RealtechLoginSearch: self.RealtechLoginSearch, type: 2})   // ,{withCredentials: true} 用于跨域请求  RealtechLoginSearch: {username:self.ruleForm.user, password: self.ruleForm.pass}}
               .then((response) => {
                 var data = response.data;
                 if(data.code == 0){ 
